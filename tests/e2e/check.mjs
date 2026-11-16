@@ -99,15 +99,15 @@ for (const w of [390, 1440]) for (const scheme of ["light", "dark"]) {
   report.checks.costs26500noGst = await p.$eval("#side .total", e => e.textContent);
   await p.close(); }
 
-// 3. Not connected (production build without Firebase config): renders, banner, writes disabled
-{ const p = await open(PROD, "cars", 390, "dark");
-  report.checks.noConfigBanner = await p.$eval(".banner", e => e.textContent.trim().slice(0, 60)).catch(() => null);
-  report.checks.noConfigAddDisabled = await p.$eval('[data-act="add-car"]', e => e.disabled);
-  report.checks.noConfigHeroAddDisabled = await p.$eval('.pillform .cta', e => e.disabled);
-  await go(p, "costs"); report.checks.noConfigCosts = await p.$eval("#side .total", e => e.textContent);
-  report.checks.noConfigSaveDisabled = await p.$eval('#rates-form [type=submit]', e => e.disabled);
-  await go(p, "search"); report.checks.noConfigSearchDisabled = await p.$eval('#search-form [type=submit]', e => e.disabled);
-  await p.screenshot({ path: path.join(OUT, "noconfig-390-dark.png") });
+// 3. Production build, signed out: renders, sign-in banner, writes disabled
+{ const p = await open(PROD, "cars", 390, "dark"); await sleep(1500);
+  report.checks.signedOutBanner = await p.$eval(".banner", e => e.textContent.trim().slice(0, 60)).catch(() => null);
+  report.checks.signedOutHasSignIn = await p.evaluate(() => [...document.querySelectorAll("button")].some(b => /Google/.test(b.textContent)));
+  report.checks.signedOutHeroAddDisabled = await p.$eval(".pillform .cta", e => e.disabled);
+  await go(p, "costs"); report.checks.signedOutCosts = await p.$eval("#side .total", e => e.textContent);
+  report.checks.signedOutSaveDisabled = await p.$eval("#rates-form [type=submit]", e => e.disabled);
+  await go(p, "search"); report.checks.signedOutSearchDisabled = await p.$eval("#search-form [type=submit]", e => e.disabled);
+  await p.screenshot({ path: path.join(OUT, "signedout-390-dark.png") });
   await p.close(); }
 
 // 4. Round trips through the mock store
