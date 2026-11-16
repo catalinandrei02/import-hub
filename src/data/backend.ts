@@ -24,6 +24,10 @@ export interface AuthUser { uid: string; name: string; photo: string | null }
 export interface AuthProvider {
   onChange(cb: (u: AuthUser | null) => void): Unsub;
   signIn(): Promise<void>;
+  /** Email accounts (Firebase Email/Password provider). `name` = first name shown to the family. */
+  signInEmail(email: string, password: string): Promise<void>;
+  signUpEmail(email: string, password: string, name: string): Promise<void>;
+  resetPassword(email: string): Promise<void>;
   signOut(): Promise<void>;
 }
 

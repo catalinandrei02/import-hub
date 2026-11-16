@@ -89,6 +89,9 @@ export async function connect() {
 }
 
 export const signIn = () => conn?.auth.signIn();
+export const signInEmail = (email: string, password: string) => conn!.auth.signInEmail(email.trim(), password);
+export const signUpEmail = (email: string, password: string, name: string) => conn!.auth.signUpEmail(email.trim(), password, name.trim());
+export const resetPassword = (email: string) => conn!.auth.resetPassword(email.trim());
 export const signOut = () => conn?.auth.signOut();
 
 // ---- writes -------------------------------------------------------------

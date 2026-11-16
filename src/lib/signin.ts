@@ -14,3 +14,16 @@ export async function signInWithHelp() {
     else toast(A.error + (code ? ` (${code})` : ""));
   }
 }
+
+/** Explains an email sign-in / sign-up / reset error; returns the message (shown under the form). */
+export function emailError(e: any): string {
+  const code = String(e?.code || ""), G = t.value.gate;
+  if (code === "auth/email-already-in-use") return G.eUsed;
+  if (code === "auth/invalid-email" || code === "auth/missing-email") return G.eEmail;
+  if (code === "auth/weak-password" || code === "auth/missing-password") return G.eWeak;
+  if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found" || code === "auth/invalid-login-credentials") return G.eWrong;
+  if (code === "auth/too-many-requests") return G.eMany;
+  if (code === "auth/operation-not-allowed" || code === "auth/configuration-not-found") return G.eOff;
+  if (code === "auth/network-request-failed") return G.eNet;
+  return t.value.auth.error + (code ? ` (${code})` : "");
+}

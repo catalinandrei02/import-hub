@@ -182,6 +182,7 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   const seen = [];
   for (const r of ["cars", "costs", "steps", "documents", "contacts", "search"]) { await go(p, r); const l = await look(); seen.push(l.gate && !l.header && !l.cars ? l.mode : "LEAK " + r + " " + JSON.stringify(l)); if (l.sw > l.vw) report.overflow.push(`gate ${w} ${scheme} ${r}`); }
   report.checks[`gate_${w}_${scheme}`] = [...new Set(seen)].join(",");
+  report.checks[`gateEmail_${w}`] = await p.evaluate(() => !!document.getElementById("g-email") && !!document.querySelector('[data-act="email-submit"]'));
   report.checks[`gateSignIn_${w}`] = await p.$eval('[data-act="sign-in"]', e => e.textContent.trim()).catch(() => null);
   await setLang(p, "en"); report.checks[`gateEn_${w}`] = await p.$eval('[data-act="sign-in"]', e => e.textContent.trim()).catch(() => null); await setLang(p, "ro");
   await p.screenshot({ path: path.join(OUT, `gate-${w}-${scheme}.png`) });
@@ -286,6 +287,22 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   report.checks.carfaxDeleted = JSON.stringify({ left: (st["cars/s2"].carfax || []).map(x => x.kind), fileDocs: Object.keys(st).filter(k => k.startsWith("files/")).length });
   await p.keyboard.press("Escape"); await sleep(250);
   report.checks.carfaxChip = await p.$eval('[data-act="details"][data-id="s2"]', b => [...b.closest(".car").querySelectorAll(".chip")].some(c => /Carfax/.test(c.textContent)));
+  await p.close(); }
+
+// 4f. Email accounts on the login screen (test version starts signed out with "?signedout")
+{ const p = await open(MOCK + "?signedout", "cars", 390, "dark"); await sleep(400);
+  const msg = () => p.$eval(".gate-msg", e => e.textContent.trim().slice(0, 40)).catch(() => null);
+  report.checks.emailForm = await p.evaluate(() => [!!document.querySelector('[data-act="sign-in"]'), !!document.getElementById("g-email"), document.querySelectorAll(".gate-tabs button").length].join(","));
+  await setVal(p, "#g-email", "someone@example.test"); await setVal(p, "#g-pass", "nope"); await p.click('[data-act="email-submit"]'); await sleep(200);
+  const wrong = await msg();
+  await p.click('[data-act="forgot"]'); await sleep(200); const reset = await msg();
+  await p.click('[data-tab="up"]'); await sleep(100); await setVal(p, "#g-pass", "secret123"); await p.click('[data-act="email-submit"]'); await sleep(200);
+  const noName = await msg();
+  const over = await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth); if (!over) report.overflow.push("gate email 390");
+  await p.screenshot({ path: path.join(OUT, "gate-email-390.png") });
+  await setVal(p, "#g-name", "Maria Pop"); await p.click('[data-act="email-submit"]'); await sleep(600);
+  report.checks.emailFlow = JSON.stringify({ wrong, reset, noName, inAfterSignUp: await p.evaluate(() => !document.querySelector(".gate") && document.querySelectorAll(".car").length), name: await p.evaluate(() => document.querySelector(".ubtn")?.getAttribute("aria-label")) });
+  report.checks.emailNotStored = await p.evaluate(() => !JSON.stringify([...window.__mock.store]).includes("example.test"));
   await p.close(); }
 
 // 4c. Admin page (avatar menu): approve a request, change a role, remove a member (two presses), add by code

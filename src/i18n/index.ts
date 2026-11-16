@@ -41,8 +41,14 @@ const V3 = {
       how: "Se numără de fiecare dată când cineva din familie deschide mașina.", none: "Încă n-a deschis-o nimeni.", you: "tu", last: "ultima dată",
     },
     gate: {
-      lead: "Site-ul privat al familiei pentru mașinile aduse din Québec în România. Intră cu contul Google ca să continui.",
+      lead: "Site-ul privat al familiei pentru mașinile aduse din Québec în România. Intră cu Google sau cu email ca să continui.",
       checking: "Se verifică contul…", none: "Site-ul nu e încă legat de baza de date, așa că nu se poate intra.", other: "Intră cu alt cont",
+      or: "sau cu email", tabIn: "Intră", tabUp: "Creează cont", name: "Prenume", email: "Email", pass: "Parolă", passH: "Cel puțin 6 caractere.",
+      submitIn: "Intră", submitUp: "Creează contul", forgot: "Ai uitat parola?", resetSent: "Dacă există un cont cu acest email, ți-am trimis un link pentru o parolă nouă.",
+      upNote: "După ce creezi contul, proprietarul primește cererea ta și te aprobă.", needName: "Scrie prenumele, ca familia să știe cine ești.",
+      eUsed: "Există deja un cont cu acest email. Intră în el sau folosește „Ai uitat parola?”.", eEmail: "Emailul nu pare corect.", eWeak: "Parola trebuie să aibă cel puțin 6 caractere.",
+      eWrong: "Email sau parolă greșită.", eMany: "Prea multe încercări. Mai încearcă peste câteva minute.", eNet: "Nu e conexiune la internet.",
+      eOff: "Conturile cu email nu sunt încă pornite în Firebase (Authentication → Sign-in method → Email/Password).",
       private: "Doar membrii familiei au acces.", sent: "Am trimis o cerere proprietarului. Pagina se deschide singură după ce te aprobă, nu trebuie să faci nimic.", sending: "Se trimite cererea de acces…",
     },
     auth: {
@@ -127,8 +133,14 @@ const V3 = {
       how: "Counted each time someone in the family opens this car.", none: "Nobody has opened it yet.", you: "you", last: "last",
     },
     gate: {
-      lead: "The family's private site for cars brought from Québec to Romania. Sign in with your Google account to continue.",
+      lead: "The family's private site for cars brought from Québec to Romania. Sign in with Google or with email to continue.",
       checking: "Checking your account…", none: "The site isn't connected to its database yet, so nobody can sign in.", other: "Use another account",
+      or: "or with email", tabIn: "Sign in", tabUp: "Create account", name: "First name", email: "Email", pass: "Password", passH: "At least 6 characters.",
+      submitIn: "Sign in", submitUp: "Create the account", forgot: "Forgot your password?", resetSent: "If there's an account with this email, we've sent it a link to set a new password.",
+      upNote: "Once you create the account, the owner gets your request and approves you.", needName: "Write your first name so the family knows who you are.",
+      eUsed: "There's already an account with this email. Sign in, or use “Forgot your password?”.", eEmail: "That email doesn't look right.", eWeak: "The password needs at least 6 characters.",
+      eWrong: "Wrong email or password.", eMany: "Too many attempts. Try again in a few minutes.", eNet: "No internet connection.",
+      eOff: "Email accounts aren't switched on in Firebase yet (Authentication → Sign-in method → Email/Password).",
       private: "Only family members have access.", sent: "A request was sent to the owner. This page opens by itself once you're approved; there's nothing else to do.", sending: "Sending your access request…",
     },
     auth: {
@@ -213,8 +225,14 @@ const V3 = {
       how: "Comptées chaque fois qu'un membre de la famille ouvre ce véhicule.", none: "Personne ne l'a encore ouvert.", you: "vous", last: "dernière fois",
     },
     gate: {
-      lead: "Le site privé de la famille pour les véhicules amenés du Québec en Roumanie. Connectez-vous avec votre compte Google pour continuer.",
+      lead: "Le site privé de la famille pour les véhicules amenés du Québec en Roumanie. Connectez-vous avec Google ou par courriel pour continuer.",
       checking: "Vérification du compte…", none: "Le site n'est pas encore relié à sa base de données ; personne ne peut se connecter.", other: "Utiliser un autre compte",
+      or: "ou avec un courriel", tabIn: "Se connecter", tabUp: "Créer un compte", name: "Prénom", email: "Courriel", pass: "Mot de passe", passH: "Au moins 6 caractères.",
+      submitIn: "Se connecter", submitUp: "Créer le compte", forgot: "Mot de passe oublié ?", resetSent: "S'il existe un compte avec ce courriel, nous lui avons envoyé un lien pour un nouveau mot de passe.",
+      upNote: "Une fois le compte créé, le propriétaire reçoit votre demande et vous approuve.", needName: "Écrivez votre prénom pour que la famille sache qui vous êtes.",
+      eUsed: "Un compte existe déjà avec ce courriel. Connectez-vous ou utilisez « Mot de passe oublié ? ».", eEmail: "Ce courriel ne semble pas correct.", eWeak: "Le mot de passe doit comporter au moins 6 caractères.",
+      eWrong: "Courriel ou mot de passe incorrect.", eMany: "Trop de tentatives. Réessayez dans quelques minutes.", eNet: "Pas de connexion Internet.",
+      eOff: "Les comptes par courriel ne sont pas encore activés dans Firebase (Authentication → Sign-in method → Email/Password).",
       private: "Seuls les membres de la famille y ont accès.", sent: "Une demande a été envoyée au propriétaire. Cette page s'ouvrira d'elle-même une fois approuvée ; vous n'avez rien d'autre à faire.", sending: "Envoi de la demande d'accès…",
     },
     auth: {

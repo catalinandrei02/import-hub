@@ -27,6 +27,8 @@ export function connectMock(): Connection {
   const urlDeny = new URLSearchParams(location.search).has("deny");
   if (urlDeny) store.delete("members/mock-user");
   const denied = (p: string) => urlDeny && !store.has("members/mock-user") && !p.startsWith("members/");
+  const startOut = new URLSearchParams(location.search).has("signedout");
+  let authCb: ((u: { uid: string; name: string; photo: string | null } | null) => void) | null = null;
   (window as any).__mock = { store, writes: [] as string[][], emit: () => emit() };
   const log = (op: string, p: string) => (window as any).__mock.writes.push([op, p]);
   return {
@@ -54,8 +56,21 @@ export function connectMock(): Connection {
       async add(c, d) { const id = "new" + ++n; log("add", c + "/" + id); store.set(c + "/" + id, clone(d)); emit(); return id; },
     },
     auth: {
-      onChange(cb) { setTimeout(() => cb({ uid: "mock-user", name: "Test", photo: null }), 0); return () => {}; },
-      async signIn() {}, async signOut() {},
+      // "?signedout" in the address: start signed out (to test the login screen); any sign-in signs in as mock-user.
+      onChange(cb) { authCb = cb; setTimeout(() => cb(startOut ? null : { uid: "mock-user", name: "Test", photo: null }), 0); return () => {}; },
+      async signIn() { authCb?.({ uid: "mock-user", name: "Test", photo: null }); },
+      async signInEmail(email, password) {
+        log("signInEmail", email.replace(/@.*/, "@…"));
+        if (password !== "secret123") throw Object.assign(new Error("wrong"), { code: "auth/invalid-credential" });
+        authCb?.({ uid: "mock-user", name: "Test", photo: null });
+      },
+      async signUpEmail(email, password, name) {
+        log("signUpEmail", email.replace(/@.*/, "@…"));
+        if (password.length < 6) throw Object.assign(new Error("weak"), { code: "auth/weak-password" });
+        authCb?.({ uid: "mock-user", name, photo: null });
+      },
+      async resetPassword(email) { log("resetPassword", email.replace(/@.*/, "@…")); },
+      async signOut() { authCb?.(null); },
     },
   };
 }

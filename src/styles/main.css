@@ -633,3 +633,17 @@ dialog { box-shadow: none }
 .eqlist li { padding-block: 4px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere }
 .eqlist li.key { font-weight: 600 }
 .equip .link { justify-self: start }
+
+/* Login screen: email form */
+.gate-or { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 26rem; margin: 6px 0 0; color: #9a9a9a; font-size: .8125rem; text-transform: uppercase; letter-spacing: .08em }
+.gate-or::before, .gate-or::after { content: ""; flex: 1; height: 1px; background: #333 }
+.gate-tabs { display: flex; gap: var(--tile) }
+.gate-tabs button { all: unset; cursor: pointer; padding: 10px 16px; color: #bdbdbd; border-bottom: 2px solid transparent; font-weight: 500 }
+.gate-tabs button[aria-selected="true"] { color: #fff; border-bottom-color: #fff }
+.gate-tabs button:focus-visible { outline: 2px solid #fff; outline-offset: 2px }
+.gate-form { display: grid; gap: 12px; width: 100%; max-width: 26rem }
+.gate-form label { display: grid; gap: 6px; color: #d6d6d6; font-size: .875rem }
+.gate-form input { all: unset; box-sizing: border-box; width: 100%; min-height: 48px; padding: 0 14px; background: #fff; color: #000; font-size: 1rem }
+.gate-form input:focus-visible { outline: 2px solid #fff; outline-offset: 2px }
+.gate-form small, .gate-note { color: #9a9a9a; font-size: .8125rem; margin: 0 }
+.gate-msg { margin: 0; color: #ff8a9b; font-size: .875rem } .gate-msg.ok { color: #9fe0b0 }
