@@ -14,9 +14,16 @@ fs.mkdirSync(OUT, { recursive: true });
 const ROUTES = ["cars", "costs", "steps", "documents", "contacts", "search"];
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml" };
 
+// A fake listing page for the "Add to Import Hub" bookmark (JSON-LD like the real sites, plus a large photo).
+const FAKE_LISTING = `<!doctype html><html><head><title>2021 Audi Q5 Technik | Example Motors</title>
+<meta property="og:image" content="http://localhost:4181/fake/og.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Car","name":"2021 Audi Q5 Technik 45 TFSI quattro","vehicleIdentificationNumber":"WA1FAAFY2M2004811","mileageFromOdometer":{"@type":"QuantitativeValue","value":"88000","unitCode":"KMT"},"image":["http://localhost:4181/fake/1.jpg","http://localhost:4181/fake/2.jpg"],"offers":{"@type":"Offer","price":"29750.00","priceCurrency":"CAD","seller":{"@type":"AutoDealer","name":"Example Motors","address":{"addressLocality":"Laval"}}}}</script>
+</head><body><h1>2021 Audi Q5 Technik</h1><p>VIN: WA1FAAFY2M2004811 · 88 000 km</p></body></html>`;
 function serve(dir, port) {
   return new Promise(r => {
     const s = http.createServer((req, res) => {
+      if (req.url.startsWith("/fake-listing")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_LISTING); }
+      if (req.url.startsWith("/fake/")) { res.writeHead(200, { "content-type": "image/svg+xml" }); return res.end('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="#8a8a8a"/></svg>'); }
       let f = path.join(dir, decodeURIComponent(req.url.split("?")[0]));
       if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, "index.html");
       if (!fs.existsSync(f)) { res.writeHead(404); return res.end(); }
@@ -161,6 +168,32 @@ for (const w of [390, 1440]) for (const scheme of ["light", "dark"]) {
   report.checks.avatarOpensMenu = await p.evaluate(() => !!document.querySelector(".upop") && !!document.querySelector(".ubtn"));
   await p.keyboard.press("Escape"); await sleep(80);
   report.checks.menuClosesOnEscape = await p.evaluate(() => !document.querySelector(".upop"));
+  await p.close(); }
+
+// 5. "Add to Import Hub" bookmark: run it on a listing page, open the app from it, save the car with its photos
+{ const p = await open(MOCK, "cars", 1280, "light");
+  await p.click('[data-act="add-car"]'); await sleep(200);
+  const href = await p.$eval(".impbox .bm", a => a.getAttribute("href"));
+  report.checks.bookmarkHref = href && href.startsWith("javascript:(") ? "ok (" + href.length + " chars)" : href;
+  await p.keyboard.press("Escape"); await sleep(100);
+  const l = await browser.newPage();
+  await l.goto(MOCK + "fake-listing.html", { waitUntil: "load" });
+  const opened = await l.evaluate(code => { let u = null; window.open = x => { u = x; return null; }; (0, eval)(decodeURIComponent(code)); return u; }, href.slice("javascript:".length));
+  report.checks.bookmarkOpens = opened ? opened.slice(0, 60) + "…" : null;
+  await l.close();
+  await p.goto(opened, { waitUntil: "networkidle0" }); await sleep(400);
+  report.checks.importPrefill = await p.evaluate(() => ["d-vin", "d-year", "d-trim", "d-price", "d-km", "d-seller", "d-location", "d-url"].map(id => document.getElementById(id)?.value).join(" | "));
+  report.checks.importPhotos = await p.$eval("#d-photos", e => e.value.split("\n").length);
+  report.checks.importBanner = await p.$eval("#car-form .banner", e => e.textContent.trim().slice(0, 40)).catch(() => null);
+  report.checks.queryCleared = await p.evaluate(() => !location.hash.includes("add="));
+  await p.click('#car-form [type=submit]'); await sleep(300);
+  const st = await p.evaluate(() => Object.fromEntries(window.__mock.store));
+  const k = Object.keys(st).find(x => st[x].vin === "WA1FAAFY2M2004811" && st[x].seller === "Example Motors");
+  report.checks.importSaved = k ? JSON.stringify({ price: st[k].price, km: st[k].km, photos: st[k].photos.length, addedBy: st[k].addedBy }) : null;
+  await sleep(300);
+  report.checks.cardShowsPhoto = await p.evaluate(() => [...document.querySelectorAll(".car img.cphoto")].filter(i => i.complete && i.naturalWidth > 0).length);
+  report.checks.heroShowsPhoto = await p.evaluate(() => !!document.querySelector(".hero-art.hasphoto img"));
+  await p.screenshot({ path: path.join(OUT, "import-1280-light.png") });
   await p.close(); }
 
 console.log(JSON.stringify(report, null, 1));

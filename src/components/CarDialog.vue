@@ -10,8 +10,9 @@ import { parseNum } from "../lib/cars";
 import { t } from "../i18n";
 import { toast, ui } from "../ui";
 import VinInfo from "./VinInfo.vue";
+import ImportBookmark from "./ImportBookmark.vue";
 
-const props = defineProps<{ car: Partial<Car> | null }>();
+const props = defineProps<{ car: Partial<Car> | null; imported?: boolean }>();
 const dlg = ref<HTMLDialogElement | null>(null);
 const old = props.car || {};
 const isNew = !old._id;
@@ -22,8 +23,10 @@ const f = reactive({
   status: old.status || "watching", price: str(old.price), offer: str(old.offer), dePrice: str(old.dePrice),
   gst: carGst({ gst: old.gst, sellerType: old.sellerType || "dealer" }), gstTouched: typeof old.gst === "boolean",
   acc: old.acc || "", cam: old.cam || "", flags: [...(old.flags || [])] as string[], notes: str(old.notes),
+  photos: (old.photos || []).join("\n"),
 });
 const armed = ref(false);
+const photoList = computed(() => f.photos.split(/\s+/).filter(u => /^https?:\/\//i.test(u)).slice(0, 12));
 const busy = ref(false);
 const F = computed(() => t.value.f);
 function onVin() {
@@ -41,6 +44,7 @@ async function save() {
     title: f.title || "Audi Q5", year: parseNum(f.year), trim: f.trim, price, km: parseNum(f.km), status: f.status, seller: f.seller,
     sellerType: f.sellerType, contact: f.contact, stock: f.stock, location: f.location, offer: parseNum(f.offer), dePrice: parseNum(f.dePrice),
     gst: f.gst, acc: f.acc, cam: f.cam, vin: f.vin.toUpperCase().replace(/\s/g, ""), url: f.url, flags: f.flags, notes: f.notes, updatedAt: now,
+    photos: f.photos.split(/\s+/).filter(u => /^https?:\/\//i.test(u)).slice(0, 12),
   });
   // Price changes are appended to the history, never rewritten.
   const h = Array.isArray(old.priceHistory) ? [...old.priceHistory] : [];
@@ -71,6 +75,8 @@ onMounted(() => { dlg.value?.showModal(); onVin(); });
     <form id="car-form" class="dlg" novalidate autocomplete="off" @submit.prevent="save">
       <div class="spread"><h2>{{ isNew ? t.cars.add : t.cars.edit }}</h2>
         <button class="closex" type="button" :aria-label="t.c.close" @click="ui.dialog = null"><AIcon name="cancel" /></button></div>
+      <div v-if="imported" class="banner"><span class="msg"><span>{{ t.imp.got }}</span></span></div>
+      <ImportBookmark v-else-if="isNew" />
       <div class="form">
         <section class="group"><h3 class="label">{{ F.gCar }}</h3>
           <div class="row full"><div class="lab"><label for="d-title">{{ F.title }}</label></div><div class="inp txt"><input id="d-title" v-model="f.title"></div></div>
@@ -101,6 +107,11 @@ onMounted(() => { dlg.value?.showModal(); onVin(); });
               <label v-for="o in [['', t.cars.unknown], ['yes', t.cars.yes], ['no', t.cars.no]]" :key="o[0]"><input v-model="f[k]" type="radio" :name="k" :value="o[0]">{{ o[1] }}</label></div></div>
           <label v-for="fl in FLAGS" :key="fl" class="row sw" :for="'d-flag-' + fl"><span class="lab"><span class="t">{{ (F.flagList as any)[fl] }}</span></span>
             <input :id="'d-flag-' + fl" v-model="f.flags" class="switch" type="checkbox" role="switch" :value="fl"></label>
+        </section>
+        <section class="group wide"><h3 class="label">{{ t.imp.photos }}</h3>
+          <p class="note">{{ t.imp.photosH }}</p>
+          <div v-if="photoList.length" class="thumbs"><img v-for="u in photoList" :key="u" :src="u" alt="" loading="lazy" referrerpolicy="no-referrer" @error="($event.target as HTMLImageElement).classList.add('broken')"></div>
+          <div class="inp area"><textarea id="d-photos" v-model="f.photos" spellcheck="false" :aria-label="t.imp.photos"></textarea></div>
         </section>
         <section class="group wide"><h3 class="label">{{ F.notes }}</h3><div class="inp area"><textarea id="d-notes" v-model="f.notes" :aria-label="F.notes"></textarea></div></section>
       </div>

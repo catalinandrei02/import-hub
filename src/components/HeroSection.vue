@@ -1,7 +1,11 @@
 <script setup lang="ts">
-// Hero as an asymmetric split: a solid text block and a full-bleed tile with the car drawing.
+// Hero as an asymmetric split: a solid text block and a full-bleed tile with a photo of one of the family's cars
+// (members only, from its listing) or, without one, our own car drawing.
+import { ref, watch } from "vue";
 import CarArt from "./CarArt.vue";
-defineProps<{ title: string; lead: string }>();
+const props = defineProps<{ title: string; lead: string; photo?: string }>();
+const broken = ref(false);
+watch(() => props.photo, () => (broken.value = false));
 </script>
 
 <template>
@@ -12,6 +16,9 @@ defineProps<{ title: string; lead: string }>();
       <p class="lead">{{ lead }}</p>
       <slot />
     </div>
-    <div class="hero-art" aria-hidden="true"><CarArt label="" /></div>
+    <div class="hero-art" :class="{ hasphoto: photo && !broken }" aria-hidden="true">
+      <img v-if="photo && !broken" :src="photo" alt="" referrerpolicy="no-referrer" @error="broken = true">
+      <CarArt v-else label="" />
+    </div>
   </section>
 </template>

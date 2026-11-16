@@ -16,6 +16,8 @@ export interface Car {
   // v2 additions
   gst?: boolean; contact?: string; stock?: string; offer?: number | null; dePrice?: number | null;
   docs?: Record<string, string | boolean>;
+  /** v3: photo links taken from the listing (first = main photo). Hotlinked, visible only to members. */
+  photos?: string[];
   [k: string]: unknown;
 }
 

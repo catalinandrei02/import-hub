@@ -34,6 +34,11 @@ const V3 = {
       dailyH: "Căutarea zilnică automată", dailyLead: "O sarcină programată rulează cu aceste filtre și adaugă singură mașinile noi în lista ta.", saveDaily: "Salvează pentru căutarea zilnică",
     },
     noCars: "Încă nu ai nicio mașină salvată. Pașii și actele se bifează pentru fiecare mașină în parte, așa că adaugă întâi una.",
+    imp: {
+      h: "Adaugă direct din anunț", lead: "Trage butonul în bara de favorite din Chrome. Pe pagina unui anunț (CarGurus, AutoTrader, Kijiji…) apasă-l: se deschide Import Hub cu prețul, kilometrii, anul, VIN-ul, vânzătorul și pozele deja completate.",
+      dragOnly: "Trage butonul în bara de favorite; aici nu face nimic.", got: "Date preluate din anunț. Verifică-le înainte să salvezi.",
+      photos: "Poze", photosH: "Linkuri către poze, câte unul pe rând. Prima e poza principală. Le văd doar membrii familiei.",
+    },
     foot: { line: "Costuri orientative. Verifică întotdeauna oferta reală și cursul zilei.", data: "Datele familiei", sources: "Surse oficiale" },
   },
   en: {
@@ -66,6 +71,11 @@ const V3 = {
       dailyH: "Daily automatic search", dailyLead: "A scheduled task runs with these filters and adds new cars to your list by itself.", saveDaily: "Save for the daily search",
     },
     noCars: "You don't have any cars saved yet. Steps and papers are ticked per car, so add one first.",
+    imp: {
+      h: "Add straight from a listing", lead: "Drag the button to Chrome's bookmarks bar. On a listing page (CarGurus, AutoTrader, Kijiji…) press it: Import Hub opens with the price, km, year, VIN, seller and photos already filled in.",
+      dragOnly: "Drag the button to the bookmarks bar; it does nothing here.", got: "Details taken from the listing. Check them before saving.",
+      photos: "Photos", photosH: "Photo links, one per line. The first is the main photo. Only family members can see them.",
+    },
     foot: { line: "Costs are estimates. Always check the real quote and today's rate.", data: "Family data", sources: "Official sources" },
   },
   fr: {
@@ -98,6 +108,11 @@ const V3 = {
       dailyH: "Recherche automatique quotidienne", dailyLead: "Une tâche planifiée s'exécute avec ces filtres et ajoute d'elle-même les nouveaux véhicules à votre liste.", saveDaily: "Enregistrer pour la recherche quotidienne",
     },
     noCars: "Aucun véhicule enregistré pour l'instant. Les étapes et les papiers se cochent par véhicule : ajoutez-en d'abord un.",
+    imp: {
+      h: "Ajouter directement depuis une annonce", lead: "Glissez le bouton dans la barre de favoris de Chrome. Sur la page d'une annonce (CarGurus, AutoTrader, Kijiji…), appuyez dessus : Import Hub s'ouvre avec le prix, le kilométrage, l'année, le NIV, le vendeur et les photos déjà remplis.",
+      dragOnly: "Glissez le bouton dans la barre de favoris ; ici, il ne fait rien.", got: "Données reprises de l'annonce. Vérifiez-les avant d'enregistrer.",
+      photos: "Photos", photosH: "Liens vers les photos, un par ligne. La première est la photo principale. Seuls les membres de la famille les voient.",
+    },
     foot: { line: "Coûts indicatifs. Vérifiez toujours l'offre réelle et le taux du jour.", data: "Données de la famille", sources: "Sources officielles" },
   },
 };

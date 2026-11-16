@@ -66,3 +66,21 @@ describe("search", () => {
     expect(matchCars(cars, { text: "technik" }).map(c => c._id)).toEqual(["a"]);
   });
 });
+
+import { cleanNum, parseImport } from "../../src/lib/importer";
+
+describe("listing import", () => {
+  it("reads prices and kilometres in any format", () => {
+    expect(cleanNum("27,999.00")).toBe(27999);
+    expect(cleanNum("29 750 $")).toBe(29750);
+    expect(cleanNum("88 000 km")).toBe(88000);
+    expect(cleanNum("$31,490")).toBe(31490);
+    expect(cleanNum("")).toBeNull();
+  });
+  it("turns the bookmark payload into a prefilled car", () => {
+    const car = parseImport(JSON.stringify({ u: "https://www.example.ca/listing/1", t: "2021 Audi Q5 Technik 45 TFSI quattro", p: "29750.00", k: "88 000", y: "", v: "wa1faafy2m2004811", s: "Example Motors", l: "Laval", i: ["https://img.example.ca/1.jpg", "javascript:alert(1)", "https://img.example.ca/2.jpg"] }));
+    expect(car).toMatchObject({ title: "Audi Q5", year: 2021, vin: "WA1FAAFY2M2004811", trim: "Technik", price: 29750, km: 88000, seller: "Example Motors", location: "Laval" });
+    expect(car!.photos).toEqual(["https://img.example.ca/1.jpg", "https://img.example.ca/2.jpg"]);
+  });
+  it("rejects broken payloads", () => expect(parseImport("{not json")).toBeNull());
+});

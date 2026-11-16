@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import AIcon from "../components/AIcon.vue";
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { parseImport } from "../lib/importer";
 import { canWrite, state } from "../data/store";
 import { carLanded } from "../lib/costs";
 import { decodeVin } from "../lib/vin";
@@ -32,10 +34,27 @@ function addFromVin() {
   ui.dialog = { kind: "car", car: { vin: vin.value.toUpperCase().replace(/\s/g, ""), ...(d.err ? {} : { trim: d.trim === "?" ? "" : d.trim, year: d.year === "?" ? null : d.year }) } as any };
 }
 watch(() => ui.cmp.length, n => { if (n < 2) cmpOpen.value = false; });
+// Hero photo: the selected car's main photo, else the newest active car that has one.
+const heroPhoto = computed(() => {
+  const sel = state.cars.find(c => c._id === ui.selCar && c.photos?.length);
+  const any = active.value.filter(c => c.photos?.length).sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")))[0];
+  return (sel || any)?.photos?.[0] || "";
+});
+// Arriving from the "Add to Import Hub" bookmark: #/cars?add=<listing data>
+const route = useRoute(), router = useRouter();
+function takeImport() {
+  const raw = route.query.add;
+  if (typeof raw !== "string" || !raw) return;
+  const car = parseImport(raw);
+  router.replace({ query: {} });
+  if (car) ui.dialog = { kind: "car", car: { status: "watching", sellerType: "dealer", ...car }, imported: true };
+}
+onMounted(takeImport);
+watch(() => route.query.add, takeImport);
 </script>
 
 <template>
-  <HeroSection :title="t.cars.h" :lead="t.cars.lead">
+  <HeroSection :title="t.cars.h" :lead="t.cars.lead" :photo="heroPhoto">
     <template #proof>
       <span><b>{{ fill(t.chip.cars, { n: active.length }).split(" ")[0] }}</b> {{ fill(t.chip.cars, { n: active.length }).split(" ").slice(1).join(" ") }}<template v-if="cheapest"> · {{ t.cars.cheapest }} {{ eur(cheapest) }}</template></span>
     </template>

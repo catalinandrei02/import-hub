@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AIcon from "./AIcon.vue";
 // A car as a testimonial-style card: status source line, the car and its price, then seller and cost in Romania.
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import type { Car } from "../data/types";
 import { state } from "../data/store";
 import { carGst, carLanded } from "../lib/costs";
@@ -27,13 +27,16 @@ function toggleCmp(e: Event) {
   if (on && ui.cmp.length >= 3) { (e.target as HTMLInputElement).checked = false; toast(t.value.cars.compareMax); return; }
   ui.cmp = on ? [...ui.cmp, id] : ui.cmp.filter(x => x !== id);
 }
+const broken = ref(false);
+const photo = computed(() => (!broken.value && c.value.photos?.[0]) || "");
 function open() { ui.selCar = c.value._id; ui.detail = true; }
 </script>
 
 <template>
   <article class="car" :class="{ sel: ui.detail && ui.selCar === car._id, dropped: car.status === 'dropped' }">
     <div class="cimg">
-      <CarArt :label="carName(car)" />
+      <img v-if="photo" class="cphoto" :src="photo" :alt="carName(car)" loading="lazy" referrerpolicy="no-referrer" @error="broken = true">
+      <CarArt v-else :label="carName(car)" />
       <span class="badge" :class="statusClass(car.status)">{{ (t.st as any)[car.status || ''] || car.status }}</span>
       <span v-if="car.addedBy === 'claude'" class="badge auto">{{ t.cars.byClaude }}</span>
     </div>

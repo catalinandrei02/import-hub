@@ -67,6 +67,9 @@ watch(car, c => { if (!c) ui.detail = false; });
           <button class="btn" type="button" data-act="edit-car" :data-id="car._id" @click="ui.dialog = { kind: 'car', car }"><AIcon name="edit" :size="20" />{{ t.cars.edit }}</button>
         </div>
       </section>
+      <div v-if="car.photos?.length" class="gallery" :aria-label="t.imp.photos" tabindex="0">
+        <a v-for="(u, i) in car.photos" :key="u" :href="u" target="_blank" rel="noopener noreferrer"><img :src="u" :alt="carName(car) + ' ' + (i + 1)" loading="lazy" referrerpolicy="no-referrer"></a>
+      </div>
       <CostPanels v-if="car.price" :price="car.price" :gst="carGst(car)" :costs="state.costs" :cap="t.cars.landedCap" :extra="carGst(car) ? t.cars.withGst : t.cars.noGst" />
       <section class="glass pad" style="display:grid;gap:12px">
         <h3 class="label">{{ t.cars.progress }}</h3>

@@ -24,7 +24,7 @@ import ContactDialog from "./components/ContactDialog.vue";
     </footer>
   </div>
   <CarDetail v-if="ui.detail" />
-  <CarDialog v-if="ui.dialog?.kind === 'car'" :car="ui.dialog.car" />
+  <CarDialog v-if="ui.dialog?.kind === 'car'" :car="ui.dialog.car" :imported="ui.dialog.imported" />
   <ContactDialog v-if="ui.dialog?.kind === 'contact'" :contact="ui.dialog.contact" />
   <div v-if="ui.toast" class="toast" role="status">{{ ui.toast }}</div>
 </template>
