@@ -43,7 +43,7 @@ function openCar(id: string) { ui.selCar = id; ui.detail = true; }
 </script>
 
 <template>
-  <HeroSection :title="t.admin.h" :lead="t.admin.lead" />
+  <HeroSection small :title="t.admin.h" :lead="t.admin.lead" />
   <div class="content solo">
     <div class="main admin">
       <StatusBanner />

@@ -13,7 +13,7 @@ import VinInfo from "./VinInfo.vue";
 import ImportBookmark from "./ImportBookmark.vue";
 import { deletePdf } from "../data/files";
 import { hasExtension, readWithExtension } from "../lib/extension";
-import { MAX_PHOTOS, findSaved, parseImport } from "../lib/importer";
+import { MAX_PHOTOS, findSaved, mergeHistory, parseImport } from "../lib/importer";
 import { state } from "../data/store";
 
 const props = defineProps<{ car: Partial<Car> | null; imported?: boolean; autoFill?: boolean }>();
@@ -59,7 +59,7 @@ async function fillFromLink() {
   if (c.acc === "yes") f.acc = "yes";
   if (c.cam === "yes") f.cam = "yes";
   if (c.flags?.length) f.flags = [...new Set([...f.flags, ...c.flags])];
-  extra.value = { equipment: c.equipment, carfax: c.carfax, history: c.history };
+  extra.value = { equipment: c.equipment, carfax: c.carfax, history: c.history, priceHistory: c.priceHistory, listedSince: c.listedSince };
   onVin();
   dup.value = findSaved(state.cars, { vin: c.vin, url });
   fillState.value = "done";
@@ -86,7 +86,8 @@ async function save() {
   try {
     if (isNew) {
       Object.assign(data, { steps: {}, docs: {}, addedBy: "manual", addedAt: now });
-      for (const [k, v] of Object.entries(extra.value)) if (v != null && data[k] == null) data[k] = v;
+      for (const [k, v] of Object.entries(extra.value)) if (v != null && k !== "priceHistory" && data[k] == null) data[k] = v;
+      if (extra.value.priceHistory?.length) data.priceHistory = mergeHistory(extra.value.priceHistory as any, data.priceHistory); // the site's dated prices
       ui.selCar = await addDoc("cars", data);
     } else await queue("cars/" + old._id, b => b.set("cars/" + old._id, data));
     toast(t.value.costs.saved); ui.dialog = null;

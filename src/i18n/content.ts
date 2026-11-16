@@ -107,6 +107,20 @@ export const STEPS: Record<Lang, string[][]> = {
    "Cu certificatul original, contractul și actele de vamă.",
    "Cumpărătorul",
    "Dosar complet"
+  ],
+  [
+   "Înainte de cumpărare",
+   "Verifică vânzătorul",
+   "Actul de identitate al vânzătorului și certificatul de înmatriculare SAAQ trebuie să fie pe același nume. Întâlnire într-un loc sigur, ideal la bancă.",
+   "Tu / unchiul",
+   "Act identitate, certificat"
+  ],
+  [
+   "Cumpărare",
+   "Actele de la dealer pentru export",
+   "Factura finală (verifică taxele aplicate), formularul ATAC cu „EXPORTATION” și copia certificatului de înmatriculare pentru Viamar.",
+   "Dealerul",
+   "Factură, ATAC, certificat"
   ]
  ],
  "en": [
@@ -214,6 +228,20 @@ export const STEPS: Record<Lang, string[][]> = {
    "With the original registration, the contract and the customs papers.",
    "Buyer",
    "Full file"
+  ],
+  [
+   "Before buying",
+   "Check the seller",
+   "The seller's ID and the SAAQ registration certificate must be in the same name. Meet somewhere safe, ideally at a bank.",
+   "You / uncle",
+   "ID, registration"
+  ],
+  [
+   "Buying",
+   "Papers from the dealer for export",
+   "Final invoice (check which taxes were applied), the ATAC form with “EXPORTATION” and a copy of the registration certificate for Viamar.",
+   "Dealer",
+   "Invoice, ATAC, registration"
   ]
  ],
  "fr": [
@@ -321,6 +349,20 @@ export const STEPS: Record<Lang, string[][]> = {
    "Avec le certificat original, le contrat et les papiers de douane.",
    "Acheteur",
    "Dossier complet"
+  ],
+  [
+   "Avant l'achat",
+   "Vérifier le vendeur",
+   "La pièce d'identité du vendeur et le certificat d'immatriculation SAAQ doivent être au même nom. Rencontre dans un lieu sûr, idéalement à la banque.",
+   "Vous / l'oncle",
+   "Pièce d'identité, certificat"
+  ],
+  [
+   "Achat",
+   "Documents du concessionnaire pour l'export",
+   "Facture finale (vérifiez les taxes appliquées), le formulaire ATAC avec « EXPORTATION » et une copie du certificat d'immatriculation pour Viamar.",
+   "Concessionnaire",
+   "Facture, ATAC, certificat"
   ]
  ]
 };
@@ -352,7 +394,9 @@ export const DOCS: Record<Lang, [string, string[]][]> = {
    [
     "Formularul de anulare pentru vehicul vândut în afara Québecului",
     "Copie a contractului de vânzare",
-    "Certificatul de înmatriculare"
+    "Certificatul de înmatriculare",
+    "Rezultatul căutării RDPRM (fără datorii)",
+    "Copie a actului de identitate al vânzătorului"
    ]
   ],
   [
@@ -360,7 +404,9 @@ export const DOCS: Record<Lang, [string, string[]][]> = {
    [
     "Pașaport sau act de identitate al cumpărătorului (unii cer permisul, cu adresă)",
     "Datele transportatorului (Viamar / GO Transport)",
-    "Formular ATAC cu scutire de QST „EXPORTATION”"
+    "Formular ATAC cu scutire de QST „EXPORTATION”",
+    "Factura finală a dealerului (cu taxele aplicate)",
+    "Raportul Carfax de la dealer"
    ]
   ],
   [
@@ -400,7 +446,9 @@ export const DOCS: Record<Lang, [string, string[]][]> = {
    [
     "Cancellation form for a vehicle sold outside Québec",
     "Copy of the bill of sale",
-    "Registration certificate"
+    "Registration certificate",
+    "RDPRM search result (no liens)",
+    "Copy of the seller's ID"
    ]
   ],
   [
@@ -408,7 +456,9 @@ export const DOCS: Record<Lang, [string, string[]][]> = {
    [
     "Buyer's passport or ID (some ask for a licence with address)",
     "Carrier details (Viamar / GO Transport)",
-    "ATAC form with QST exemption “EXPORTATION”"
+    "ATAC form with QST exemption “EXPORTATION”",
+    "Dealer's final invoice (showing the taxes applied)",
+    "Carfax report from the dealer"
    ]
   ],
   [
@@ -448,7 +498,9 @@ export const DOCS: Record<Lang, [string, string[]][]> = {
    [
     "Formulaire d'annulation pour véhicule vendu hors Québec",
     "Copie du contrat de vente",
-    "Certificat d'immatriculation"
+    "Certificat d'immatriculation",
+    "Résultat de la recherche RDPRM (aucune dette)",
+    "Copie de la pièce d'identité du vendeur"
    ]
   ],
   [
@@ -456,7 +508,9 @@ export const DOCS: Record<Lang, [string, string[]][]> = {
    [
     "Passeport ou pièce d'identité de l'acheteur (certains demandent le permis avec adresse)",
     "Coordonnées du transporteur (Viamar / GO Transport)",
-    "Formulaire ATAC avec exemption de TVQ « EXPORTATION »"
+    "Formulaire ATAC avec exemption de TVQ « EXPORTATION »",
+    "Facture finale du concessionnaire (taxes appliquées visibles)",
+    "Rapport Carfax du concessionnaire"
    ]
   ],
   [
@@ -504,3 +558,54 @@ export const LINKS: [string, string][] = [
   "https://vehicleflaws.com/recall/21V947000"
  ]
 ] as any;
+
+// ---- Dealer vs private seller (owner's request). Indices are stable: ticks are stored as s<i> / d<g>_<i>. ----
+export type Seller = "dealer" | "private";
+/** Steps that apply to one kind of seller only (the rest apply to both). 15 and 16 were added for this. */
+const STEP_ONLY: Record<number, Seller> = { 9: "private", 15: "private", 16: "dealer" };
+/** Document groups that apply to one kind of seller only: 2 = SAAQ (private seller), 3 = Québec dealer. */
+const DOC_ONLY: Record<number, Seller> = { 2: "private", 3: "dealer" };
+/** Wording that differs by seller: [lang][step] = { dealer, private } descriptions (from PROJECT_BRIEF §3–4). */
+const STEP_TEXT: Record<Lang, Record<number, Record<Seller, string>>> = {
+  ro: {
+    1: { dealer: "Cere raportul Carfax de la dealer (de obicei îl dă gratuit). Caută accidente, leasing („Bail”), goluri în service, rechemări deschise (22V753, 21V947).", private: "Cumpără tu raportul Carfax după VIN (carfax.ca). Caută accidente, leasing („Bail”), goluri în service, rechemări deschise (22V753, 21V947)." },
+    2: { dealer: "Dealerul garantează că mașina e fără datorii; o căutare RDPRM după VIN (câțiva dolari) e totuși o verificare ieftină.", private: "Obligatoriu: căutare după VIN pe rdprm.gouv.qc.ca (câțiva dolari). Fără credit sau leasing pe mașină, altfel Viamar n-o ia." },
+    4: { dealer: "Confirmă în scris vânzarea pentru export: dealerul predă mașina direct transportatorului și trece scutirea „EXPORTATION” pe formularul ATAC, ca să nu plătești QST (ideal nici GST).", private: "Confirmă că vânzătorul predă mașina la transportator. Între persoane fizice nu se plătește QST dacă înmatricularea nu se transferă (mașina pleacă din Canada)." },
+    5: { dealer: "Contractul / factura dealerului pe numele cumpărătorului: preț, VIN, km, mențiunea de export și scutirea de taxe.", private: "Contract scris, semnat de amândoi: nume, adrese, telefoane, acte de identitate, VIN, km, preț real, dată, „vândut ca atare” și clauza de predare la transportator. Plata cu cardul singură nu ajunge." },
+    6: { dealer: "Transfer bancar către dealer, din contul cumpărătorului din contract. Dovada plății trebuie la vama din Olanda.", private: "Transfer bancar din contul cumpărătorului din contract, nu numerar. Dovada plății trebuie la vama din Olanda." },
+    8: { dealer: "Dealerul duce mașina la GO Transport (180 Graveline, Saint-Laurent). E condiția pentru vânzarea fără taxe.", private: "Vânzătorul duce mașina la GO Transport (180 Graveline, Saint-Laurent) sau Viamar o ridică (~185 USD în Montréal). Sună cu 24 h înainte." },
+  },
+  en: {
+    1: { dealer: "Ask the dealer for the Carfax report (usually free). Look for accidents, lease (“Bail”), service gaps, open recalls (22V753, 21V947).", private: "Buy the Carfax report yourself by VIN (carfax.ca). Look for accidents, lease (“Bail”), service gaps, open recalls (22V753, 21V947)." },
+    2: { dealer: "The dealer guarantees the car is free of liens; an RDPRM search by VIN (a few dollars) is still a cheap check.", private: "Required: search by VIN at rdprm.gouv.qc.ca (a few dollars). No loan or lease on the car, or Viamar won't take it." },
+    4: { dealer: "Confirm in writing that it's an export sale: the dealer hands the car straight to the carrier and enters the “EXPORTATION” exemption on the ATAC form, so you don't pay QST (ideally not GST either).", private: "Confirm the seller will hand the car to the carrier. Between individuals there's no QST if the registration isn't transferred (the car leaves Canada)." },
+    5: { dealer: "Dealer's contract / invoice in the buyer's name: price, VIN, km, the export mention and the tax exemption.", private: "Written contract signed by both: names, addresses, phones, IDs, VIN, km, real price, date, “sold as is” and the hand-over-to-carrier clause. A card payment alone isn't enough." },
+    6: { dealer: "Bank transfer to the dealer from the account of the buyer named in the contract. Dutch customs need the proof of payment.", private: "Bank transfer from the account of the buyer named in the contract, no cash. Dutch customs need the proof of payment." },
+    8: { dealer: "The dealer takes the car to GO Transport (180 Graveline, Saint-Laurent). That's the condition for the tax-free sale.", private: "The seller takes the car to GO Transport (180 Graveline, Saint-Laurent), or Viamar picks it up (~185 USD in Montréal). Call 24 h ahead." },
+  },
+  fr: {
+    1: { dealer: "Demandez le rapport Carfax au concessionnaire (souvent gratuit). Cherchez accidents, location (« Bail »), trous dans l'entretien, rappels ouverts (22V753, 21V947).", private: "Achetez vous-même le rapport Carfax par NIV (carfax.ca). Cherchez accidents, location (« Bail »), trous dans l'entretien, rappels ouverts (22V753, 21V947)." },
+    2: { dealer: "Le concessionnaire garantit que le véhicule est libre de dettes ; une recherche RDPRM par NIV (quelques dollars) reste une vérification peu coûteuse.", private: "Obligatoire : recherche par NIV sur rdprm.gouv.qc.ca (quelques dollars). Aucun prêt ni location sur le véhicule, sinon Viamar le refuse." },
+    4: { dealer: "Confirmez par écrit la vente pour l'export : le concessionnaire remet le véhicule directement au transporteur et inscrit l'exemption « EXPORTATION » sur le formulaire ATAC, pour ne pas payer la TVQ (idéalement ni la TPS).", private: "Confirmez que le vendeur remet le véhicule au transporteur. Entre particuliers, pas de TVQ si l'immatriculation n'est pas transférée (le véhicule quitte le Canada)." },
+    5: { dealer: "Contrat / facture du concessionnaire au nom de l'acheteur : prix, NIV, km, la mention d'export et l'exemption de taxes.", private: "Contrat écrit signé par les deux : noms, adresses, téléphones, pièces d'identité, NIV, km, prix réel, date, « vendu tel quel » et la clause de remise au transporteur. Un paiement par carte seul ne suffit pas." },
+    6: { dealer: "Virement au concessionnaire depuis le compte de l'acheteur nommé au contrat. La douane néerlandaise demande la preuve de paiement.", private: "Virement depuis le compte de l'acheteur nommé au contrat, pas d'argent comptant. La douane néerlandaise demande la preuve de paiement." },
+    8: { dealer: "Le concessionnaire apporte le véhicule chez GO Transport (180 Graveline, Saint-Laurent). C'est la condition de la vente sans taxes.", private: "Le vendeur apporte le véhicule chez GO Transport (180 Graveline, Saint-Laurent) ou Viamar le ramasse (~185 USD à Montréal). Appelez 24 h avant." },
+  },
+};
+export const sellerOf = (c?: { sellerType?: string } | null): Seller => (c?.sellerType === "private" ? "private" : "dealer");
+
+export interface StepView { i: number; key: string; phase: string; title: string; desc: string; who: string; docs: string }
+/** The steps for one kind of seller, in phase order (new steps slot into their phase), with the right wording. */
+export function stepsFor(lang: Lang, seller: Seller): StepView[] {
+  const all = STEPS[lang];
+  const phases: string[] = [];
+  all.forEach(s => { if (!phases.includes(s[0])) phases.push(s[0]); });
+  return all.map((s, i) => ({ i, key: "s" + i, phase: s[0], title: s[1], desc: STEP_TEXT[lang][i]?.[seller] || s[2], who: s[3], docs: s[4] }))
+    .filter(v => !STEP_ONLY[v.i] || STEP_ONLY[v.i] === seller)
+    .sort((a, b) => phases.indexOf(a.phase) - phases.indexOf(b.phase) || a.i - b.i);
+}
+/** Document groups for one kind of seller: [{ gi, title, items: [{ key, text }] }]. */
+export function docsFor(lang: Lang, seller: Seller) {
+  return DOCS[lang].map((g, gi) => ({ gi, title: g[0], items: g[1].map((text, i) => ({ key: `d${gi}_${i}`, text })) }))
+    .filter(g => !DOC_ONLY[g.gi] || DOC_ONLY[g.gi] === seller);
+}

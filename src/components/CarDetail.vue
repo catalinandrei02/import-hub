@@ -10,7 +10,7 @@ import { carGst } from "../lib/costs";
 import { STATUSES } from "../lib/constants";
 import { carName, carTrim, countDone, history, safeUrl } from "../lib/cars";
 import { cad, fmt, fmtDate } from "../lib/format";
-import { DOCS, STEPS } from "../i18n/content";
+import { docsFor, sellerOf, stepsFor } from "../i18n/content";
 import { countLabel, fill, lang, t } from "../i18n";
 import { copyText, toast, ui } from "../ui";
 import CostPanels from "./CostPanels.vue";
@@ -24,13 +24,14 @@ import { mergeExtras, parseImport } from "../lib/importer";
 
 const car = computed(() => state.cars.find(c => c._id === ui.selCar) || null);
 const closeBtn = ref<HTMLButtonElement | null>(null);
-const nSteps = computed(() => STEPS[lang.value].length);
-const done = computed(() => STEPS[lang.value].filter((_, i) => car.value?.steps?.["s" + i]).length);
-const docKeys = computed(() => DOCS[lang.value].flatMap((g, gi) => g[1].map((_, i) => `d${gi}_${i}`)));
+const mySteps = computed(() => stepsFor(lang.value, sellerOf(car.value)));
+const nSteps = computed(() => mySteps.value.length);
+const done = computed(() => mySteps.value.filter(s => car.value?.steps?.[s.key]).length);
+const docKeys = computed(() => docsFor(lang.value, sellerOf(car.value)).flatMap(g => g.items.map(x => x.key)));
 const docsDone = computed(() => countDone(car.value?.docs, docKeys.value));
 const next = computed(() => {
-  const i = STEPS[lang.value].findIndex((_, k) => !car.value?.steps?.["s" + k]);
-  return i < 0 ? t.value.proc.allDone : t.value.proc.next + ": " + STEPS[lang.value][i][1];
+  const s = mySteps.value.find(x => !car.value?.steps?.[x.key]);
+  return s ? t.value.proc.next + ": " + s.title : t.value.proc.allDone;
 });
 const yn = (v?: string) => (v === "yes" ? t.value.cars.yes : v === "no" ? t.value.cars.no : t.value.cars.unknown);
 const rows = computed(() => {
@@ -40,6 +41,7 @@ const rows = computed(() => {
     [F.offer, c.offer ? cad(c.offer) : "—"], [F.gst, carGst(c) ? L.yes : L.no],
     [F.sellerType, c.sellerType === "private" ? F.private : F.dealer], [F.contact, c.contact || "—"], [F.stock, c.stock || "—"],
     [F.acc, yn(c.acc)], [F.cam, yn(c.cam)],
+    ...(c.listedSince ? [[t.value.histx.listed, fmtDate(c.listedSince) + " · " + fill(t.value.histx.days, { n: Math.max(0, Math.round((Date.now() - Date.parse(c.listedSince)) / 86400_000)) })] as [string, string]] : []),
     [t.value.c.added, (fmtDate(c.addedAt) || "—") + (c.addedBy === "claude" ? " · " + L.byClaude : "")], [t.value.c.updated, fmtDate(c.updatedAt) || "—"],
   ] as [string, string | number][];
 });

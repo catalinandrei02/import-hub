@@ -13,7 +13,7 @@ const loading = computed(() => !state.contactsLoaded && (state.data === "loading
 </script>
 
 <template>
-  <HeroSection :title="t.contacts.h" :lead="t.contacts.lead">
+  <HeroSection small :title="t.contacts.h" :lead="t.contacts.lead">
     <template #proof>
       <span>{{ fill(t.chip.contacts, { n: list.length }) }}</span>
     </template>

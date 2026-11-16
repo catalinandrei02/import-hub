@@ -139,14 +139,44 @@ describe("auto-search filters", () => {
 
 import { extras, mergeExtras } from "../../src/lib/importer";
 describe("equipment, Carfax and history from a listing", () => {
-  it("reads ACC / 360 / accident only as yes, keeps only real Carfax report links", () => {
+  it("reads ACC / 360 only as yes, keeps only real Carfax report links", () => {
     const x = extras({ eq: ["Régulateur de vitesse adaptatif", "Caméra 360°", "Sièges chauffants"], cf: ["https://vhr.carfax.ca/?id=1", "https://evil.test/carfax"], h: { damaged: true } });
-    expect([x.equipment!.length, x.acc, x.cam, x.carfax!.length, x.flags]).toEqual([3, "yes", "yes", 1, ["accident"]]);
+    expect([x.equipment!.length, x.acc, x.cam, x.carfax!.length, x.flags]).toEqual([3, "yes", "yes", 1, undefined]); // accidents come from Carfax, not CarGurus
     expect(extras({ eq: ["Heated seats"] }).acc).toBeUndefined();
   });
   it("never overwrites what the family set", () => {
     const upd = mergeExtras({ acc: "no", equipment: ["A"], carfax: [{ id: "1", kind: "link", url: "https://vhr.carfax.ca/?id=1" }] }, extras({ eq: ["Adaptive Cruise Control"], cf: ["https://vhr.carfax.ca/?id=1", "https://vhr.carfax.ca/?id=2"] }));
     expect(upd.acc).toBeUndefined(); expect(upd.equipment).toBeUndefined();
     expect((upd.carfax as any[]).length).toBe(2);
+  });
+});
+
+import { stepsFor, docsFor } from "../../src/i18n/content";
+describe("steps and documents per seller", () => {
+  it("dealer and private lists differ where they should, keep stable keys", () => {
+    const d = stepsFor("ro", "dealer"), p = stepsFor("ro", "private");
+    expect(d.map(s => s.key)).toContain("s16"); expect(d.map(s => s.key)).not.toContain("s9"); expect(d.map(s => s.key)).not.toContain("s15");
+    expect(p.map(s => s.key)).toContain("s9"); expect(p.map(s => s.key)).toContain("s15"); expect(p.map(s => s.key)).not.toContain("s16");
+    expect(d.find(s => s.key === "s4")!.desc).toMatch(/ATAC/); expect(p.find(s => s.key === "s4")!.desc).toMatch(/persoane fizice/);
+    // new steps sit in their phase, not at the end
+    expect(p.findIndex(s => s.key === "s15")).toBeLessThan(p.findIndex(s => s.key === "s4"));
+    expect(docsFor("ro", "dealer").map(g => g.gi)).toEqual([0, 1, 3, 4]); expect(docsFor("ro", "private").map(g => g.gi)).toEqual([0, 1, 2, 4]);
+    for (const l of ["en", "fr"] as const) expect(stepsFor(l, "private").length).toBe(p.length);
+  });
+});
+
+import { mergeHistory } from "../../src/lib/importer";
+describe("price history from the listing site", () => {
+  it("inserts the site's dated points, never rewrites ours, skips repeats", () => {
+    const ours = [{ date: "2026-10-01", price: 33000 }, { date: "2026-11-16", price: 31999 }];
+    const site = [{ date: "2026-05-06", price: 33974 }, { date: "2026-09-29", price: 32999 }, { date: "2026-10-09", price: 33000 }, { date: "2026-11-16", price: 31000 }];
+    expect(mergeHistory(ours, site)).toEqual([
+      { date: "2026-05-06", price: 33974 }, { date: "2026-09-29", price: 32999 }, { date: "2026-10-01", price: 33000 }, { date: "2026-11-16", price: 31999 },
+    ]);
+  });
+  it("parses CarGurus' [date, \"$price\"] pairs", () => {
+    const c = parseImport(JSON.stringify({ ph: [["2026-09-29", "$32,999"], ["2026-05-06", "$33,974"]], dl: 10 }))!;
+    expect(c.priceHistory).toEqual([{ date: "2026-05-06", price: 33974 }, { date: "2026-09-29", price: 32999 }]);
+    expect(c.listedSince).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 });

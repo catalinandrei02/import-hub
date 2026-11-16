@@ -37,6 +37,7 @@ const remix = { state: { loaderData: { "routes/($intl).details.$listingId": {
   data: { listing: { vin: { value: "WA1EAAFYXN2102045" }, mileage: { value: 61250 }, vehicleHistory: { damaged: true, hasMultipleAccident: false },
     options: [{ label: "Adaptive Cruise Control", category: "OPTIONS" }, { label: "Heated Seats", category: "OPTIONS" }, { label: "Navigation System", category: "OPTIONS" }] }, seller: { name: "Gurus Audi", sellerType: "DEALER", address: { city: "Brossard" } } },
   leadForm: { listing: { price: 33995, yearMakeModelTrim: "2022 Audi Q5 Progressiv 45 TFSI quattro", city: "Brossard" } },
+  history: { priceHistory: [["2026-05-06", "$36,500"], ["2026-09-29", "$34,995"], ["2026-11-10", "$33,995"]], daysOnCarGurus: 194 },
   listingImages: Array.from({ length: 32 }, (_, k) => ({ url: `http://localhost:4181/fake/2022_audi_q5-pic-${k + 1}-1024x768.jpeg`, width: 960, height: 721 })),
 } } } };
 const FAKE_CGR = `<!doctype html><html><head><title>2022 Audi Q5 Progressiv - $33,995 - CarGurus</title>
@@ -130,7 +131,7 @@ for (const w of [390, 1440]) for (const scheme of ["light", "dark"]) {
       await go(p, r);
       const x = await p.evaluate(() => { const c = document.body.cloneNode(true); c.querySelectorAll("pre,.links,script,style,dialog,canvas,select").forEach(n => n.remove());
         // Hero content clipped at the edges (the hero hides overflow, so scrollWidth can't see it).
-        const clipped = [...document.querySelectorAll(".hero-in > *")].filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.left < -1 || b.right > innerWidth + 1); }).map(e => e.className || e.tagName);
+        const clipped = [...document.querySelectorAll(".h2-text > *, .h2-bar-c > *")].filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.left < -1 || b.right > innerWidth + 1); }).map(e => e.className || e.tagName);
         return { sw: document.documentElement.scrollWidth, vw: innerWidth, text: c.innerText, clipped }; });
       if (x.sw > x.vw) report.overflow.push(`${w} ${scheme} ${l} ${r}: ${x.sw} > ${x.vw}`);
       if (x.clipped.length) report.overflow.push(`${w} ${scheme} ${l} ${r} hero clipped: ${x.clipped.join(",")}`);
@@ -194,7 +195,7 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   report.checks.filterDefaultAll = await p.$eval('[data-filter="all"]', e => e.getAttribute("aria-pressed"));
   report.checks.cardLanded = await p.$$eval(".car", cs => cs.map(c => c.querySelector(".ctt").textContent + " = " + c.querySelector(".rate").innerText.replace(/\n/g, " ")));
   await setVal(p, "#hero-vin", "WA1FAAFY0M2006299"); await sleep(80);
-  report.checks.heroVinChips = await p.$$eval(".hero .chip", cs => cs.map(c => c.textContent));
+  report.checks.heroVinChips = await p.$$eval(".h2-bar .chip", cs => cs.map(c => c.textContent));
   await p.click(".pillform .cta"); await sleep(200);
   report.checks.dialogPrefill = await p.evaluate(() => [document.getElementById("d-vin").value, document.getElementById("d-trim").value, document.getElementById("d-year").value]);
   await setVal(p, "#d-price", "28500"); await setVal(p, "#d-seller", "Test dealer");
@@ -305,26 +306,6 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   report.checks.emailNotStored = await p.evaluate(() => !JSON.stringify([...window.__mock.store]).includes("example.test"));
   await p.close(); }
 
-// 4g. Day / night switch: header button cycles Automatic → Day → Night, the menu picks directly, the choice is
-// remembered (applied before the page draws), and a forced theme wins over the device setting.
-{ const p = await open(MOCK, "cars", 1280, "light");
-  const look = () => p.evaluate(() => (document.documentElement.dataset.theme || "auto") + " " + getComputedStyle(document.body).backgroundColor);
-  const seq = [await look()];
-  await p.click('[data-act="theme"]'); await sleep(100); seq.push(await look());
-  await p.click('[data-act="theme"]'); await sleep(100); seq.push(await look());
-  report.checks.themeCycle = seq.join(" → ");
-  report.checks.themeStored = await p.evaluate(() => localStorage.getItem("hub-theme"));
-  const q = await browser.newPage(); await q.setViewport({ width: 390, height: 844 }); await q.emulateMediaFeatures([{ name: "prefers-color-scheme", value: "light" }]);
-  await q.goto(MOCK + "#/cars", { waitUntil: "domcontentloaded" });
-  report.checks.themeEarly = await q.evaluate(() => document.documentElement.dataset.theme || "auto");
-  await q.waitForSelector(".ubtn"); await sleep(300);
-  for (const r of ["cars", "costs", "steps", "documents", "contacts", "search"]) { await go(q, r); const o = await q.evaluate(() => document.documentElement.scrollWidth <= innerWidth); if (!o) report.overflow.push("night 390 " + r); }
-  await go(q, "cars"); await q.screenshot({ path: path.join(OUT, "night-forced-390.png") });
-  await q.click(".ubtn"); await sleep(150); await q.click('[data-theme-pick="auto"]'); await sleep(100);
-  report.checks.themeMenu = await q.evaluate(() => (document.documentElement.dataset.theme || "auto") + " stored=" + localStorage.getItem("hub-theme"));
-  await q.screenshot({ path: path.join(OUT, "theme-menu-390.png") });
-  await q.close(); await p.close(); }
-
 // 4c. Admin page (avatar menu): approve a request, change a role, remove a member (two presses), add by code
 { const p = await open(MOCK, "cars", 1280, "light");
   const store = () => p.evaluate(() => Object.fromEntries(window.__mock.store));
@@ -377,7 +358,7 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   report.checks.importSaved = k ? JSON.stringify({ price: st[k].price, km: st[k].km, photos: st[k].photos.length, addedBy: st[k].addedBy }) : null;
   await sleep(300);
   report.checks.cardShowsPhoto = await p.evaluate(() => [...document.querySelectorAll(".car img.cphoto")].filter(i => i.complete && i.naturalWidth > 0).length);
-  report.checks.heroShowsPhoto = await p.evaluate(() => !!document.querySelector(".hero-art.hasphoto img"));
+  report.checks.heroShowsPhoto = await p.evaluate(() => !!document.querySelector(".hero2:not(.nophoto) .h2-media img"));
   // Same car on a CarGurus-like page: the whole gallery is read, and its photos are added to the saved car with no form.
   const c = await browser.newPage();
   await c.goto(MOCK + "fake-cg.html", { waitUntil: "load" });
@@ -459,6 +440,7 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   const found = await p.evaluate(() => { const c = window.__mock.store.get("config/prices"); const cars = [...window.__mock.store].filter(([k, v]) => k.startsWith("cars/") && v.addedBy === "claude" && String(v.vin).startsWith("WA1FAAFY0N2091")).map(([, v]) => v);
     return { found: (c.found || []).map(f => f.title + " " + f.price), total: c.searchTotal, blocked: c.blocked, added: cars.map(v => [v.vin.slice(-5), v.price, v.km, v.acc, v.cam, v.status, v.photos.length, v.location, v.url.split("/").pop()].join("/")) }; });
   report.checks.autoSearch = JSON.stringify(found);
+  report.checks.cgHistory = await p.evaluate(() => { const c = window.__mock.store.get("cars/s3"); return JSON.stringify({ hist: (c.priceHistory || []).map(x => x.date.slice(5) + ":" + x.price), listedSince: c.listedSince }); });
   report.checks.priceCheck = JSON.stringify({ checked: pr.c?.checked, changes: (pr.c?.changes || []).map(x => x.from + "→" + x.to), gone: pr.c?.gone?.length, carsMarkedGone: pr.gone, s3: pr.s3.price, historyAdded: (pr.s3.priceHistory || []).length - before, statusKept: pr.s3.status });
   report.checks.priceBar = await p.$eval('[data-sec="prices"]', e => e.innerText.replace(/\s+/g, " ").slice(0, 120)).catch(() => null);
   report.checks.goneChip = await p.evaluate(() => document.querySelectorAll(".car .chip.bad").length > 0);

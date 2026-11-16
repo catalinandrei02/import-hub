@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import ThemeIcon from "./ThemeIcon.vue";
-import { theme } from "../lib/theme";
 import AIcon from "./AIcon.vue";
 // Avatar button that opens a small account menu; signing out needs a second, explicit click.
 import { nextTick, onBeforeUnmount, ref, watch } from "vue";
@@ -32,12 +30,6 @@ async function doSignOut() { close(); await signOut(); }
     <div v-if="open" class="upop glass" role="menu">
       <p class="uname"><span>{{ state.user.name || t.auth.account }}</span><span class="urole" data-role="me">{{ isAdmin ? t.admin.admin : t.admin.member }}</span></p>
       <RouterLink v-if="isAdmin" class="uitem" to="/admin" role="menuitem" data-act="admin" @click="close()">{{ t.admin.menu }}<span v-if="state.requests.length" class="ucount">{{ state.requests.length }}</span></RouterLink>
-      <div class="utheme" role="group" :aria-label="t.theme.label">
-        <span>{{ t.theme.label }}</span>
-        <div class="seg">
-          <button v-for="m in (['auto', 'light', 'dark'] as const)" :key="m" type="button" role="menuitemradio" :aria-checked="theme === m" :aria-pressed="theme === m" :data-theme-pick="m" :title="t.theme[m]" @click="theme = m"><ThemeIcon :mode="m" :size="18" /><span class="sr-only">{{ t.theme[m] }}</span></button>
-        </div>
-      </div>
       <button class="uitem danger" type="button" role="menuitem" data-act="sign-out" @click="doSignOut">{{ t.auth.signOut }}</button>
     </div>
   </div>

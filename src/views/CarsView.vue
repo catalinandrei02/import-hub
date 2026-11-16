@@ -4,10 +4,9 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { MAX_PHOTOS, findSaved, mergeExtras, parseImport } from "../lib/importer";
 import { canWrite, queue, state } from "../data/store";
-import { carLanded } from "../lib/costs";
 import { decodeVin } from "../lib/vin";
 import { priceDelta, sortCars } from "../lib/cars";
-import { cad, eur } from "../lib/format";
+import { cad } from "../lib/format";
 import { fill, t } from "../i18n";
 import { toast, ui } from "../ui";
 import HeroSection from "../components/HeroSection.vue";
@@ -24,7 +23,6 @@ const cmpOpen = ref(false);
 
 const active = computed(() => state.cars.filter(c => c.status !== "dropped"));
 const list = computed(() => state.cars.filter(c => filter.value === "all" || (filter.value === "dropped" ? c.status === "dropped" : c.status !== "dropped")).slice().sort(sortCars));
-const cheapest = computed(() => { const v = active.value.map(c => carLanded(c, state.costs)?.total).filter((x): x is number => !!x); return v.length ? Math.min(...v) : null; });
 const bestDrop = computed(() => { const d = active.value.map(priceDelta).filter(x => x < 0); return d.length ? -Math.min(...d) : null; });
 const cmpCars = computed(() => ui.cmp.map(id => state.cars.find(c => c._id === id)).filter(Boolean) as typeof state.cars);
 const loading = computed(() => !state.carsLoaded && (state.data === "loading" || state.data === "stale"));
@@ -67,29 +65,25 @@ watch(() => route.query.add, takeImport);
 </script>
 
 <template>
-  <HeroSection :title="t.cars.h" :lead="t.cars.lead">
-    <template #proof>
-      <span><b>{{ fill(t.chip.cars, { n: active.length }).split(" ")[0] }}</b> {{ fill(t.chip.cars, { n: active.length }).split(" ").slice(1).join(" ") }}<template v-if="cheapest"> · {{ t.cars.cheapest }} {{ eur(cheapest) }}</template></span>
-    </template>
-    <form class="pillform" novalidate autocomplete="off" @submit.prevent="addFromVin">
-      <label class="sr-only" for="hero-vin">{{ t.hero.vinL }}</label>
-      <input id="hero-vin" v-model="vin" maxlength="600" spellcheck="false" :placeholder="t.hero.vinPh">
-      <button class="cta" type="submit" :disabled="!canWrite">{{ t.cars.add }} <AIcon name="forward" /></button>
-    </form>
+  <!-- Title and the add box only (owner's request: no count line, no description). -->
+  <HeroSection :title="t.cars.h" :bar-title="t.hero.addT" :bar-note="t.hero.addN">
+    <!-- Add box and the list filter side by side (one heading for the page: the hero title). -->
+    <div class="addrowbar">
+      <form class="pillform" novalidate autocomplete="off" @submit.prevent="addFromVin">
+        <label class="sr-only" for="hero-vin">{{ t.hero.vinL }}</label>
+        <input id="hero-vin" v-model="vin" maxlength="600" spellcheck="false" :placeholder="t.hero.vinPh">
+        <button class="cta" type="submit" :disabled="!canWrite"><span class="btxt">{{ t.cars.add }}</span> <AIcon name="forward" /></button>
+      </form>
+      <div class="seg" role="group" :aria-label="t.f.status">
+        <button v-for="f in ([['active', t.cars.all], ['dropped', t.cars.dropped], ['all', t.cars.allAll]] as const)" :key="f[0]" type="button" :data-filter="f[0]" :aria-pressed="filter === f[0]" @click="filter = f[0]">{{ f[1] }}</button>
+      </div>
+    </div>
     <div v-if="vin.trim() && !/^https?:/i.test(vin.trim())" class="vinout"><VinInfo :vin="vin" center /></div>
   </HeroSection>
 
   <div class="content solo">
     <div class="main">
       <StatusBanner />
-      <div class="secrow">
-         <h2 class="seclabel">{{ t.cars.h }}</h2>
-        <div class="rowx">
-          <div class="seg" role="group" :aria-label="t.f.status">
-            <button v-for="f in ([['active', t.cars.all], ['dropped', t.cars.dropped], ['all', t.cars.allAll]] as const)" :key="f[0]" type="button" :data-filter="f[0]" :aria-pressed="filter === f[0]" @click="filter = f[0]">{{ f[1] }}</button>
-          </div>
-        </div>
-      </div>
 
       <div v-if="ui.cmp.length" class="banner glass" role="status">
         <span class="msg"><span>{{ fill(t.cars.compareN, { n: cmpCars.length }) }}<template v-if="cmpCars.length < 2"> · {{ t.cars.compareHint }}</template></span></span>

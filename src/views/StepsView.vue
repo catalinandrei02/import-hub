@@ -1,32 +1,36 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { canWrite, state } from "../data/store";
 import NoCar from "../components/NoCar.vue";
 import { carLabel } from "../lib/cars";
 import { fmtDate } from "../lib/format";
 import { tick } from "../lib/tick";
-import { STEPS } from "../i18n/content";
+import { sellerOf, stepsFor, type Seller } from "../i18n/content";
 import { fill, lang, t } from "../i18n";
 import { ui } from "../ui";
 import HeroSection from "../components/HeroSection.vue";
 import StatusBanner from "../components/StatusBanner.vue";
 import CarPicker from "../components/CarPicker.vue";
 import ProgressRing from "../components/ProgressRing.vue";
+import SellerSwitch from "../components/SellerSwitch.vue";
 
 const car = computed(() => state.cars.find(c => c._id === ui.selCar) || null);
-const steps = computed(() => STEPS[lang.value]);
-const done = computed(() => steps.value.filter((_, i) => car.value?.steps?.["s" + i]).length);
+// The car's seller type picks the list (dealer or private); with no car, a switch previews either.
+const preview = ref<Seller>("dealer");
+const seller = computed<Seller>(() => (car.value ? sellerOf(car.value) : preview.value));
+const steps = computed(() => stepsFor(lang.value, seller.value));
+const done = computed(() => steps.value.filter(s => car.value?.steps?.[s.key]).length);
 const phases = computed(() => {
-  const out: { name: string; items: number[] }[] = [];
-  steps.value.forEach((s, i) => { const p = out[out.length - 1]; if (!p || p.name !== s[0]) out.push({ name: s[0], items: [i] }); else p.items.push(i); });
+  const out: { name: string; items: typeof steps.value }[] = [];
+  steps.value.forEach(s => { const p = out[out.length - 1]; if (!p || p.name !== s.phase) out.push({ name: s.phase, items: [s] }); else p.items.push(s); });
   return out;
 });
-const when = (i: number) => { const v = car.value?.steps?.["s" + i]; return typeof v === "string" ? fill(t.value.proc.ticked, { d: fmtDate(v) }) : v ? t.value.proc.doneNoDate : ""; };
-const next = computed(() => { const i = steps.value.findIndex((_, k) => !car.value?.steps?.["s" + k]); return i < 0 ? t.value.proc.allDone : t.value.proc.next + ": " + steps.value[i][1]; });
+const when = (key: string) => { const v = car.value?.steps?.[key]; return typeof v === "string" ? fill(t.value.proc.ticked, { d: fmtDate(v) }) : v ? t.value.proc.doneNoDate : ""; };
+const next = computed(() => { const s = steps.value.find(x => !car.value?.steps?.[x.key]); return s ? t.value.proc.next + ": " + s.title : t.value.proc.allDone; });
 </script>
 
 <template>
-  <HeroSection :title="t.proc.h" :lead="t.proc.lead">
+  <HeroSection small :title="t.proc.h" :lead="t.proc.lead">
     <template #proof><span v-if="car"><b>{{ done }}</b> {{ fill(t.proc.of, { n: steps.length }) }} · {{ carLabel(car) }}</span><span v-else>{{ t.proc.pickHint }}</span></template>
   </HeroSection>
   <div class="content">
@@ -34,21 +38,22 @@ const next = computed(() => { const i = steps.value.findIndex((_, k) => !car.val
       <StatusBanner />
       <NoCar v-if="!car" :hint="t.proc.pickHint" />
       <section class="glass pad" style="display:grid;gap:24px">
+        <SellerSwitch v-model="preview" :car="car" />
         <div v-for="p in phases" :key="p.name" class="group">
           <h2 class="label">{{ p.name }}</h2>
           <ol class="tl">
-            <li v-for="i in p.items" :key="i" :class="{ done: !!car?.steps?.['s' + i] }">
+            <li v-for="st in p.items" :key="st.key" :class="{ done: !!car?.steps?.[st.key] }">
               <template v-if="car">
-                <input :id="'st-' + i" class="node" type="checkbox" :data-step="'s' + i" :checked="!!car.steps?.['s' + i]" :disabled="!canWrite"
-                  @change="tick(car._id, 'steps', 's' + i, ($event.target as HTMLInputElement).checked)">
-                <label :for="'st-' + i"><span class="st">{{ steps[i][1] }}</span><span class="sd">{{ steps[i][2] }}</span>
-                  <span class="chips"><span class="chip">{{ t.proc.who }}: {{ steps[i][3] }}</span><span class="chip">{{ t.proc.docs }}: {{ steps[i][4] }}</span></span>
-                  <span v-if="when(i)" class="when">{{ when(i) }}</span></label>
+                <input :id="'st-' + st.i" class="node" type="checkbox" :data-step="st.key" :checked="!!car.steps?.[st.key]" :disabled="!canWrite"
+                  @change="tick(car._id, 'steps', st.key, ($event.target as HTMLInputElement).checked)">
+                <label :for="'st-' + st.i"><span class="st">{{ st.title }}</span><span class="sd">{{ st.desc }}</span>
+                  <span class="chips"><span class="chip">{{ t.proc.who }}: {{ st.who }}</span><span class="chip">{{ t.proc.docs }}: {{ st.docs }}</span></span>
+                  <span v-if="when(st.key)" class="when">{{ when(st.key) }}</span></label>
               </template>
               <template v-else>
-                <span class="node" aria-hidden="true">{{ i + 1 }}</span>
-                <div class="bd"><span class="st">{{ steps[i][1] }}</span><span class="sd">{{ steps[i][2] }}</span>
-                  <span class="chips"><span class="chip">{{ t.proc.who }}: {{ steps[i][3] }}</span><span class="chip">{{ t.proc.docs }}: {{ steps[i][4] }}</span></span></div>
+                <span class="node" aria-hidden="true">{{ steps.indexOf(st) + 1 }}</span>
+                <div class="bd"><span class="st">{{ st.title }}</span><span class="sd">{{ st.desc }}</span>
+                  <span class="chips"><span class="chip">{{ t.proc.who }}: {{ st.who }}</span><span class="chip">{{ t.proc.docs }}: {{ st.docs }}</span></span></div>
               </template>
             </li>
           </ol>

@@ -7,7 +7,7 @@ import { state } from "../data/store";
 import { carGst, carLanded } from "../lib/costs";
 import { carName, carTrim, history, initials, priceDelta, safeUrl, statusClass } from "../lib/cars";
 import { cad, eur, fmt } from "../lib/format";
-import { STEPS } from "../i18n/content";
+import { sellerOf, stepsFor } from "../i18n/content";
 import { countLabel, fill, lang, t } from "../i18n";
 import { toast, ui } from "../ui";
 import SparkLine from "./SparkLine.vue";
@@ -18,7 +18,8 @@ const c = computed(() => props.car);
 const lc = computed(() => carLanded(c.value, state.costs));
 const dl = computed(() => priceDelta(c.value));
 const first = computed(() => history(c.value)[0]?.price);
-const done = computed(() => STEPS[lang.value].filter((_, i) => c.value.steps?.["s" + i]).length);
+const mySteps = computed(() => stepsFor(lang.value, sellerOf(c.value)));
+const done = computed(() => mySteps.value.filter(s => c.value.steps?.[s.key]).length);
 const hue = computed(() => [...String(c.value.seller || c.value._id)].reduce((a, ch) => a + ch.charCodeAt(0), 0) % 360);
 function toggleCmp(e: Event) {
   const on = (e.target as HTMLInputElement).checked, id = c.value._id;
@@ -55,7 +56,7 @@ function open() { ui.selCar = c.value._id; ui.detail = true; }
         <!-- ACC / 360° only when known to be there (from the listing's equipment or the trim); no "?" noise. -->
         <span v-if="car.acc === 'yes'" class="chip ok">{{ t.cars.acc }} ✓</span>
         <span v-if="car.cam === 'yes'" class="chip ok">{{ t.cars.cam }} ✓</span>
-        <span class="chip">{{ t.cars.stepsL }} {{ done }}/{{ STEPS[lang].length }}</span>
+        <span class="chip">{{ t.cars.stepsL }} {{ done }}/{{ mySteps.length }}</span>
         <span v-if="car.gone" class="chip bad" :title="car.gone">{{ t.prices.gone }}</span>
         <span v-if="car.carfax?.length" class="chip info">{{ t.carfax.chip }} ✓</span>
         <span v-if="state.viewsOn && state.views[car._id]?.total" class="chip views">{{ countLabel(state.views[car._id].total!, t.views) }}</span>

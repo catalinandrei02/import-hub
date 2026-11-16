@@ -92,6 +92,9 @@
         s: sl.name, l: (sl.address && sl.address.city) || lf.city, st: /priv/i.test(String(sl.sellerType || "")) ? "private" : sl.name ? "dealer" : "",
         i: rd.listingImages.map((x     ) => x && x.url).filter(Boolean),
         eq: Array.isArray(L.options) ? L.options.map((o     ) => (o && typeof o === "object" ? o.label : o)).filter(Boolean) : undefined });
+      // Price history with dates (checked Nov 2026): loaderData[...].history = { priceHistory: [["2026-05-06","$33,974"], …], daysOnCarGurus }
+      if (rd.history && Array.isArray(rd.history.priceHistory)) site.ph = rd.history.priceHistory.filter((x     ) => Array.isArray(x) && x.length >= 2).slice(0, 60);
+      if (rd.history && typeof rd.history.daysOnCarGurus === "number") site.dl = rd.history.daysOnCarGurus;
       const vh = L.vehicleHistory;
       if (vh && typeof vh === "object") site.h = { damaged: !!vh.damaged, accidents: !!vh.hasMultipleAccident, scrapped: !!vh.scrapped, imported: !!vh.imported, exported: !!vh.exported };
       site.y = (String(site.t || "").match(/\b(19|20)\d{2}\b/) || [""])[0];
@@ -139,7 +142,7 @@
     u: location.href.split("#")[0], t: pickS(site.t, title).slice(0, 120), p: pickS(site.p, offer.price || v.price || meta("product:price:amount") || priceEl || ""),
     k: pickS(site.k, odo.value || (kmText ? kmText[1] : "")), y: pickS(site.y, year), v: svin.length === 17 ? svin : vin.length === 17 ? vin : "",
     s: pickS(site.s, seller.name || meta("og:site_name") || "").slice(0, 80), l: pickS(site.l, addr).slice(0, 60), st: String(site.st || ""), tr: String(site.tr || "").slice(0, 80),
-    i: (site.i && site.i.length ? site.i : imgs).slice(0, 40), eq: eq.slice(0, 150), cf: cf.slice(0, 5), h: site.h,
+    i: (site.i && site.i.length ? site.i : imgs).slice(0, 40), eq: eq.slice(0, 150), cf: cf.slice(0, 5), h: site.h, ph: site.ph, dl: site.dl,
   };
   if (!base) return data;
   window.open(base + "#/cars?add=" + encodeURIComponent(JSON.stringify(data)), "_blank");

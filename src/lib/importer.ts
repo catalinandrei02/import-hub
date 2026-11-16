@@ -66,11 +66,28 @@ export function extras(d: Partial<ListingData>): Partial<Car> {
   }
   const cf = (Array.isArray(d.cf) ? d.cf : []).map(u => String(u).slice(0, 600)).filter(u => /^https:\/\/([\w-]+\.)*carfax\.(ca|com)\//i.test(u)).slice(0, 5);
   if (cf.length) out.carfax = cf.map((url, i) => ({ id: "auto" + i + Date.now().toString(36), kind: "link" as const, url, addedAt: new Date().toISOString(), addedBy: "auto" }));
+  // The site's own price history (CarGurus), oldest first, as {date, price}.
+  const ph = (Array.isArray(d.ph) ? d.ph : []).map(x => ({ date: String(x[0]).slice(0, 10), price: cleanNum(x[1]) }))
+    .filter((x): x is { date: string; price: number } => /^\d{4}-\d{2}-\d{2}$/.test(x.date) && !!x.price).sort((a, b) => a.date.localeCompare(b.date));
+  if (ph.length) out.priceHistory = ph;
+  if (typeof d.dl === "number" && d.dl >= 0 && d.dl < 5000) out.listedSince = new Date(Date.now() - d.dl * 86400_000).toISOString().slice(0, 10);
   if (d.h && typeof d.h === "object") {
     out.history = { damaged: !!d.h.damaged, accidents: !!d.h.accidents, scrapped: !!d.h.scrapped, imported: !!d.h.imported, exported: !!d.h.exported, source: "CarGurus" };
-    if (d.h.damaged || d.h.accidents) out.flags = ["accident"];
   }
   return out;
+}
+
+/**
+ * Adds the site's dated price points to ours without rewriting any existing entry: points on dates we don't have are
+ * inserted, and an inserted point is skipped when it only repeats the price just before it.
+ */
+export function mergeHistory(ours: { date: string; price: number }[] = [], site: { date: string; price: number }[] = []) {
+  const have = new Set(ours.map(p => p.date));
+  const all = [...ours.map(p => ({ ...p, mine: true })), ...site.filter(p => !have.has(p.date)).map(p => ({ ...p, mine: false }))]
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const out: { date: string; price: number; mine: boolean }[] = [];
+  for (const p of all) { const prev = out[out.length - 1]; if (!p.mine && prev && prev.price === p.price) continue; out.push(p); }
+  return out.map(({ date, price }) => ({ date, price }));
 }
 
 /** What a re-read listing adds to a saved car without overwriting anything the family set. */
@@ -83,6 +100,7 @@ export function mergeExtras(car: Partial<Car>, x: Partial<Car>): Record<string, 
   const newCf = (x.carfax || []).filter(c => !have.has(c.url));
   if (newCf.length) upd.carfax = [...(car.carfax || []), ...newCf];
   if (x.history && JSON.stringify(x.history) !== JSON.stringify(car.history)) upd.history = x.history;
-  if (x.flags?.includes("accident") && !(car.flags || []).includes("accident")) upd.flags = [...(car.flags || []), "accident"];
+  if (x.priceHistory?.length) { const m = mergeHistory(car.priceHistory as any, x.priceHistory as any); if (m.length !== (car.priceHistory || []).length) upd.priceHistory = m; }
+  if (x.listedSince && x.listedSince !== car.listedSince) upd.listedSince = x.listedSince;
   return upd;
 }

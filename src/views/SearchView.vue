@@ -62,7 +62,7 @@ async function save() {
 </script>
 
 <template>
-  <HeroSection :title="t.find.h" :lead="t.find.lead">
+  <HeroSection small :title="t.find.h" :lead="t.find.lead">
     <template #proof><span v-if="state.search.enabled">{{ fill(t.chip.searchOn, { f: freqLabel }) }}<template v-if="state.scan?.found != null"> · <b>{{ state.scan.found }}</b> {{ t.search.found }}</template></span>
       <span v-else>{{ t.chip.searchOff }}</span></template>
     <form class="pillform" role="search" novalidate autocomplete="off" @submit.prevent="go">

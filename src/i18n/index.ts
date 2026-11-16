@@ -36,11 +36,13 @@ const V3 = {
       addH: "Adaugă după cod", addLead: "Dacă cineva ți-a trimis codul de pe pagina de intrare.", addCode: "Codul persoanei", addName: "Prenume", add: "Adaugă", added: "Adăugat.", badCode: "Codul pare greșit (20–40 de litere și cifre).",
       topH: "Cele mai deschise mașini", none: "Încă nimic.", only: "Doar adminii văd pagina asta.",
     },
+    histx: { listed: "Anunț publicat", days: "{n} zile pe piață" },
+    docsx: { missing: "Lipsesc încă", allHere: "Ai toate actele pentru acest tip de vânzător." },
+    procx: { forSeller: "pașii și actele sunt pentru acest tip de vânzător.", previewFor: "Arată pașii pentru:" },
     views: {
       h: "Vizualizări", one: "{n} vizualizare", few: "{n} vizualizări", many: "{n} de vizualizări",
       how: "Se numără de fiecare dată când cineva din familie deschide mașina.", none: "Încă n-a deschis-o nimeni.", you: "tu", last: "ultima dată",
     },
-    theme: { label: "Temă", auto: "Automat", light: "Zi", dark: "Noapte", next: "Temă: {m}. Apasă ca s-o schimbi." },
     gate: {
       lead: "Site-ul privat al familiei pentru mașinile aduse din Québec în România. Intră cu Google sau cu email ca să continui.",
       checking: "Se verifică contul…", none: "Site-ul nu e încă legat de baza de date, așa că nu se poate intra.", other: "Intră cu alt cont",
@@ -62,7 +64,7 @@ const V3 = {
       badDomain: "Adresa acestui site nu e încă permisă în Firebase (Authentication → Settings → Authorized domains).",
       popup: "Browserul a blocat fereastra de conectare. Permite ferestrele pop-up pentru acest site și încearcă din nou.",
     },
-    hero: { vinPh: "Lipește linkul anunțului sau un VIN", vinL: "Link sau VIN", priceL: "Prețul mașinii în CAD" },
+    hero: { addT: "Adaugă o mașină", addN: "Lipește linkul anunțului (CarGurus, AutoTrader, un dealer) sau un VIN. Restul se completează singur.", vinPh: "https://www.cargurus.ca/… sau WA1…", vinL: "Link sau VIN", priceL: "Prețul mașinii în CAD" },
     nav: { prev: "Înapoi", next: "Înainte", main: "Secțiuni" },
     chip: {
       cars: "{n} mașini active", contacts: "{n} contacte",
@@ -129,11 +131,13 @@ const V3 = {
       addH: "Add by code", addLead: "If someone sent you the code from the sign-in page.", addCode: "Their code", addName: "First name", add: "Add", added: "Added.", badCode: "That code looks wrong (20–40 letters and digits).",
       topH: "Most opened cars", none: "Nothing yet.", only: "Only admins can see this page.",
     },
+    histx: { listed: "Listed since", days: "{n} days on the market" },
+    docsx: { missing: "Still missing", allHere: "You have every paper for this kind of seller." },
+    procx: { forSeller: "the steps and papers are for this kind of seller.", previewFor: "Show the steps for:" },
     views: {
       h: "Views", one: "{n} view", few: "{n} views", many: "{n} views",
       how: "Counted each time someone in the family opens this car.", none: "Nobody has opened it yet.", you: "you", last: "last",
     },
-    theme: { label: "Theme", auto: "Automatic", light: "Day", dark: "Night", next: "Theme: {m}. Press to change it." },
     gate: {
       lead: "The family's private site for cars brought from Québec to Romania. Sign in with Google or with email to continue.",
       checking: "Checking your account…", none: "The site isn't connected to its database yet, so nobody can sign in.", other: "Use another account",
@@ -155,7 +159,7 @@ const V3 = {
       badDomain: "This site's address isn't allowed in Firebase yet (Authentication → Settings → Authorized domains).",
       popup: "The browser blocked the sign-in window. Allow pop-ups for this site and try again.",
     },
-    hero: { vinPh: "Paste the listing link or a VIN", vinL: "Link or VIN", priceL: "Car price in CAD" },
+    hero: { addT: "Add a car", addN: "Paste the listing link (CarGurus, AutoTrader, a dealer) or a VIN. The rest fills itself in.", vinPh: "https://www.cargurus.ca/… or WA1…", vinL: "Link or VIN", priceL: "Car price in CAD" },
     nav: { prev: "Previous", next: "Next", main: "Sections" },
     chip: {
       cars: "{n} active cars", contacts: "{n} contacts",
@@ -222,11 +226,13 @@ const V3 = {
       addH: "Ajouter par code", addLead: "Si quelqu'un vous a envoyé le code de la page de connexion.", addCode: "Son code", addName: "Prénom", add: "Ajouter", added: "Ajouté.", badCode: "Ce code semble incorrect (20 à 40 lettres et chiffres).",
       topH: "Véhicules les plus ouverts", none: "Rien pour l'instant.", only: "Seuls les administrateurs peuvent voir cette page.",
     },
+    histx: { listed: "Annonce publiée le", days: "{n} jours sur le marché" },
+    docsx: { missing: "Il manque encore", allHere: "Vous avez tous les documents pour ce type de vendeur." },
+    procx: { forSeller: "les étapes et les documents correspondent à ce type de vendeur.", previewFor: "Afficher les étapes pour :" },
     views: {
       h: "Consultations", one: "{n} consultation", few: "{n} consultations", many: "{n} consultations",
       how: "Comptées chaque fois qu'un membre de la famille ouvre ce véhicule.", none: "Personne ne l'a encore ouvert.", you: "vous", last: "dernière fois",
     },
-    theme: { label: "Thème", auto: "Automatique", light: "Jour", dark: "Nuit", next: "Thème : {m}. Appuyez pour le changer." },
     gate: {
       lead: "Le site privé de la famille pour les véhicules amenés du Québec en Roumanie. Connectez-vous avec Google ou par courriel pour continuer.",
       checking: "Vérification du compte…", none: "Le site n'est pas encore relié à sa base de données ; personne ne peut se connecter.", other: "Utiliser un autre compte",
@@ -248,7 +254,7 @@ const V3 = {
       badDomain: "L'adresse de ce site n'est pas encore autorisée dans Firebase (Authentication → Settings → Authorized domains).",
       popup: "Le navigateur a bloqué la fenêtre de connexion. Autorisez les fenêtres pop-up pour ce site et réessayez.",
     },
-    hero: { vinPh: "Collez le lien de l'annonce ou un NIV", vinL: "Lien ou NIV", priceL: "Prix du véhicule en $ CA" },
+    hero: { addT: "Ajouter un véhicule", addN: "Collez le lien de l'annonce (CarGurus, AutoTrader, un concessionnaire) ou un NIV. Le reste se remplit tout seul.", vinPh: "https://www.cargurus.ca/… ou WA1…", vinL: "Lien ou NIV", priceL: "Prix du véhicule en $ CA" },
     nav: { prev: "Précédent", next: "Suivant", main: "Sections" },
     chip: {
       cars: "{n} véhicules actifs", contacts: "{n} contacts",

@@ -22,6 +22,8 @@ export interface Car {
   photos?: string[];
   /** v3: Carfax reports, as links or PDFs (PDFs live in files/{fileId}, split into chunks). */
   carfax?: CarfaxItem[];
+  /** v3: date the car was first listed on the site it came from (CarGurus: today − daysOnCarGurus). */
+  listedSince?: string;
   /** v3: equipment list from the listing (CarGurus options or the dealer site's lists), as written there. */
   equipment?: string[];
   /** v3: CarGurus vehicle history flags (source "CarGurus"). */

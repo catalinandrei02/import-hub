@@ -9,7 +9,7 @@ import { reactive } from "vue";
 import { addDoc, canWrite, queue, state } from "../data/store";
 import type { Car, PriceRun, SearchSettings } from "../data/types";
 import { extVersion, hasExtension, readWithExtension, searchWithExtension } from "./extension";
-import { findSaved, mergeExtras, parseImport, MAX_PHOTOS, ACC_RE, CAM_RE } from "./importer";
+import { findSaved, mergeExtras, mergeHistory, parseImport, MAX_PHOTOS, ACC_RE, CAM_RE } from "./importer";
 import type { SearchHit } from "./listingReader";
 import { carName, safeUrl } from "./cars";
 import { decodeVin } from "./vin";
@@ -127,14 +127,15 @@ export async function runDaily(opts: { search: boolean; prices: boolean }): Prom
         } else {
           if (c.gone) upd.gone = "";
           if (p.price !== c.price) {
-            const h = Array.isArray(c.priceHistory) ? [...c.priceHistory] : [];
-            if (!h.length && c.price) h.push({ date: (c.addedAt || now).slice(0, 10), price: c.price }); // keep the old price on record
-            h.push({ date: today, price: p.price });
+            const h0 = Array.isArray(c.priceHistory) ? [...c.priceHistory] : [];
+            if (!h0.length && c.price) h0.push({ date: (c.addedAt || now).slice(0, 10), price: c.price }); // keep the old price on record
+            const h = mergeHistory(h0, (p.priceHistory || []) as { date: string; price: number }[]); // the site's dated prices first
+            if (!h.length || h[h.length - 1].price !== p.price) h.push({ date: today, price: p.price });
             Object.assign(upd, { price: p.price, priceHistory: h });
             res.changes!.push({ id: c._id, title: carName(c), from: c.price ?? null, to: p.price });
           }
           if (!c.photos?.length && p.photos?.length) upd.photos = p.photos.slice(0, MAX_PHOTOS);
-          Object.assign(upd, mergeExtras(c, p)); // equipment, Carfax links, history if new
+          Object.assign(upd, mergeExtras({ ...c, ...upd } as Car, p)); // equipment, Carfax links, the site's dated prices (after today's)
         }
         if (Object.keys(upd).length) await queue("cars/" + c._id, b => b.update("cars/" + c._id, { ...upd, updatedAt: new Date().toISOString() }));
       }
