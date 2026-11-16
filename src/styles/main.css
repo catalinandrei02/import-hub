@@ -80,6 +80,7 @@ h1, h2, h3, h4 { margin: 0; font-weight: 400; text-wrap: balance }
 .head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; column-gap: clamp(16px, 3vw, 48px); min-height: 64px }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; min-height: 44px }
 .logo { width: 34px; height: 34px; flex: none }
+.logo.flags { width: auto; height: 18px; aspect-ratio: 106 / 20 }
 .brand-t { font-size: 1rem; font-weight: 700; font-stretch: 125%; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap }
 .navrow { min-width: 0; align-self: stretch; display: flex }
 .tabs { display: flex; gap: 4px; max-width: 100%; overflow-x: auto; scrollbar-width: none }
@@ -415,6 +416,12 @@ dialog::backdrop { background: var(--scrim) }
 
 @media (max-width: 40rem) {
   .brand-t { font-size: .9375rem }
+  .brand { gap: 8px; min-width: 0 } .logo.flags { height: 14px }
+}
+@media (max-width: 26rem) {
+  .brand-t { font-size: .8125rem; letter-spacing: .02em; font-stretch: 112% }
+}
+@media (max-width: 40rem) {
   .cta.hide-sm { padding-inline: 12px } .cta.hide-sm span { display: none }
   .hero-in { padding-block: 36px 32px; gap: 14px }
   .hero h1 { font-size: clamp(2rem, 9.5vw, 2.75rem) }

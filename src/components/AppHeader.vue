@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FlagsLogo from "./FlagsLogo.vue";
 import AIcon from "./AIcon.vue";
 import { useRoute } from "vue-router";
 import { SECTIONS } from "../router";
@@ -17,7 +18,7 @@ const doSignIn = signInWithHelp;
   <header class="topbar">
     <div class="wrap head">
       <RouterLink class="brand" to="/cars">
-        <svg class="logo" viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M6 27l9-14h4l-9 14H6zm11 0l9-14h4l-9 14h-4zm11 0l3.5-5.5" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" /></svg>
+        <FlagsLogo />
         <span class="brand-t">Import Hub</span>
       </RouterLink>
       <nav class="navrow" :aria-label="t.nav.main">
