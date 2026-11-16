@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AIcon from "./AIcon.vue";
 import { computed, onMounted, reactive, ref } from "vue";
 import type { Car } from "../data/types";
 import { addDoc, canWrite, queue } from "../data/store";
@@ -69,7 +70,7 @@ onMounted(() => { dlg.value?.showModal(); onVin(); });
   <dialog ref="dlg" @close="ui.dialog = null" @cancel.prevent="ui.dialog = null">
     <form id="car-form" class="dlg" novalidate autocomplete="off" @submit.prevent="save">
       <div class="spread"><h2>{{ isNew ? t.cars.add : t.cars.edit }}</h2>
-        <button class="closex" type="button" :aria-label="t.c.close" @click="ui.dialog = null"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg></button></div>
+        <button class="closex" type="button" :aria-label="t.c.close" @click="ui.dialog = null"><AIcon name="cancel" /></button></div>
       <div class="form">
         <section class="group"><h3 class="label">{{ F.gCar }}</h3>
           <div class="row full"><div class="lab"><label for="d-title">{{ F.title }}</label></div><div class="inp txt"><input id="d-title" v-model="f.title"></div></div>

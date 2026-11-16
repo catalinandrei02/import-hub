@@ -8,3 +8,4 @@ interface ImportMetaEnv {
   readonly VITE_FIREBASE_CONFIG?: string;
   readonly VITE_DATA?: "mock" | "firebase";
 }
+declare module "*.svg?raw" { const s: string; export default s; }

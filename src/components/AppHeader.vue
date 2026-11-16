@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AIcon from "./AIcon.vue";
 import { useRoute } from "vue-router";
 import { SECTIONS } from "../router";
 import { lang, t } from "../i18n";
@@ -29,7 +30,7 @@ const doSignIn = signInWithHelp;
         <label class="lang">
           <span class="sr-only">{{ t.langL }}</span>
           <select id="lang" v-model="lang"><option value="ro">RO</option><option value="en">EN</option><option value="fr">FR</option></select>
-          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6" stroke="currentColor" stroke-width="1.5" /></svg>
+          <AIcon name="arrow-down" :size="20" />
         </label>
         <button v-if="state.auth === 'signedOut'" class="cta" type="button" @click="doSignIn">{{ t.auth.signIn }}</button>
         <template v-else>

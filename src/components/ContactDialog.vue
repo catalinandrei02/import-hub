@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AIcon from "./AIcon.vue";
 import { onMounted, reactive, ref } from "vue";
 import type { Contact } from "../data/types";
 import { addDoc, canWrite, queue } from "../data/store";
@@ -27,7 +28,7 @@ onMounted(() => dlg.value?.showModal());
   <dialog ref="dlg" @close="ui.dialog = null" @cancel.prevent="ui.dialog = null">
     <form id="ct-form" class="dlg" novalidate autocomplete="off" @submit.prevent="save">
       <div class="spread"><h2>{{ c ? t.cars.edit : t.contacts.add }}</h2>
-        <button class="closex" type="button" :aria-label="t.c.close" @click="ui.dialog = null"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg></button></div>
+        <button class="closex" type="button" :aria-label="t.c.close" @click="ui.dialog = null"><AIcon name="cancel" /></button></div>
       <div class="form">
         <div v-for="[k, type] in fields" :key="k" class="row full"><div class="lab"><label :for="'ct-' + k">{{ (t.contacts as any)[k] }}</label></div>
           <div class="inp txt"><input :id="'ct-' + k" v-model="f[k]" :type="type"></div></div>

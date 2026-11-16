@@ -90,9 +90,8 @@ h1, h2, h3, h4 { margin: 0; font-weight: 400; text-wrap: balance }
 .tabs a.on { color: var(--ink); border-bottom-color: var(--ink); font-weight: 500 }
 .hright { display: flex; align-items: center; gap: 12px }
 .lang { position: relative; display: inline-flex; align-items: center }
-.lang select { appearance: none; -webkit-appearance: none; border: 0; background: transparent; color: var(--ink); font: 500 .9375rem var(--sans); min-height: 44px; padding: 0 22px 0 6px; cursor: pointer }
+.lang select { appearance: none; -webkit-appearance: none; border: 0; background: transparent; color: var(--ink); font: 500 .9375rem var(--sans); min-height: 44px; padding: 0 24px 0 6px; cursor: pointer }
 .lang select option { color: #000; background: #fff }
-.lang svg { position: absolute; right: 2px; width: 14px; height: 14px; pointer-events: none; color: var(--ink) }
 @media (max-width: 61.99rem) {
   .head { grid-template-columns: minmax(0, 1fr) auto; min-height: 56px }
   .navrow { grid-column: 1 / -1; grid-row: 2; border-top: 1px solid var(--line); margin-inline: calc(-1 * max(var(--gutter), env(safe-area-inset-left, 0px))); padding-inline: max(var(--gutter), env(safe-area-inset-left, 0px)) }
@@ -468,3 +467,9 @@ dialog::backdrop { background: var(--scrim) }
 dialog { box-shadow: none }
 .foot { border-top: 0 }
 .chip { background: var(--surface-2) }
+
+/* Icons (@audi/audi-icon, Apache-2.0) */
+.aicon { display: inline-flex; flex: none; line-height: 0 }
+.aicon svg { display: block }
+.lang .aicon { position: absolute; right: 0; pointer-events: none }
+.ubtn .aicon svg { width: 26px; height: 26px }

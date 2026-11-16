@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AIcon from "../components/AIcon.vue";
 // Search page: one query + filters → matching saved cars (instant) and result links per listing site.
 // The same filters are what the daily automatic search reads from config/search.
 import { computed, nextTick, reactive, ref, watch } from "vue";
@@ -67,7 +68,7 @@ async function save() {
     <form class="pillform" role="search" novalidate autocomplete="off" @submit.prevent="go">
       <label class="sr-only" for="s-model">{{ t.search.model }}</label>
       <input id="s-model" v-model="s.model" type="search" :placeholder="t.find.ph">
-      <button class="cta" type="submit">{{ t.find.go }} <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.6" /><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg></button>
+      <button class="cta" type="submit"><AIcon name="search" />{{ t.find.go }}</button>
     </form>
     <p v-if="summary" class="note">{{ summary }}</p>
   </HeroSection>

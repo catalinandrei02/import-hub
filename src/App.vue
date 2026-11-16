@@ -15,7 +15,7 @@ import ContactDialog from "./components/ContactDialog.vue";
     <main id="main" tabindex="-1"><RouterView /></main>
     <footer class="foot">
       <div class="wrap foot-in">
-        <div class="foot-col"><p class="foot-brand">Import Hub</p><span>Canada → Nederland → România</span><span>{{ t.foot.line }}</span></div>
+        <div class="foot-col"><p class="foot-brand">Import Hub</p><span>Canada → Nederland → România</span><span>{{ t.foot.line }}</span><span>Icons: <a href="https://github.com/oneaudi/audi-icon" target="_blank" rel="noopener">Audi Icons</a>, <a href="./LICENSE-audi-icon.txt" target="_blank" rel="noopener">Apache-2.0</a></span></div>
         <nav class="foot-links" :aria-label="t.foot.sources">
           <h2 class="label">{{ t.foot.sources }}</h2>
           <ul class="links"><li v-for="l in LINKS" :key="l[1]"><a :href="l[1]" target="_blank" rel="noopener">{{ l[0] }}</a></li></ul>

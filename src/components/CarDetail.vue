@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AIcon from "./AIcon.vue";
 // Car detail drawer: right-hand sheet on desktop, full screen on phones.
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { canWrite, queue, state } from "../data/store";
@@ -54,7 +55,7 @@ watch(car, c => { if (!c) ui.detail = false; });
           <div><span class="eyebrow">{{ (t.st as any)[car.status || ''] }}</span><h2>{{ carName(car) }}<template v-if="carTrim(car)"> · {{ carTrim(car) }}</template></h2>
             <p class="note">{{ [car.seller, car.location].filter(Boolean).join(" · ") }}</p></div>
           <button ref="closeBtn" class="closex" type="button" data-act="close-detail" :aria-label="t.c.close" @click="close">
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+            <AIcon name="cancel" />
           </button>
         </div>
         <div class="row full"><div class="lab"><label for="q-status">{{ t.cars.status }}</label></div>
@@ -63,7 +64,7 @@ watch(car, c => { if (!c) ui.detail = false; });
         <div class="rowx">
           <a v-if="safeUrl(car.url)" class="btn" :href="safeUrl(car.url)" target="_blank" rel="noopener">{{ t.cars.open }} ↗</a>
           <button v-if="car.vin" class="btn" type="button" @click="copyText(car.vin!, t.c.copied)">{{ t.c.copyVin }}</button>
-          <button class="btn" type="button" data-act="edit-car" :data-id="car._id" @click="ui.dialog = { kind: 'car', car }">{{ t.cars.edit }}</button>
+          <button class="btn" type="button" data-act="edit-car" :data-id="car._id" @click="ui.dialog = { kind: 'car', car }"><AIcon name="edit" :size="20" />{{ t.cars.edit }}</button>
         </div>
       </section>
       <CostPanels v-if="car.price" :price="car.price" :gst="carGst(car)" :costs="state.costs" :cap="t.cars.landedCap" :extra="carGst(car) ? t.cars.withGst : t.cars.noGst" />
@@ -72,8 +73,8 @@ watch(car, c => { if (!c) ui.detail = false; });
         <div class="ringrow"><ProgressRing :n="done" :total="nSteps" />
           <div><p class="big">{{ done }} {{ fill(t.proc.of, { n: nSteps }) }}</p><p class="note">{{ next }}</p><p class="note">{{ t.cars.docsL }}: {{ docsDone }} / {{ docKeys.length }}</p></div></div>
         <div class="rowx">
-          <RouterLink class="link" to="/steps" @click="ui.detail = false">{{ t.tabs.process }} →</RouterLink>
-          <RouterLink class="link" to="/documents" @click="ui.detail = false">{{ t.tabs.docs }} →</RouterLink>
+          <RouterLink class="link" to="/steps" @click="ui.detail = false">{{ t.tabs.process }} <AIcon name="forward" :size="20" /></RouterLink>
+          <RouterLink class="link" to="/documents" @click="ui.detail = false">{{ t.tabs.docs }} <AIcon name="forward" :size="20" /></RouterLink>
         </div>
       </section>
       <section class="glass pad" style="display:grid;gap:12px">

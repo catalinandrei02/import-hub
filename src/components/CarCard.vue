@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AIcon from "./AIcon.vue";
 // A car as a testimonial-style card: status source line, the car and its price, then seller and cost in Romania.
 import { computed } from "vue";
 import type { Car } from "../data/types";
@@ -61,8 +62,8 @@ function open() { ui.selCar = c.value._id; ui.detail = true; }
         <span class="rate"><span class="lbl">{{ t.cars.landed }}</span><b class="hl">{{ lc ? eur(lc.total) : "—" }}</b><small>{{ carGst(car) ? t.cars.withGst : t.cars.noGst }}</small></span>
       </div>
       <div class="acts">
-        <button class="btn primary" type="button" @click="open">{{ t.c.details }}</button>
-        <button class="btn" type="button" data-act="edit-car" :data-id="car._id" @click="ui.dialog = { kind: 'car', car }">{{ t.cars.edit }}</button>
+        <button class="btn primary" type="button" @click="open">{{ t.c.details }} <AIcon name="forward" :size="20" /></button>
+        <button class="btn" type="button" data-act="edit-car" :data-id="car._id" @click="ui.dialog = { kind: 'car', car }"><AIcon name="edit" :size="20" />{{ t.cars.edit }}</button>
         <a v-if="safeUrl(car.url)" class="link" :href="safeUrl(car.url)" target="_blank" rel="noopener">{{ t.cars.open }} ↗</a>
         <label class="cmpchk"><input type="checkbox" :data-cmp="car._id" :checked="ui.cmp.includes(car._id)" @change="toggleCmp"> {{ t.cars.compare }}</label>
       </div>

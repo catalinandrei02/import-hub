@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AIcon from "../components/AIcon.vue";
 import { computed, ref, watch } from "vue";
 import { canWrite, state } from "../data/store";
 import { carLanded } from "../lib/costs";
@@ -41,7 +42,7 @@ watch(() => ui.cmp.length, n => { if (n < 2) cmpOpen.value = false; });
     <form class="pillform" novalidate autocomplete="off" @submit.prevent="addFromVin">
       <label class="sr-only" for="hero-vin">{{ t.hero.vinL }}</label>
       <input id="hero-vin" v-model="vin" maxlength="17" spellcheck="false" :placeholder="t.hero.vinPh">
-      <button class="cta" type="submit" :disabled="!canWrite">{{ t.cars.add }} <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3.5L10.5 8 6 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+      <button class="cta" type="submit" :disabled="!canWrite">{{ t.cars.add }} <AIcon name="forward" /></button>
     </form>
     <div v-if="vin.trim()" class="vinout"><VinInfo :vin="vin" center /></div>
   </HeroSection>

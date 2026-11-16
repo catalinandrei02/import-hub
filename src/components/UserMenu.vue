@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AIcon from "./AIcon.vue";
 // Avatar button that opens a small account menu; signing out needs a second, explicit click.
 import { nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { t } from "../i18n";
@@ -9,7 +10,6 @@ const open = ref(false);
 const root = ref<HTMLElement | null>(null);
 const btn = ref<HTMLButtonElement | null>(null);
 const first = ref<HTMLButtonElement | null>(null);
-const initial = () => (state.user?.name || "?").trim().charAt(0).toUpperCase();
 
 function close(focus = false) { open.value = false; if (focus) btn.value?.focus(); }
 function onDoc(e: MouseEvent) { if (root.value && !root.value.contains(e.target as Node)) close(); }
@@ -26,7 +26,7 @@ async function doSignOut() { close(); await signOut(); }
   <div v-if="state.user" ref="root" class="umenu">
     <button ref="btn" class="ubtn" type="button" aria-haspopup="menu" :aria-expanded="open" :aria-label="t.auth.account + ': ' + state.user.name" @click="open = !open">
       <img v-if="state.user.photo" class="avatar" :src="state.user.photo" alt="" referrerpolicy="no-referrer" width="36" height="36">
-      <span v-else class="avatar ini-sm" aria-hidden="true">{{ initial() }}</span>
+      <AIcon v-else name="user" />
     </button>
     <div v-if="open" class="upop glass" role="menu">
       <p class="uname">{{ state.user.name || t.auth.account }}</p>
