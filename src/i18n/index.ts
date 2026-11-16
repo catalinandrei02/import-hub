@@ -1,4 +1,5 @@
 import { computed, ref, watch } from "vue";
+import { pluralForm } from "../lib/plural";
 import { BASE } from "./strings";
 import type { Lang } from "./content";
 
@@ -7,6 +8,10 @@ const V3 = {
   ro: {
     brand: { line1: "pentru mașini", line2: "din Québec în România" },
     langL: "Limba",
+    views: {
+      h: "Vizualizări", one: "{n} vizualizare", few: "{n} vizualizări", many: "{n} de vizualizări",
+      how: "Se numără de fiecare dată când cineva din familie deschide mașina.", none: "Încă n-a deschis-o nimeni.", you: "tu", last: "ultima dată",
+    },
     gate: {
       lead: "Site-ul privat al familiei pentru mașinile aduse din Québec în România. Intră cu contul Google ca să continui.",
       checking: "Se verifică contul…", none: "Site-ul nu e încă legat de baza de date, așa că nu se poate intra.", other: "Intră cu alt cont",
@@ -61,6 +66,10 @@ const V3 = {
   en: {
     brand: { line1: "for cars", line2: "from Québec to Romania" },
     langL: "Language",
+    views: {
+      h: "Views", one: "{n} view", few: "{n} views", many: "{n} views",
+      how: "Counted each time someone in the family opens this car.", none: "Nobody has opened it yet.", you: "you", last: "last",
+    },
     gate: {
       lead: "The family's private site for cars brought from Québec to Romania. Sign in with your Google account to continue.",
       checking: "Checking your account…", none: "The site isn't connected to its database yet, so nobody can sign in.", other: "Use another account",
@@ -115,6 +124,10 @@ const V3 = {
   fr: {
     brand: { line1: "pour les véhicules", line2: "du Québec vers la Roumanie" },
     langL: "Langue",
+    views: {
+      h: "Consultations", one: "{n} consultation", few: "{n} consultations", many: "{n} consultations",
+      how: "Comptées chaque fois qu'un membre de la famille ouvre ce véhicule.", none: "Personne ne l'a encore ouvert.", you: "vous", last: "dernière fois",
+    },
     gate: {
       lead: "Le site privé de la famille pour les véhicules amenés du Québec en Roumanie. Connectez-vous avec votre compte Google pour continuer.",
       checking: "Vérification du compte…", none: "Le site n'est pas encore relié à sa base de données ; personne ne peut se connecter.", other: "Utiliser un autre compte",
@@ -184,3 +197,8 @@ watch(lang, l => { try { localStorage.setItem("hub-lang", l); } catch { /* ignor
 /** "{n} cars" → "3 cars" */
 export const fill = (s: string, o: Record<string, string | number>) => String(s).replace(/\{(\w+)\}/g, (m, k) => (o[k] != null ? String(o[k]) : m));
 export type { Lang };
+
+/** "1 vizualizare / 5 vizualizări / 20 de vizualizări" (RO), "1 view / 5 views" (EN), "1 consultation" (FR). */
+export function countLabel(n: number, f: { one: string; few: string; many: string }): string {
+  return fill(f[pluralForm(n, lang.value)], { n });
+}

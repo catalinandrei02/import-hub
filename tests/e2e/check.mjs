@@ -205,6 +205,17 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   report.checks.menuClosesOnEscape = await p.evaluate(() => !document.querySelector(".upop"));
   await p.close(); }
 
+// 4b. View counts: each opening of a car's details counts once per person; cards and details show them
+{ const p = await open(MOCK, "cars", 1280, "light");
+  for (let k = 0; k < 2; k++) { await p.click('[data-act="details"][data-id="s1"]'); await sleep(250); await p.keyboard.press("Escape"); await sleep(250); }
+  await p.click('[data-act="details"][data-id="s1"]'); await sleep(300);
+  const v = await p.evaluate(() => window.__mock.store.get("views/s1"));
+  report.checks.viewsStored = JSON.stringify({ total: v?.total, me: v?.byUser?.["mock-user"]?.n, name: v?.byUser?.["mock-user"]?.name });
+  report.checks.viewsDetail = await p.$eval('#side [data-sec="views"]', e => e.innerText.replace(/\s+/g, " ").slice(0, 80)).catch(() => null);
+  await p.keyboard.press("Escape"); await sleep(250);
+  report.checks.viewsChip = await p.$eval('[data-act="details"][data-id="s1"]', b => b.closest(".car").querySelector(".chip.views")?.textContent).catch(() => null);
+  await p.close(); }
+
 // 5. "Add to Import Hub" bookmark: run it on a listing page, open the app from it, save the car with its photos
 { const p = await open(MOCK, "cars", 1280, "light");
   await p.click('[data-act="add-car"]'); await sleep(200);

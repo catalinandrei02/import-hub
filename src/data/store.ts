@@ -1,7 +1,7 @@
 // Shared app state: one subscription per query, opened once after sign-in; one write at a time per document.
 import { computed, reactive } from "vue";
 import type { Backend, Connection, ErrCode, Unsub } from "./backend";
-import type { Car, Contact, Scan, SearchSettings } from "./types";
+import type { Car, Contact, Scan, SearchSettings, ViewDoc } from "./types";
 import { DEF_COSTS, DEF_SEARCH, type Costs } from "../lib/constants";
 import { numCosts } from "../lib/costs";
 import { firebaseConfig } from "../firebase.config";
@@ -18,6 +18,7 @@ export const state = reactive({
   costs: { ...DEF_COSTS } as Costs, costsAt: "",
   search: { ...DEF_SEARCH } as SearchSettings,
   scan: null as Scan | null,
+  views: {} as Record<string, ViewDoc>, viewsOn: false,
 });
 
 export const canWrite = computed(() => state.auth === "ok" && (state.data === "ok" || state.data === "stale"));
@@ -28,7 +29,7 @@ let staleTimer: ReturnType<typeof setTimeout> | undefined;
 
 function resetData() {
   unsubs.forEach(u => u()); unsubs = [];
-  Object.assign(state, { cars: [], carsLoaded: false, contacts: [], contactsLoaded: false, costs: { ...DEF_COSTS }, costsAt: "", search: { ...DEF_SEARCH }, scan: null });
+  Object.assign(state, { cars: [], carsLoaded: false, contacts: [], contactsLoaded: false, costs: { ...DEF_COSTS }, costsAt: "", search: { ...DEF_SEARCH }, scan: null, views: {}, viewsOn: false });
 }
 
 function onErr(code: ErrCode) {
@@ -53,6 +54,8 @@ function subscribe(b: Backend) {
     b.watchDoc("config/costs", d => { state.costs = numCosts(d); state.costsAt = (d?.updatedAt as string) || ""; }, onErr),
     b.watchDoc("config/search", d => { state.search = { ...DEF_SEARCH, ...(d || {}) } as SearchSettings; }, onErr),
     b.watchDoc("config/scan", d => { state.scan = d as Scan | null; }, onErr),
+    // View counts are extra: if the rules don't allow them yet, the rest of the site keeps working.
+    b.watchCollection("views", docs => { state.views = Object.fromEntries(docs.map(d => [d.id, d.data as ViewDoc])); state.viewsOn = true; }, () => { state.views = {}; state.viewsOn = false; }),
   );
 }
 
@@ -89,4 +92,12 @@ export function queue<T>(path: string, fn: (b: Backend) => Promise<T>): Promise<
 export function addDoc(collection: string, data: Record<string, any>): Promise<string> {
   if (!conn || !canWrite.value) return Promise.reject(new Error("read-only"));
   return conn.backend.add(collection, data);
+}
+
+/** Counts one view of a car by the signed-in member (opening its details). Failures are ignored. */
+export function recordView(carId: string) {
+  const u = state.user;
+  if (!conn || state.auth !== "ok" || !u || !carId) return;
+  const first = (u.name || "").trim().split(/\s+/)[0].slice(0, 30);
+  conn.backend.bump("views/" + carId, { total: 1, [`byUser.${u.uid}.n`]: 1 }, { [`byUser.${u.uid}.name`]: first, [`byUser.${u.uid}.last`]: new Date().toISOString() }).catch(() => {});
 }

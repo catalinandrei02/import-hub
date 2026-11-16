@@ -12,6 +12,8 @@ export interface Backend {
   update(path: string, data: Record<string, any>): Promise<void>;
   remove(path: string): Promise<void>;
   add(collection: string, data: Record<string, any>): Promise<string>;
+  /** Creates or merges a document: `inc` keys (dotted paths) are added to atomically, `set` keys are written. */
+  bump(path: string, inc: Record<string, number>, set: Record<string, unknown>): Promise<void>;
 }
 
 export interface AuthUser { uid: string; name: string; photo: string | null }

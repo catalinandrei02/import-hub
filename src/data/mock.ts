@@ -32,6 +32,14 @@ export function connectMock(): Connection {
       async set(p, d) { log("set", p); store.set(p, clone(d)); emit(); },
       async update(p, d) { log("update", p); if (!store.has(p)) throw new Error("not found"); store.set(p, { ...store.get(p), ...clone(d) }); emit(); },
       async remove(p) { log("delete", p); store.delete(p); emit(); },
+      async bump(p, inc, set) {
+        log("bump", p);
+        const o: Record<string, any> = store.get(p) ? clone(store.get(p)!) : {};
+        const at = (k: string) => { const ks = k.split("."); let c = o; ks.slice(0, -1).forEach(x => (c = c[x] ??= {})); return [c, ks[ks.length - 1]] as const; };
+        for (const [k, v] of Object.entries(set)) { const [c, last] = at(k); c[last] = v; }
+        for (const [k, n] of Object.entries(inc)) { const [c, last] = at(k); c[last] = (Number(c[last]) || 0) + n; }
+        store.set(p, o); emit();
+      },
       async add(c, d) { const id = "new" + ++n; log("add", c + "/" + id); store.set(c + "/" + id, clone(d)); emit(); return id; },
     },
     auth: {

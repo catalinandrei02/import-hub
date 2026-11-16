@@ -66,6 +66,10 @@ cars/{autoId}
 
 contacts/{autoId}   name, role, phone, email, notes
 
+views/{carId}       (v3) total, byUser: {<uid>: {n, name (first name only, never email), last (ISO)}}
+                    one count each time a member opens the car's details (recordView in store.ts, atomic increments);
+                    every member sees them (card chip + "Views" section in the details). Rules: members only.
+
 config/costs        (+ updatedAt, written by the page) cadEur 0.64, usdEur 0.89, shipUsd 1450, fuelUsd 0, insPct 1.5,
                     dutyPct 10, vatPct 21, marlogEur 1030, roadEur 800, rarEur 800
 

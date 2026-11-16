@@ -33,4 +33,7 @@ export interface SearchSettings {
   sources: string[]; exclude: string; extra: string; updatedAt?: string;
 }
 
+/** views/{carId}: how often each member opened the car (v3). Names are first names only; never emails. */
+export interface ViewDoc { total?: number; byUser?: Record<string, { n?: number; name?: string; last?: string }> }
+
 export interface Scan { lastRun?: string; found?: number; summary?: string }

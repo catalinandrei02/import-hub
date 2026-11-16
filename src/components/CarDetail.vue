@@ -5,13 +5,13 @@ const tried = new Set<string>(); // cars whose photos were already fetched this 
 import AIcon from "./AIcon.vue";
 // Car detail drawer: right-hand sheet on desktop, full screen on phones.
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { canWrite, queue, state } from "../data/store";
+import { canWrite, queue, recordView, state } from "../data/store";
 import { carGst } from "../lib/costs";
 import { STATUSES } from "../lib/constants";
 import { carName, carTrim, countDone, history, safeUrl } from "../lib/cars";
 import { cad, fmt, fmtDate } from "../lib/format";
 import { DOCS, STEPS } from "../i18n/content";
-import { fill, lang, t } from "../i18n";
+import { countLabel, fill, lang, t } from "../i18n";
 import { copyText, toast, ui } from "../ui";
 import CostPanels from "./CostPanels.vue";
 import ProgressRing from "./ProgressRing.vue";
@@ -50,6 +50,14 @@ const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !ui.dialog) clos
 onMounted(() => { document.body.classList.add("lock"); document.addEventListener("keydown", onKey); nextTick(() => closeBtn.value?.focus()); });
 onBeforeUnmount(() => { document.body.classList.remove("lock"); document.removeEventListener("keydown", onKey); });
 watch(car, c => { if (!c) ui.detail = false; });
+// One view each time a car's details are opened (or another car is opened in the drawer). Everyone sees the counts.
+watch(() => ui.selCar, id => recordView(id), { immediate: true });
+const views = computed(() => {
+  const v = car.value ? state.views[car.value._id] : undefined;
+  const people = Object.entries(v?.byUser || {}).map(([uid, x]) => ({ uid, n: x.n || 0, name: uid === state.user?.uid ? t.value.views.you : x.name || "—", last: x.last || "" }))
+    .filter(p => p.n > 0).sort((a, b) => b.n - a.n);
+  return { total: v?.total || 0, people };
+});
 
 // Photos: slideshow beside the drawer on wide screens, inside it on phones.
 const wideMq = typeof matchMedia === "function" ? matchMedia("(min-width: 62rem)") : null;
@@ -108,6 +116,12 @@ watch(() => [car.value?._id, canFetch.value], () => { const c = car.value; if (c
           <RouterLink class="link" to="/steps" @click="ui.detail = false">{{ t.tabs.process }} <AIcon name="forward" :size="20" /></RouterLink>
           <RouterLink class="link" to="/documents" @click="ui.detail = false">{{ t.tabs.docs }} <AIcon name="forward" :size="20" /></RouterLink>
         </div>
+      </section>
+      <section v-if="state.viewsOn" class="glass pad views" style="display:grid;gap:12px" data-sec="views">
+        <h3 class="label">{{ t.views.h }}</h3>
+        <p class="big">{{ countLabel(views.total, t.views) }}</p>
+        <ul v-if="views.people.length" class="hist"><li v-for="p in views.people" :key="p.uid"><span>{{ p.name }}<small v-if="p.last" class="note"> · {{ t.views.last }} {{ fmtDate(p.last) }}</small></span><b>{{ p.n }}</b></li></ul>
+        <p class="note">{{ views.people.length ? t.views.how : t.views.none }}</p>
       </section>
       <section class="glass pad" style="display:grid;gap:12px">
         <h3 class="label">{{ t.f.gCar }}</h3>

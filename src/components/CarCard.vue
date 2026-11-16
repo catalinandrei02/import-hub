@@ -8,7 +8,7 @@ import { carGst, carLanded } from "../lib/costs";
 import { carName, carTrim, history, initials, priceDelta, safeUrl, statusClass } from "../lib/cars";
 import { cad, eur, fmt } from "../lib/format";
 import { STEPS } from "../i18n/content";
-import { fill, lang, t } from "../i18n";
+import { countLabel, fill, lang, t } from "../i18n";
 import { toast, ui } from "../ui";
 import SparkLine from "./SparkLine.vue";
 import CarArt from "./CarArt.vue";
@@ -57,6 +57,7 @@ function open() { ui.selCar = c.value._id; ui.detail = true; }
         <span class="chip" :class="ync(car.acc)">{{ t.cars.acc }}: {{ yn(car.acc) }}</span>
         <span class="chip" :class="ync(car.cam)">{{ t.cars.cam }}: {{ yn(car.cam) }}</span>
         <span class="chip">{{ t.cars.stepsL }} {{ done }}/{{ STEPS[lang].length }}</span>
+        <span v-if="state.viewsOn && state.views[car._id]?.total" class="chip views">{{ countLabel(state.views[car._id].total!, t.views) }}</span>
         <span v-for="f in car.flags || []" :key="f" class="chip bad">{{ (t.f.flagList as any)[f] || f }}</span>
       </div>
       <div class="cfoot">

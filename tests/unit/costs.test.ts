@@ -95,3 +95,12 @@ describe("parseImport: site data", () => {
     expect(c.photos!.length).toBe(40);
   });
 });
+
+import { pluralForm } from "../../src/lib/plural";
+describe("pluralForm (view counts)", () => {
+  it("uses Romanian, French and English plural forms", () => {
+    expect([0, 1, 2, 19, 20, 101, 120, 200].map(n => pluralForm(n, "ro"))).toEqual(["few", "one", "few", "few", "many", "few", "many", "many"]);
+    expect([0, 1, 2].map(n => pluralForm(n, "fr"))).toEqual(["one", "one", "few"]);
+    expect([0, 1, 20].map(n => pluralForm(n, "en"))).toEqual(["few", "one", "few"]);
+  });
+});
