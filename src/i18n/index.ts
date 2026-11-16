@@ -64,7 +64,7 @@ const V3 = {
       badDomain: "Adresa acestui site nu e încă permisă în Firebase (Authentication → Settings → Authorized domains).",
       popup: "Browserul a blocat fereastra de conectare. Permite ferestrele pop-up pentru acest site și încearcă din nou.",
     },
-    hero: { addT: "Adaugă o mașină", addN: "Lipește linkul anunțului (CarGurus, AutoTrader, un dealer) sau un VIN. Restul se completează singur.", vinPh: "https://www.cargurus.ca/… sau WA1…", vinL: "Link sau VIN", priceL: "Prețul mașinii în CAD" },
+    hero: { addT: "Adaugă o mașină", addN: "Lipește linkul anunțului (CarGurus, AutoTrader, un dealer) sau un VIN. Restul se completează singur.", vinPh: "Lipește linkul anunțului (CarGurus, AutoTrader, un dealer). Restul se completează singur.", vinL: "Linkul anunțului", linkOnly: "Lipește linkul anunțului (începe cu https://).", priceL: "Prețul mașinii în CAD" },
     nav: { prev: "Înapoi", next: "Înainte", main: "Secțiuni" },
     chip: {
       cars: "{n} mașini active", contacts: "{n} contacte",
@@ -159,7 +159,7 @@ const V3 = {
       badDomain: "This site's address isn't allowed in Firebase yet (Authentication → Settings → Authorized domains).",
       popup: "The browser blocked the sign-in window. Allow pop-ups for this site and try again.",
     },
-    hero: { addT: "Add a car", addN: "Paste the listing link (CarGurus, AutoTrader, a dealer) or a VIN. The rest fills itself in.", vinPh: "https://www.cargurus.ca/… or WA1…", vinL: "Link or VIN", priceL: "Car price in CAD" },
+    hero: { addT: "Add a car", addN: "Paste the listing link (CarGurus, AutoTrader, a dealer) or a VIN. The rest fills itself in.", vinPh: "Paste the listing link (CarGurus, AutoTrader, a dealer). The rest fills itself in.", vinL: "Listing link", linkOnly: "Paste the listing link (starting with https://).", priceL: "Car price in CAD" },
     nav: { prev: "Previous", next: "Next", main: "Sections" },
     chip: {
       cars: "{n} active cars", contacts: "{n} contacts",
@@ -254,7 +254,7 @@ const V3 = {
       badDomain: "L'adresse de ce site n'est pas encore autorisée dans Firebase (Authentication → Settings → Authorized domains).",
       popup: "Le navigateur a bloqué la fenêtre de connexion. Autorisez les fenêtres pop-up pour ce site et réessayez.",
     },
-    hero: { addT: "Ajouter un véhicule", addN: "Collez le lien de l'annonce (CarGurus, AutoTrader, un concessionnaire) ou un NIV. Le reste se remplit tout seul.", vinPh: "https://www.cargurus.ca/… ou WA1…", vinL: "Lien ou NIV", priceL: "Prix du véhicule en $ CA" },
+    hero: { addT: "Ajouter un véhicule", addN: "Collez le lien de l'annonce (CarGurus, AutoTrader, un concessionnaire) ou un NIV. Le reste se remplit tout seul.", vinPh: "Collez le lien de l'annonce (CarGurus, AutoTrader, un concessionnaire). Le reste se remplit tout seul.", vinL: "Lien de l'annonce", linkOnly: "Collez le lien de l'annonce (commençant par https://).", priceL: "Prix du véhicule en $ CA" },
     nav: { prev: "Précédent", next: "Suivant", main: "Sections" },
     chip: {
       cars: "{n} véhicules actifs", contacts: "{n} contacts",

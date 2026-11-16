@@ -194,9 +194,11 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   const store = () => p.evaluate(() => Object.fromEntries(window.__mock.store));
   report.checks.filterDefaultAll = await p.$eval('[data-filter="all"]', e => e.getAttribute("aria-pressed"));
   report.checks.cardLanded = await p.$$eval(".car", cs => cs.map(c => c.querySelector(".ctt").textContent + " = " + c.querySelector(".rate").innerText.replace(/\n/g, " ")));
-  await setVal(p, "#hero-vin", "WA1FAAFY0M2006299"); await sleep(80);
-  report.checks.heroVinChips = await p.$$eval(".h2-bar .chip", cs => cs.map(c => c.textContent));
-  await p.click(".pillform .cta"); await sleep(200);
+  // The bar takes listing links only; a car without a link is added from the header button.
+  await setVal(p, "#hero-vin", "WA1FAAFY0M2006299"); await p.click(".pillform .cta"); await sleep(200);
+  report.checks.barLinkOnly = await p.evaluate(() => (document.querySelector(".toast")?.textContent || "").slice(0, 30) + " | dialog " + !!document.querySelector("#car-form"));
+  await p.click('[data-act="add-car"]'); await sleep(200);
+  await setVal(p, "#d-vin", "WA1FAAFY0M2006299"); await sleep(100);
   report.checks.dialogPrefill = await p.evaluate(() => [document.getElementById("d-vin").value, document.getElementById("d-trim").value, document.getElementById("d-year").value]);
   await setVal(p, "#d-price", "28500"); await setVal(p, "#d-seller", "Test dealer");
   await p.select("#d-sellerType", "private"); await sleep(50);

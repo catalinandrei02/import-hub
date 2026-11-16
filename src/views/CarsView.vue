@@ -4,7 +4,6 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { MAX_PHOTOS, findSaved, mergeExtras, parseImport } from "../lib/importer";
 import { canWrite, queue, state } from "../data/store";
-import { decodeVin } from "../lib/vin";
 import { priceDelta, sortCars } from "../lib/cars";
 import { cad } from "../lib/format";
 import { fill, t } from "../i18n";
@@ -13,7 +12,6 @@ import HeroSection from "../components/HeroSection.vue";
 import StatusBanner from "../components/StatusBanner.vue";
 import CarCard from "../components/CarCard.vue";
 import CompareTable from "../components/CompareTable.vue";
-import VinInfo from "../components/VinInfo.vue";
 import PriceCheckBar from "../components/PriceCheckBar.vue";
 
 // Opens on "All" every time (owner's choice).
@@ -27,12 +25,12 @@ const bestDrop = computed(() => { const d = active.value.map(priceDelta).filter(
 const cmpCars = computed(() => ui.cmp.map(id => state.cars.find(c => c._id === id)).filter(Boolean) as typeof state.cars);
 const loading = computed(() => !state.carsLoaded && (state.data === "loading" || state.data === "stale"));
 
+// The bar adds cars by listing link only (owner's request): the form opens and fills itself in (Chrome extension).
+// A car without a link is still added with "Add car" in the header.
 function addFromVin() {
   const v = vin.value.trim();
-  // A listing link: open the form with it and let it fill itself in (Chrome extension).
-  if (/^https?:\/\//i.test(v)) { ui.dialog = { kind: "car", car: { url: v }, autoFill: true }; vin.value = ""; return; }
-  const d = decodeVin(vin.value);
-  ui.dialog = { kind: "car", car: { vin: vin.value.toUpperCase().replace(/\s/g, ""), ...(d.err ? {} : { trim: d.trim === "?" ? "" : d.trim, year: d.year === "?" ? null : d.year }) } as any };
+  if (!/^https?:\/\/\S+\.\S+/i.test(v)) { toast(t.value.hero.linkOnly); return; }
+  ui.dialog = { kind: "car", car: { url: v }, autoFill: true }; vin.value = "";
 }
 watch(() => ui.cmp.length, n => { if (n < 2) cmpOpen.value = false; });
 // Arriving from the "Add to Import Hub" bookmark: #/cars?add=<listing data>
@@ -66,19 +64,18 @@ watch(() => route.query.add, takeImport);
 
 <template>
   <!-- Title and the add box only (owner's request: no count line, no description). -->
-  <HeroSection :title="t.cars.h" :bar-title="t.hero.addT" :bar-note="t.hero.addN">
+  <HeroSection :title="t.cars.h">
     <!-- Add box and the list filter side by side (one heading for the page: the hero title). -->
     <div class="addrowbar">
       <form class="pillform" novalidate autocomplete="off" @submit.prevent="addFromVin">
         <label class="sr-only" for="hero-vin">{{ t.hero.vinL }}</label>
-        <input id="hero-vin" v-model="vin" maxlength="600" spellcheck="false" :placeholder="t.hero.vinPh">
+        <input id="hero-vin" v-model="vin" type="url" inputmode="url" maxlength="600" spellcheck="false" :placeholder="t.hero.vinPh" :title="t.hero.vinPh">
         <button class="cta" type="submit" :disabled="!canWrite"><span class="btxt">{{ t.cars.add }}</span> <AIcon name="forward" /></button>
       </form>
       <div class="seg" role="group" :aria-label="t.f.status">
         <button v-for="f in ([['active', t.cars.all], ['dropped', t.cars.dropped], ['all', t.cars.allAll]] as const)" :key="f[0]" type="button" :data-filter="f[0]" :aria-pressed="filter === f[0]" @click="filter = f[0]">{{ f[1] }}</button>
       </div>
     </div>
-    <div v-if="vin.trim() && !/^https?:/i.test(vin.trim())" class="vinout"><VinInfo :vin="vin" center /></div>
   </HeroSection>
 
   <div class="content solo">

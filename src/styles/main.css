@@ -695,3 +695,10 @@ dialog { box-shadow: none }
   .h2-text { padding: 0 18px 16px } .h2-bar-in { padding: 16px 18px }
   .h2-media img { object-position: 50% 76% }
 }
+
+/* Hero background video (YouTube, muted loop): covers the tile like the photo; bigger band on the Cars page. */
+.hero2:not(.small) { height: clamp(340px, 50vw, 720px) }
+.h2-media { container-type: size }
+.h2-video { position: absolute; top: 50%; left: 50%; width: max(100cqw, 177.78cqh); height: max(100cqh, 56.25cqw); transform: translate(-50%, -50%); border: 0; pointer-events: none; opacity: 0; transition: opacity 1.2s ease }
+.h2-video.on { opacity: 1 }
+@media (max-width: 40rem) { .hero2:not(.small) { height: 80vw } }

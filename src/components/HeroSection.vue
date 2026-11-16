@@ -8,6 +8,13 @@ import CarArt from "./CarArt.vue";
 const props = defineProps<{ title: string; lead?: string; photo?: string; barTitle?: string; barNote?: string; small?: boolean }>();
 const broken = ref(false);
 const base = import.meta.env.BASE_URL;
+// Background video on the big hero (owner's choice): muted, looping YouTube embed (no-cookie domain), the photo shows
+// underneath until it plays. Not on inner pages, not with reduced motion, not in the test build.
+const VIDEO = "wawUWh-08UQ";
+const video = !props.small && !props.photo && import.meta.env.MODE !== "mock"
+  && !(typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches);
+const videoSrc = `https://www.youtube-nocookie.com/embed/${VIDEO}?autoplay=1&mute=1&loop=1&playlist=${VIDEO}&controls=0&playsinline=1&rel=0&iv_load_policy=3&disablekb=1&modestbranding=1`;
+const playing = ref(false);
 watch(() => props.photo, () => (broken.value = false));
 </script>
 
@@ -18,6 +25,7 @@ watch(() => props.photo, () => (broken.value = false));
       <img v-if="photo && !broken" :src="photo" alt="" referrerpolicy="no-referrer" @error="broken = true">
       <img v-else-if="!broken" :src="base + 'hero.jpg'" :srcset="`${base}hero-1200.jpg 1200w, ${base}hero.jpg 1920w`" sizes="100vw" alt="" @error="broken = true">
       <CarArt v-else label="" />
+      <iframe v-if="video" class="h2-video" :class="{ on: playing }" :src="videoSrc" title="" tabindex="-1" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" @load="playing = true"></iframe>
     </div>
     <div class="h2-text">
       <p v-if="$slots.proof" class="proof"><slot name="proof" /></p>
