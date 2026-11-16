@@ -4,7 +4,7 @@ A family website for importing used cars from Québec to Romania (Viamar Montrea
 
 Built with Vue 3, Vite and TypeScript. Data lives in Firebase Firestore behind Google sign-in (family members only). Hosted on GitHub Pages.
 
-![Home page](docs/home.png)
+![Cars section](docs/cars-1440.png)
 
 ## Run it
 
