@@ -3,13 +3,13 @@ import AIcon from "../components/AIcon.vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { parseImport } from "../lib/importer";
-import { canWrite, state } from "../data/store";
+import { canWrite, queue, state } from "../data/store";
 import { carLanded } from "../lib/costs";
 import { decodeVin } from "../lib/vin";
 import { priceDelta, sortCars } from "../lib/cars";
 import { cad, eur } from "../lib/format";
 import { fill, t } from "../i18n";
-import { ui } from "../ui";
+import { toast, ui } from "../ui";
 import HeroSection from "../components/HeroSection.vue";
 import StatusBanner from "../components/StatusBanner.vue";
 import CarCard from "../components/CarCard.vue";
@@ -42,13 +42,29 @@ const heroPhoto = computed(() => {
 });
 // Arriving from the "Add to Import Hub" bookmark: #/cars?add=<listing data>
 const route = useRoute(), router = useRouter();
+const sameUrl = (a?: string, b?: string) => !!a && !!b && a.split(/[?#]/)[0].replace(/\/$/, "").toLowerCase() === b.split(/[?#]/)[0].replace(/\/$/, "").toLowerCase();
+let pending = "";
 function takeImport() {
   const raw = route.query.add;
-  if (typeof raw !== "string" || !raw) return;
-  const car = parseImport(raw);
-  router.replace({ query: {} });
-  if (car) ui.dialog = { kind: "car", car: { status: "watching", sellerType: "dealer", ...car }, imported: true };
+  if (typeof raw === "string" && raw) { pending = raw; router.replace({ query: {} }); }
+  if (!pending) return;
+  // Wait for the saved cars, so an already-saved listing is recognised instead of added twice.
+  if (state.auth === "loading" || (state.auth === "ok" && !state.carsLoaded)) return;
+  const car = parseImport(pending); pending = "";
+  if (!car) return;
+  const old = state.cars.find(c => (car.vin && c.vin === car.vin) || sameUrl(c.url, car.url));
+  if (!old) { ui.dialog = { kind: "car", car: { status: "watching", sellerType: "dealer", ...car }, imported: true }; return; }
+  // Already saved: add the listing's photos on their own. A new price still goes through the form (price history).
+  const have = old.photos || [];
+  const photos = [...have, ...(car.photos || []).filter(u => !have.includes(u))].slice(0, 12);
+  const added = photos.length - have.length;
+  ui.selCar = old._id;
+  if (car.price && old.price !== car.price) { ui.dialog = { kind: "car", car: { ...old, photos, price: car.price }, imported: true }; return; }
+  if (!added || !canWrite.value) { toast(t.value.imp.same); return; }
+  queue("cars/" + old._id, b => b.update("cars/" + old._id, { photos, updatedAt: new Date().toISOString() }))
+    .then(() => toast(fill(t.value.imp.added, { n: added })), () => toast(t.value.c.error));
 }
+watch(() => [state.auth, state.carsLoaded], takeImport);
 onMounted(takeImport);
 watch(() => route.query.add, takeImport);
 </script>

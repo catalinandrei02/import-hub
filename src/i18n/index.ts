@@ -35,8 +35,9 @@ const V3 = {
     },
     noCars: "Încă nu ai nicio mașină salvată. Pașii și actele se bifează pentru fiecare mașină în parte, așa că adaugă întâi una.",
     imp: {
-      h: "Adaugă direct din anunț", lead: "Trage butonul în bara de favorite din Chrome. Pe pagina unui anunț (CarGurus, AutoTrader, Kijiji…) apasă-l: se deschide Import Hub cu prețul, kilometrii, anul, VIN-ul, vânzătorul și pozele deja completate.",
+      h: "Adaugă direct din anunț", lead: "Trage butonul în bara de favorite din Chrome. Pe pagina unui anunț (CarGurus, AutoTrader, Kijiji…) apasă-l: se deschide Import Hub cu prețul, kilometrii, anul, VIN-ul, vânzătorul și toate pozele deja completate. Dacă mașina e deja salvată, îi adaugă doar pozele.",
       dragOnly: "Trage butonul în bara de favorite; aici nu face nimic.", got: "Date preluate din anunț. Verifică-le înainte să salvezi.",
+      added: "Am adăugat {n} poze la mașina deja salvată.", same: "Mașina e deja salvată, cu toate pozele din anunț.",
       photos: "Poze", photosH: "Linkuri către poze, câte unul pe rând. Prima e poza principală. Le văd doar membrii familiei.",
     },
     foot: { line: "Costuri orientative. Verifică întotdeauna oferta reală și cursul zilei.", data: "Datele familiei", sources: "Surse oficiale" },
@@ -72,8 +73,9 @@ const V3 = {
     },
     noCars: "You don't have any cars saved yet. Steps and papers are ticked per car, so add one first.",
     imp: {
-      h: "Add straight from a listing", lead: "Drag the button to Chrome's bookmarks bar. On a listing page (CarGurus, AutoTrader, Kijiji…) press it: Import Hub opens with the price, km, year, VIN, seller and photos already filled in.",
+      h: "Add straight from a listing", lead: "Drag the button to Chrome's bookmarks bar. On a listing page (CarGurus, AutoTrader, Kijiji…) press it: Import Hub opens with the price, km, year, VIN, seller and every photo already filled in. If the car is already saved, it just adds the photos.",
       dragOnly: "Drag the button to the bookmarks bar; it does nothing here.", got: "Details taken from the listing. Check them before saving.",
+      added: "Added {n} photos to the car you already saved.", same: "This car is already saved, with all the listing's photos.",
       photos: "Photos", photosH: "Photo links, one per line. The first is the main photo. Only family members can see them.",
     },
     foot: { line: "Costs are estimates. Always check the real quote and today's rate.", data: "Family data", sources: "Official sources" },
@@ -109,8 +111,9 @@ const V3 = {
     },
     noCars: "Aucun véhicule enregistré pour l'instant. Les étapes et les papiers se cochent par véhicule : ajoutez-en d'abord un.",
     imp: {
-      h: "Ajouter directement depuis une annonce", lead: "Glissez le bouton dans la barre de favoris de Chrome. Sur la page d'une annonce (CarGurus, AutoTrader, Kijiji…), appuyez dessus : Import Hub s'ouvre avec le prix, le kilométrage, l'année, le NIV, le vendeur et les photos déjà remplis.",
+      h: "Ajouter directement depuis une annonce", lead: "Glissez le bouton dans la barre de favoris de Chrome. Sur la page d'une annonce (CarGurus, AutoTrader, Kijiji…), appuyez dessus : Import Hub s'ouvre avec le prix, le kilométrage, l'année, le NIV, le vendeur et toutes les photos déjà remplis. Si le véhicule est déjà enregistré, il ajoute seulement les photos.",
       dragOnly: "Glissez le bouton dans la barre de favoris ; ici, il ne fait rien.", got: "Données reprises de l'annonce. Vérifiez-les avant d'enregistrer.",
+      added: "{n} photos ajoutées au véhicule déjà enregistré.", same: "Ce véhicule est déjà enregistré, avec toutes les photos de l'annonce.",
       photos: "Photos", photosH: "Liens vers les photos, un par ligne. La première est la photo principale. Seuls les membres de la famille les voient.",
     },
     foot: { line: "Coûts indicatifs. Vérifiez toujours l'offre réelle et le taux du jour.", data: "Données de la famille", sources: "Sources officielles" },

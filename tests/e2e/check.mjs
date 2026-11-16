@@ -17,11 +17,24 @@ const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/cs
 // A fake listing page for the "Add to Import Hub" bookmark (JSON-LD like the real sites, plus a large photo).
 const FAKE_LISTING = `<!doctype html><html><head><title>2021 Audi Q5 Technik | Example Motors</title>
 <meta property="og:image" content="http://localhost:4181/fake/og.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Car","name":"2021 Audi Q5 Technik 45 TFSI quattro","vehicleIdentificationNumber":"WA1FAAFY2M2004811","mileageFromOdometer":{"@type":"QuantitativeValue","value":"88000","unitCode":"KMT"},"image":["http://localhost:4181/fake/1.jpg","http://localhost:4181/fake/2.jpg"],"offers":{"@type":"Offer","price":"29750.00","priceCurrency":"CAD","seller":{"@type":"AutoDealer","name":"Example Motors","address":{"addressLocality":"Laval"}}}}</script>
-</head><body><h1>2021 Audi Q5 Technik</h1><p>VIN: WA1FAAFY2M2004811 · 88 000 km</p></body></html>`;
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Car","name":"2021 Audi Q5 Technik 45 TFSI quattro","vehicleIdentificationNumber":"WA1FAAFY2M2007731","mileageFromOdometer":{"@type":"QuantitativeValue","value":"88000","unitCode":"KMT"},"image":["http://localhost:4181/fake/1.jpg","http://localhost:4181/fake/2.jpg"],"offers":{"@type":"Offer","price":"29750.00","priceCurrency":"CAD","seller":{"@type":"AutoDealer","name":"Example Motors","address":{"addressLocality":"Laval"}}}}</script>
+</head><body><h1>2021 Audi Q5 Technik</h1><p>VIN: WA1FAAFY2M2007731 · 88 000 km</p></body></html>`;
+// Like a CarGurus page: no photos in JSON-LD, a carousel with one loaded photo and lazy ones, the full gallery in a
+// page script (escaped slashes, two sizes per photo), "similar cars" further down, and a logo.
+const pic = (n, s) => `http:\\/\\/localhost:4181\\/fake\\/2021_audi_q5-pic-${n}-${s}.jpeg`;
+const FAKE_CG = `<!doctype html><html><head><title>Used 2021 Audi Q5 for sale in Laval - CarGurus.ca</title>
+<meta property="og:image" content="http://localhost:4181/fake/2021_audi_q5-pic-1-1024x768.jpeg">
+<script type="application/ld+json">{"@type":"Car","name":"2021 Audi Q5 Technik","vehicleIdentificationNumber":"WA1FAAFY2M2007731","offers":{"price":"29750"}}</script>
+</head><body><img src="http://localhost:4181/fake/logo.png" width="600" height="300">
+<div class="gallery"><div><img src="http://localhost:4181/fake/2021_audi_q5-pic-1-1024x768.jpeg"></div>
+<div><img data-src="http://localhost:4181/fake/2021_audi_q5-pic-2-1024x768.jpeg"></div><div><img data-src="http://localhost:4181/fake/2021_audi_q5-pic-3-1024x768.jpeg"></div></div>
+<script>window.__DATA__={"listing":{"pictures":[${[1, 2, 3, 4, 5, 6].map(n => `{"thumb":"${pic(n, "320x240")}","url":"${pic(n, "1024x768")}"}`).join(",")}]},
+"pad":"${"x".repeat(4000)}","similar":[{"url":"${pic(90, "1024x768")}"},{"url":"${pic(91, "1024x768")}"}]}</script>
+<p>VIN WA1FAAFY2M2007731 · 88 000 km</p></body></html>`;
 function serve(dir, port) {
   return new Promise(r => {
     const s = http.createServer((req, res) => {
+      if (req.url.startsWith("/fake-cg")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_CG); }
       if (req.url.startsWith("/fake-listing")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_LISTING); }
       if (req.url.startsWith("/fake/")) { res.writeHead(200, { "content-type": "image/svg+xml" }); return res.end('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="#8a8a8a"/></svg>'); }
       let f = path.join(dir, decodeURIComponent(req.url.split("?")[0]));
@@ -188,11 +201,21 @@ for (const w of [390, 1440]) for (const scheme of ["light", "dark"]) {
   report.checks.queryCleared = await p.evaluate(() => !location.hash.includes("add="));
   await p.click('#car-form [type=submit]'); await sleep(300);
   const st = await p.evaluate(() => Object.fromEntries(window.__mock.store));
-  const k = Object.keys(st).find(x => st[x].vin === "WA1FAAFY2M2004811" && st[x].seller === "Example Motors");
+  const k = Object.keys(st).find(x => st[x].vin === "WA1FAAFY2M2007731" && st[x].seller === "Example Motors");
   report.checks.importSaved = k ? JSON.stringify({ price: st[k].price, km: st[k].km, photos: st[k].photos.length, addedBy: st[k].addedBy }) : null;
   await sleep(300);
   report.checks.cardShowsPhoto = await p.evaluate(() => [...document.querySelectorAll(".car img.cphoto")].filter(i => i.complete && i.naturalWidth > 0).length);
   report.checks.heroShowsPhoto = await p.evaluate(() => !!document.querySelector(".hero-art.hasphoto img"));
+  // Same car on a CarGurus-like page: the whole gallery is read, and its photos are added to the saved car with no form.
+  const c = await browser.newPage();
+  await c.goto(MOCK + "fake-cg.html", { waitUntil: "load" });
+  const cg = await c.evaluate(code => { let u = null; window.open = x => { u = x; return null; }; (0, eval)(decodeURIComponent(code)); return u; }, href.slice("javascript:".length));
+  await c.close();
+  const got = JSON.parse(decodeURIComponent(cg.split("add=")[1])).i;
+  report.checks.galleryRead = JSON.stringify({ n: got.length, big: got.every(u => u.includes("1024x768")), similarLeftOut: !got.some(u => /pic-9\d/.test(u)), noLogo: !got.some(u => u.includes("logo")) });
+  await p.goto(cg, { waitUntil: "networkidle0" }); await sleep(600);
+  const st2 = await p.evaluate(() => Object.fromEntries(window.__mock.store));
+  report.checks.photosMerged = JSON.stringify({ photos: st2[k].photos.length, dialog: await p.evaluate(() => !!document.querySelector("#car-form")), toast: await p.evaluate(() => document.querySelector(".toast")?.textContent?.trim().slice(0, 40) || null) });
   await p.screenshot({ path: path.join(OUT, "import-1280-light.png") });
   await p.close(); }
 
