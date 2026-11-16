@@ -57,6 +57,7 @@ function open() { ui.selCar = c.value._id; ui.detail = true; }
         <span class="chip" :class="ync(car.acc)">{{ t.cars.acc }}: {{ yn(car.acc) }}</span>
         <span class="chip" :class="ync(car.cam)">{{ t.cars.cam }}: {{ yn(car.cam) }}</span>
         <span class="chip">{{ t.cars.stepsL }} {{ done }}/{{ STEPS[lang].length }}</span>
+        <span v-if="car.gone" class="chip bad" :title="car.gone">{{ t.prices.gone }}</span>
         <span v-if="car.carfax?.length" class="chip info">{{ t.carfax.chip }} ✓</span>
         <span v-if="state.viewsOn && state.views[car._id]?.total" class="chip views">{{ countLabel(state.views[car._id].total!, t.views) }}</span>
         <span v-for="f in car.flags || []" :key="f" class="chip bad">{{ (t.f.flagList as any)[f] || f }}</span>

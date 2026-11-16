@@ -8,6 +8,12 @@ const V3 = {
   ro: {
     brand: { line1: "pentru mașini", line2: "din Québec în România" },
     langL: "Limba",
+    prices: {
+      h: "Verificarea prețurilor", running: "Verific prețurile din anunțuri… {d} din {n}", last: "Ultima verificare: {d}, de {n}",
+      summary: "anunțuri citite: {k} · prețuri schimbate: {c} · dispărute: {g}", errors: "necitite: {n}", never: "Prețurile n-au fost verificate încă.",
+      now: "Verifică acum", none: "Nimic de verificat", gone: "Anunț dispărut?", doneToast: "Gata: {c} prețuri schimbate, {g} anunțuri dispărute.",
+      needExt: "Prețurile se verifică singure o dată pe zi când cineva deschide site-ul în Chrome cu extensia Import Hub.",
+    },
     carfax: {
       h: "Carfax", none: "Încă nu e niciun raport Carfax. Adaugă linkul sau încarcă PDF-ul.", linkL: "Linkul raportului Carfax", addLink: "Adaugă linkul",
       upload: "Încarcă PDF", uploading: "Se încarcă… {p}%", max: "PDF, maxim 10 MB.", opening: "Se deschide…", del: "Șterge", sure: "Sigur? Apasă din nou",
@@ -79,6 +85,12 @@ const V3 = {
   en: {
     brand: { line1: "for cars", line2: "from Québec to Romania" },
     langL: "Language",
+    prices: {
+      h: "Price check", running: "Checking prices on the listings… {d} of {n}", last: "Last check: {d}, by {n}",
+      summary: "listings read: {k} · prices changed: {c} · gone: {g}", errors: "unread: {n}", never: "Prices haven't been checked yet.",
+      now: "Check now", none: "Nothing to check", gone: "Listing gone?", doneToast: "Done: {c} prices changed, {g} listings gone.",
+      needExt: "Prices are checked by themselves once a day when someone opens the site in Chrome with the Import Hub extension.",
+    },
     carfax: {
       h: "Carfax", none: "No Carfax report yet. Add the link or upload the PDF.", linkL: "Carfax report link", addLink: "Add link",
       upload: "Upload PDF", uploading: "Uploading… {p}%", max: "PDF, up to 10 MB.", opening: "Opening…", del: "Delete", sure: "Sure? Press again",
@@ -150,6 +162,12 @@ const V3 = {
   fr: {
     brand: { line1: "pour les véhicules", line2: "du Québec vers la Roumanie" },
     langL: "Langue",
+    prices: {
+      h: "Vérification des prix", running: "Vérification des prix dans les annonces… {d} sur {n}", last: "Dernière vérification : {d}, par {n}",
+      summary: "annonces lues : {k} · prix modifiés : {c} · disparues : {g}", errors: "non lues : {n}", never: "Les prix n'ont pas encore été vérifiés.",
+      now: "Vérifier maintenant", none: "Rien à vérifier", gone: "Annonce disparue ?", doneToast: "Terminé : {c} prix modifiés, {g} annonces disparues.",
+      needExt: "Les prix sont vérifiés automatiquement une fois par jour quand quelqu'un ouvre le site dans Chrome avec l'extension Import Hub.",
+    },
     carfax: {
       h: "Carfax", none: "Pas encore de rapport Carfax. Ajoutez le lien ou téléversez le PDF.", linkL: "Lien du rapport Carfax", addLink: "Ajouter le lien",
       upload: "Téléverser le PDF", uploading: "Téléversement… {p} %", max: "PDF, 10 Mo maximum.", opening: "Ouverture…", del: "Supprimer", sure: "Sûr ? Appuyez à nouveau",

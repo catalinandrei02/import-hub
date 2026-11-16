@@ -1,7 +1,7 @@
 // Shared app state: one subscription per query, opened once after sign-in; one write at a time per document.
 import { computed, reactive } from "vue";
 import type { Backend, Connection, ErrCode, Unsub } from "./backend";
-import type { AccessRequest, Car, Contact, Member, Scan, SearchSettings, ViewDoc } from "./types";
+import type { AccessRequest, Car, Contact, Member, PriceRun, Scan, SearchSettings, ViewDoc } from "./types";
 import { DEF_COSTS, DEF_SEARCH, type Costs } from "../lib/constants";
 import { numCosts } from "../lib/costs";
 import { firebaseConfig } from "../firebase.config";
@@ -18,6 +18,7 @@ export const state = reactive({
   costs: { ...DEF_COSTS } as Costs, costsAt: "",
   search: { ...DEF_SEARCH } as SearchSettings,
   scan: null as Scan | null,
+  prices: null as PriceRun | null, pricesLoaded: false,
   views: {} as Record<string, ViewDoc>, viewsOn: false,
   me: null as Omit<Member, "_id"> | null,          // my own members/{uid} doc
   members: [] as Member[], requests: [] as AccessRequest[], // admins only
@@ -37,7 +38,7 @@ function resetData() {
   unsubs.forEach(u => u()); unsubs = [];
   adminUnsubs.forEach(u => u()); adminUnsubs = [];
   waitUnsub?.(); waitUnsub = null;
-  Object.assign(state, { cars: [], carsLoaded: false, contacts: [], contactsLoaded: false, costs: { ...DEF_COSTS }, costsAt: "", search: { ...DEF_SEARCH }, scan: null, views: {}, viewsOn: false, me: null, members: [], requests: [], request: "" });
+  Object.assign(state, { cars: [], carsLoaded: false, contacts: [], contactsLoaded: false, costs: { ...DEF_COSTS }, costsAt: "", search: { ...DEF_SEARCH }, scan: null, prices: null, pricesLoaded: false, views: {}, viewsOn: false, me: null, members: [], requests: [], request: "" });
 }
 
 function onErr(code: ErrCode) {
@@ -62,6 +63,7 @@ function subscribe(b: Backend) {
     b.watchDoc("config/costs", d => { state.costs = numCosts(d); state.costsAt = (d?.updatedAt as string) || ""; }, onErr),
     b.watchDoc("config/search", d => { state.search = { ...DEF_SEARCH, ...(d || {}) } as SearchSettings; }, onErr),
     b.watchDoc("config/scan", d => { state.scan = d as Scan | null; }, onErr),
+    b.watchDoc("config/prices", (d, cache) => { state.prices = d as PriceRun | null; if (!cache) state.pricesLoaded = true; }, () => { state.pricesLoaded = true; }),
     // My own member doc (role); admins then also watch members and access requests.
     b.watchDoc("members/" + state.user!.uid, d => { state.me = d as Member | null; watchAdmin(b); }, () => {}),
     // View counts are extra: if the rules don't allow them yet, the rest of the site keeps working.

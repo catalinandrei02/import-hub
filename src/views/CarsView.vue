@@ -15,6 +15,7 @@ import StatusBanner from "../components/StatusBanner.vue";
 import CarCard from "../components/CarCard.vue";
 import CompareTable from "../components/CompareTable.vue";
 import VinInfo from "../components/VinInfo.vue";
+import PriceCheckBar from "../components/PriceCheckBar.vue";
 
 // Opens on "All" every time (owner's choice).
 const filter = ref<"active" | "dropped" | "all">("all");
@@ -80,6 +81,7 @@ watch(() => route.query.add, takeImport);
   <div class="content solo">
     <div class="main">
       <StatusBanner />
+      <PriceCheckBar v-if="state.auth === 'ok'" />
       <div class="secrow">
          <h2 class="seclabel">{{ t.cars.h }}</h2>
         <div class="rowx">

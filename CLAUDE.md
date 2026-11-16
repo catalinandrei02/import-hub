@@ -63,6 +63,7 @@ cars/{autoId}
      contact (seller's contact person), stock, offer (our offer, CAD), dePrice (mobile.de, EUR; no longer shown or written, the Germany comparison was removed at the owner's request),
      docs: {d<group>_<item>:"YYYY-MM-DD"}   (Documents-tab checklist per car)
   -- added in v3 (optional): photos: [url, ...]  (up to 40 photo links from the listing, first = main; hotlinked, members only)
+     gone: "YYYY-MM-DD"  (the daily price check found no price on the listing; "" when it's back)
      carfax: [{id, kind:"link"|"pdf", url?, fileId?, name?, size?, addedAt, addedBy (first name)}]  (Carfax section in the details)
 
 contacts/{autoId}   name, role, phone, email, notes
@@ -88,6 +89,12 @@ config/search       enabled, frequencyDays (1|3|7), model, trims[], yearMin, yea
                     maxPrice, maxKm, region, center, radiusKm, mustAcc, must360,
                     phevBonus, dealers, privates, exclude (one dealer per line), extra, updatedAt,
                     sources[] (v2: cargurus|autohebdo|kijiji|autotrader|certified|facebook; missing → all)
+
+config/prices       (v3) the last daily price check: lastRun, by (first name), checked, errors, changes[{id,title,from,to}],
+                    gone[{id,title}]. Written by `src/lib/priceCheck.ts`, which runs through the Chrome extension when the
+                    site is open in Chrome and the last run is over 20 h old (or "Check now"): re-reads every active car
+                    (watching/contacted/offer/inspection) with a link, appends price changes to priceHistory, flags gone
+                    listings, adds photos if missing; never touches status or steps. Strip on the Cars page (PriceCheckBar.vue).
 
 config/scan         written ONLY by the scheduled task:
                     lastRun (ISO), found (number), summary (text, in the UI language of the owner — Romanian)
@@ -141,6 +148,7 @@ Create **one daily** scheduled task (cloud, no local device needed). Its prompt 
 
 ## 8. Ideas for later (not required now)
 
+- Finding *new* listings in the cloud: a paid Apify actor (`fayoussef/cargurus-listings-scraper`, documented in github.com/automationbyexperts/cargurus-scraper) returns CarGurus.ca listings with price, VIN, dealer and full-size photos, pay-per-result, needs an Apify token stored as a task secret. Option for the §6 scheduled task if the owner wants to pay; tracking saved cars stays with the free extension check.
 - CarGurus' developer APIs (cargurus.com/Cars/developers) are for dealers/partners only (appId + authToken from CarGurus; stats on their own inventory, reviews, SMS, SEM). There is no buyer-side listings or price API, so price tracking has to read the listing pages (extension in the user's Chrome, or the scheduled task).
 
 - Per-car documents checklist + file uploads (`assets` capability) for contract, B/L, Marlog invoice.

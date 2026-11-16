@@ -49,7 +49,7 @@ service cloud.firestore {
     }
     match /config/{id} {
       allow read: if isMember();
-      allow write: if isMember() && id in ['costs', 'search'];
+      allow write: if isMember() && id in ['costs', 'search', 'prices'];
     }
   }
 }

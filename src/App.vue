@@ -7,7 +7,17 @@ import CarDetail from "./components/CarDetail.vue";
 import CarDialog from "./components/CarDialog.vue";
 import ContactDialog from "./components/ContactDialog.vue";
 import LoginGate from "./components/LoginGate.vue";
-import { state } from "./data/store";
+import { state, canWrite } from "./data/store";
+import { watch } from "vue";
+import { hasExtension } from "./lib/extension";
+import { isDue, runPriceCheck } from "./lib/priceCheck";
+
+// Daily price check: starts by itself once per visit when the last one is over 20 h old and this Chrome has the extension.
+let tried = false;
+watch(() => [hasExtension.value, canWrite.value, state.carsLoaded, state.pricesLoaded], () => {
+  if (tried || !hasExtension.value || !canWrite.value || !state.carsLoaded || !state.pricesLoaded || !isDue(state.prices)) return;
+  tried = true; runPriceCheck();
+}, { immediate: true });
 </script>
 
 <template>

@@ -22,6 +22,8 @@ export interface Car {
   photos?: string[];
   /** v3: Carfax reports, as links or PDFs (PDFs live in files/{fileId}, split into chunks). */
   carfax?: CarfaxItem[];
+  /** v3: date the daily price check first found the listing gone (no price on the page); cleared when it's back. */
+  gone?: string;
   [k: string]: unknown;
 }
 
@@ -47,5 +49,12 @@ export interface ViewDoc { total?: number; byUser?: Record<string, { n?: number;
 export interface Member { _id: string; name?: string; role?: "admin" | "member"; addedAt?: string }
 /** requests/{uid}: sent automatically when someone signs in who isn't a member yet. First name only. */
 export interface AccessRequest { _id: string; name?: string; at?: string }
+
+/** config/prices: the last daily price check (run through the Chrome extension by whoever has the site open). */
+export interface PriceRun {
+  lastRun?: string; by?: string; checked?: number; errors?: number;
+  changes?: { id: string; title: string; from: number | null; to: number }[];
+  gone?: { id: string; title: string }[];
+}
 
 export interface Scan { lastRun?: string; found?: number; summary?: string }

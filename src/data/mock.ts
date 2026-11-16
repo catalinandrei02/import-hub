@@ -12,6 +12,8 @@ const SAMPLE: Record<string, Record<string, any>> = {
   "members/mock-user": { name: "Test", role: "admin", addedAt: "2026-11-01T10:00:00Z" },
   "members/SampleMemberAna0000000001": { name: "Ana", role: "member", addedAt: "2026-11-02T10:00:00Z" },
   "requests/SampleRequestLaszlo00000002": { name: "Laszlo", at: "2026-11-16T09:00:00Z" },
+  // A recent price check, so the daily check doesn't start by itself in tests (the e2e test starts it on purpose).
+  "config/prices": { lastRun: new Date().toISOString(), by: "Test", checked: 0, errors: 0, changes: [], gone: [] },
   "config/scan": { lastRun: "2026-11-15T07:00:00Z", found: 2, summary: "Exemplu: 1 mașină nouă și o scădere de preț de 500 CAD." },
 };
 

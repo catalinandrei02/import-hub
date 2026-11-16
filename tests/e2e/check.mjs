@@ -54,6 +54,7 @@ function serve(dir, port) {
   return new Promise(r => {
     const s = http.createServer((req, res) => {
       if (req.url.startsWith("/fake-cgr")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_CGR); }
+      if (req.url.startsWith("/fake-gone")) { res.writeHead(200, { "content-type": "text/html" }); return res.end("<!doctype html><title>Listing not found - CarGurus</title><p>This listing is no longer available.</p>"); }
       if (req.url.startsWith("/fake-at")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_AT); }
       if (req.url.startsWith("/fake-cg")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_CG); }
       if (req.url.startsWith("/fake-listing")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_LISTING); }
@@ -366,6 +367,24 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
       + " | photos " + document.getElementById("d-photos").value.split("\n").filter(Boolean).length + " " + [...new Set(document.getElementById("d-photos").value.split("\n").map(u => (u.match(/(\d+x\d+)\.\w+$/) || [, "?"])[1]))].join("/"));
     await p.keyboard.press("Escape"); await sleep(200);
   }
+  // Daily price check through the extension: one price changed (CarGurus shape), one listing gone; history appended.
+  await p.goto(MOCK + "#/cars", { waitUntil: "networkidle0" }); await sleep(500);
+  await p.evaluate(base => {
+    const st = window.__mock.store;
+    for (const [k, v] of st) if (k.startsWith("cars/") && ["watching", "contacted", "offer", "inspection"].includes(v.status || "watching")) st.set(k, { ...v, url: base + "fake-gone.html?" + k });
+    const s3 = st.get("cars/s3"); st.set("cars/s3", { ...s3, url: base + "fake-cgr.html", price: 34995, status: "watching" });
+    window.__mock.emit();
+  }, MOCK);
+  await sleep(300);
+  const before = await p.evaluate(() => (window.__mock.store.get("cars/s3").priceHistory || []).length);
+  await p.click('[data-act="check-prices"]');
+  await p.waitForFunction(() => { const c = window.__mock.store.get("config/prices"); return c && c.checked > 0 && !document.querySelector(".pb-bar"); }, { timeout: 120000 }).catch(() => {});
+  await sleep(400);
+  const pr = await p.evaluate(() => ({ c: window.__mock.store.get("config/prices"), s3: window.__mock.store.get("cars/s3"), gone: [...window.__mock.store].filter(([k, v]) => k.startsWith("cars/") && v.gone).length }));
+  report.checks.priceCheck = JSON.stringify({ checked: pr.c?.checked, changes: (pr.c?.changes || []).map(x => x.from + "→" + x.to), gone: pr.c?.gone?.length, carsMarkedGone: pr.gone, s3: pr.s3.price, historyAdded: (pr.s3.priceHistory || []).length - before, statusKept: pr.s3.status });
+  report.checks.priceBar = await p.$eval('[data-sec="prices"]', e => e.innerText.replace(/\s+/g, " ").slice(0, 120)).catch(() => null);
+  report.checks.goneChip = await p.evaluate(() => document.querySelectorAll(".car .chip.bad").length > 0);
+  await p.screenshot({ path: path.join(OUT, "pricecheck-1440.png") });
   await eb.close(); }
 { const p = await open(MOCK, "cars", 1440, "dark");
   await p.click('[data-act="details"][data-id="s2"]'); await sleep(300);
