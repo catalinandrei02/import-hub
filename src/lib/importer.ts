@@ -27,6 +27,9 @@ export function cleanNum(x: unknown): number | null {
   return s ? Number(s) : null;
 }
 
+/** "PROGRESSIV QUATTRO 19 PCS" → "Progressiv" (Audi Canada trim names), when there is no VIN to decode. */
+const trimFrom = (s: string) => { const m = s.match(/\b(progressiv|technik|komfort)\b/i); return m ? m[1][0].toUpperCase() + m[1].slice(1).toLowerCase() : ""; };
+
 /** Turns the bookmark's payload into a prefilled car (not saved yet). */
 export function parseImport(raw: string): Partial<Car> | null {
   let d: Partial<ListingData>;
@@ -41,7 +44,8 @@ export function parseImport(raw: string): Partial<Car> | null {
   const photos = (Array.isArray(d.i) ? d.i : []).map(u => str(u, 600)).filter(u => /^https?:\/\//i.test(u)).slice(0, MAX_PHOTOS);
   return {
     title: model, year: year && year > 1990 && year < 2100 ? year : null, vin: vin.length === 17 ? vin : "",
-    trim: dv.err || dv.trim === "?" ? "" : dv.trim, price: cleanNum(d.p), km: cleanNum(d.k),
+    trim: dv.err || dv.trim === "?" ? trimFrom(str(d.tr) + " " + str(d.t)) : dv.trim, price: cleanNum(d.p), km: cleanNum(d.k),
     url: /^https?:\/\//i.test(str(d.u, 600)) ? str(d.u, 600) : "", seller: str(d.s, 80), location: str(d.l, 60), photos,
+    ...(d.st === "private" || d.st === "dealer" ? { sellerType: d.st } : {}),
   };
 }

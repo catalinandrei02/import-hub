@@ -84,3 +84,14 @@ describe("listing import", () => {
   });
   it("rejects broken payloads", () => expect(parseImport("{not json")).toBeNull());
 });
+
+describe("parseImport: site data", () => {
+  it("takes seller type and the trim from the version text when there is no VIN", () => {
+    const c = parseImport(JSON.stringify({ u: "https://www.autotrader.ca/offers/x", t: "2023 Audi Q5 45 TFSI", p: "$ 36,895", k: "28669", y: "2023", v: "", s: "Dealer", l: "Laval", st: "dealer", tr: "PROGRESSIV QUATTRO 19 PCS", i: [] }))!;
+    expect([c.title, c.year, c.trim, c.price, c.km, c.sellerType]).toEqual(["Audi Q5", 2023, "Progressiv", 36895, 28669, "dealer"]);
+  });
+  it("keeps up to 40 photos", () => {
+    const c = parseImport(JSON.stringify({ i: Array.from({ length: 45 }, (_, k) => `https://x.test/${k}.jpg`) }))!;
+    expect(c.photos!.length).toBe(40);
+  });
+});

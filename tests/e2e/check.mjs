@@ -31,9 +31,30 @@ const FAKE_CG = `<!doctype html><html><head><title>Used 2021 Audi Q5 for sale in
 <script>window.__DATA__={"listing":{"pictures":[${Array.from({ length: 28 }, (_, k) => k + 1).map(n => `{"thumb":"${pic(n, "320x240")}","url":"${pic(n, "1024x768")}"}`).join(",")}]},
 "pad":"${"x".repeat(20000)}","similar":[{"url":"${pic(90, "1024x768")}"},{"url":"${pic(91, "1024x768")}"}]}</script>
 <p>VIN WA1FAAFY2M2007731 · 88 000 km</p></body></html>`;
+// Shaped like the real pages (checked Nov 2026): CarGurus keeps everything in window.__remixContext (no JSON-LD),
+// AutoTrader.ca in __NEXT_DATA__ with photos at 1280 px that also exist at 1920 px. Both show a misleading "100 km".
+const remix = { state: { loaderData: { "routes/($intl).details.$listingId": {
+  data: { listing: { vin: { value: "WA1EAAFYXN2102045" }, mileage: { value: 61250 } }, seller: { name: "Gurus Audi", sellerType: "DEALER", address: { city: "Brossard" } } },
+  leadForm: { listing: { price: 33995, yearMakeModelTrim: "2022 Audi Q5 Progressiv 45 TFSI quattro", city: "Brossard" } },
+  listingImages: Array.from({ length: 32 }, (_, k) => ({ url: `http://localhost:4181/fake/2022_audi_q5-pic-${k + 1}-1024x768.jpeg`, width: 960, height: 721 })),
+} } } };
+const FAKE_CGR = `<!doctype html><html><head><title>2022 Audi Q5 Progressiv - $33,995 - CarGurus</title>
+<meta property="og:image" content="http://localhost:4181/fake/2022_audi_q5-pic-1-1024x768.jpeg"></head>
+<body><p>Within 100 km of you</p><img src="http://localhost:4181/fake/2022_audi_q5-pic-1-296x222.jpeg">
+<script>window.__remixContext = ${JSON.stringify(remix)};</script></body></html>`;
+const next = { props: { pageProps: { listingDetails: {
+  title: "2023 Audi Q5 45 TFSI", prices: { public: { price: "$ 36,895" } }, location: { city: "LAVAL" },
+  vehicle: { mileageInKmRaw: 28669, modelYear: 2023, make: "Audi", model: "Q5", modelVersionInput: "PROGRESSIV QUATTRO 19 PCS" },
+  seller: { isDealer: true, companyName: "Example Audi Laval" },
+  images: Array.from({ length: 26 }, (_, k) => `http://localhost:4181/fake/at-${k + 1}/1280x960.webp`),
+} } } };
+const FAKE_AT = `<!doctype html><html><head><title>2023 Audi Q5 | $ 36,895 | 28,669 km | AutoTrader.ca</title></head>
+<body><p>Free delivery within 100 km</p><script id="__NEXT_DATA__" type="application/json">${JSON.stringify(next)}</script></body></html>`;
 function serve(dir, port) {
   return new Promise(r => {
     const s = http.createServer((req, res) => {
+      if (req.url.startsWith("/fake-cgr")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_CGR); }
+      if (req.url.startsWith("/fake-at")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_AT); }
       if (req.url.startsWith("/fake-cg")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_CG); }
       if (req.url.startsWith("/fake-listing")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_LISTING); }
       if (req.url.startsWith("/fake/")) { res.writeHead(200, { "content-type": "image/svg+xml" }); return res.end('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="#8a8a8a"/></svg>'); }
@@ -254,6 +275,15 @@ for (const w of [390, 1440]) for (const scheme of ["light", "dark"]) {
   await p.screenshot({ path: path.join(OUT, "linkfill-1440.png") });
   await p.click('[data-act="open-dup"]'); await sleep(300);
   report.checks.dupOpens = await p.evaluate(() => !!document.querySelector("#side") && !document.querySelector("#car-form"));
+  // Real-site shapes: CarGurus (Remix) and AutoTrader.ca (Next.js), each through the link box.
+  for (const [name, page] of [["cargurus", "fake-cgr.html"], ["autotrader", "fake-at.html"]]) {
+    await p.keyboard.press("Escape"); await sleep(300);
+    await setVal(p, "#hero-vin", MOCK + page); await p.click(".pillform .cta");
+    await p.waitForFunction(() => document.getElementById("d-price")?.value, { timeout: 45000 }).catch(() => {});
+    report.checks["fill_" + name] = await p.evaluate(() => ["d-title", "d-vin", "d-year", "d-trim", "d-price", "d-km", "d-seller", "d-sellerType", "d-location"].map(id => document.getElementById(id)?.value).join(" | ")
+      + " | photos " + document.getElementById("d-photos").value.split("\n").filter(Boolean).length + " " + [...new Set(document.getElementById("d-photos").value.split("\n").map(u => (u.match(/(\d+x\d+)\.\w+$/) || [, "?"])[1]))].join("/"));
+    await p.keyboard.press("Escape"); await sleep(200);
+  }
   await eb.close(); }
 { const p = await open(MOCK, "cars", 1440, "dark");
   await p.click('[data-act="details"][data-id="s2"]'); await sleep(300);

@@ -71,15 +71,45 @@
   const near = text.match(/(?:VIN|NIV|Vehicle Identification)[^A-Z0-9]{0,12}([A-HJ-NPR-Z0-9]{17})/i);
   const vin = String(v.vehicleIdentificationNumber || (near && near[1]) || (text.match(/\bWA1[A-HJ-NPR-Z0-9]{14}\b/) || [])[0] || (text.match(vinRe) || [])[1] || "").toUpperCase();
   const odo = v.mileageFromOdometer || {};
-  const kmText = text.match(/([\d][\d\s.,]{2,9})\s*(km|kilom)/i);
+  // km: next to a "Mileage" label, else in the page title (sites put it there), else the first "… km" in the text.
+  const kmText = text.match(/(?:mileage|kilom[eé]trage|odometer|odom[eè]tre)[^\d]{0,30}(\d[\d\s.,]{0,9})\s*km/i)
+    || String(doc.title).match(/(\d[\d\s.,]{2,9})\s*km/i) || text.match(/(\d[\d\s.,]{2,9})\s*(?:km|kilom)/i);
   const title = String(v.name || meta("og:title") || doc.title || "").trim();
   const year = String(v.vehicleModelDate || v.modelDate || v.productionDate || (title.match(/\b(19|20)\d{2}\b/) || [""])[0]);
   const seller = offer.seller || v.seller || {};
   const addr = (seller.address && (seller.address.addressLocality || seller.address.addressRegion)) || "";
+  // Sites whose own page data is better than anything above (checked on real listings, Nov 2026).
+  const site      = {};
+  const json = (start        ) => { const sc = Array.from(doc.querySelectorAll("script:not([src])")).find(x => (x.textContent || "").startsWith(start)); if (!sc) return null; try { return JSON.parse((sc.textContent || "").slice(start.length).replace(/^\s*=\s*/, "").replace(/;\s*$/, "")); } catch { return null; } };
+  const titleCase = (x     ) => String(x || "").toLowerCase().replace(/(^|[\s-])(\S)/g, (m        ) => m.toUpperCase());
+  try { // CarGurus (Remix): listingImages has every photo at its largest size (1024x768)
+    const ctx      = (window       ).__remixContext || json("window.__remixContext");
+    const rd      = Object.values((ctx && ctx.state && ctx.state.loaderData) || {}).find((x     ) => x && x.listingImages && x.data && x.data.listing);
+    if (rd) {
+      const L = rd.data.listing, lf = (rd.leadForm && rd.leadForm.listing) || {}, sl = rd.data.seller || {};
+      Object.assign(site, { t: lf.yearMakeModelTrim || rd.listingTitle, p: lf.price, k: (L.mileage && L.mileage.value) || lf.mileage, v: L.vin && L.vin.value,
+        s: sl.name, l: (sl.address && sl.address.city) || lf.city, st: /priv/i.test(String(sl.sellerType || "")) ? "private" : sl.name ? "dealer" : "",
+        i: rd.listingImages.map((x     ) => x && x.url).filter(Boolean) });
+      site.y = (String(site.t || "").match(/\b(19|20)\d{2}\b/) || [""])[0];
+    }
+  } catch { /* page changed: fall back to the generic reading */ }
+  try { // AutoTrader.ca (Next.js): listingDetails.images, served up to 1920 px
+    const nd      = JSON.parse((doc.getElementById("__NEXT_DATA__") || {}       ).textContent || "null");
+    const L      = nd && nd.props && nd.props.pageProps && nd.props.pageProps.listingDetails;
+    if (L && Array.isArray(L.images) && L.images.length) {
+      const ve = L.vehicle || {}, sl = L.seller || {};
+      Object.assign(site, { t: L.title || [ve.modelYear, ve.make, ve.model, ve.modelVersionInput].filter(Boolean).join(" "), p: (L.prices && L.prices.public && L.prices.public.price) || (L.price && L.price.priceFormatted),
+        k: ve.mileageInKmRaw, y: ve.modelYear, tr: ve.modelVersionInput, v: ve.vin, s: sl.companyName || sl.contactName, l: titleCase(L.location && L.location.city),
+        st: sl.isDealer === false ? "private" : "dealer", i: L.images.map((u     ) => String(u).replace(/\d{3,4}x\d{3,4}(\.\w+)$/, "1920x1440$1")) });
+    }
+  } catch { /* fall back */ }
+  const pickS = (a     , b     ) => String(a != null && a !== "" ? a : b != null ? b : "");
+  const svin = String(site.v || "").toUpperCase();
   const data = {
-    u: location.href.split("#")[0], t: title.slice(0, 120), p: String(offer.price || v.price || meta("product:price:amount") || ""),
-    k: String(odo.value || (kmText ? kmText[1] : "")), y: year, v: vin.length === 17 ? vin : "",
-    s: String(seller.name || "").slice(0, 80), l: String(addr).slice(0, 60), i: imgs.slice(0, 40),
+    u: location.href.split("#")[0], t: pickS(site.t, title).slice(0, 120), p: pickS(site.p, offer.price || v.price || meta("product:price:amount") || ""),
+    k: pickS(site.k, odo.value || (kmText ? kmText[1] : "")), y: pickS(site.y, year), v: svin.length === 17 ? svin : vin.length === 17 ? vin : "",
+    s: pickS(site.s, seller.name || "").slice(0, 80), l: pickS(site.l, addr).slice(0, 60), st: String(site.st || ""), tr: String(site.tr || "").slice(0, 80),
+    i: (site.i && site.i.length ? site.i : imgs).slice(0, 40),
   };
   if (!base) return data;
   window.open(base + "#/cars?add=" + encodeURIComponent(JSON.stringify(data)), "_blank");

@@ -53,6 +53,7 @@ async function fillFromLink() {
   const put = (k: "title" | "vin" | "year" | "trim" | "price" | "km" | "seller" | "location", v: unknown) => { if (v != null && v !== "") f[k] = String(v); };
   put("title", c.title); put("vin", c.vin); put("year", c.year); put("trim", c.trim); put("price", c.price); put("km", c.km); put("seller", c.seller); put("location", c.location);
   if (c.photos?.length) f.photos = c.photos.join("\n");
+  if (c.sellerType) { f.sellerType = c.sellerType; onSellerType(); }
   onVin();
   dup.value = findSaved(state.cars, { vin: c.vin, url });
   fillState.value = "done";
