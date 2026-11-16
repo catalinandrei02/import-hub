@@ -2,7 +2,7 @@
 import AIcon from "../components/AIcon.vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { parseImport } from "../lib/importer";
+import { MAX_PHOTOS, findSaved, parseImport } from "../lib/importer";
 import { canWrite, queue, state } from "../data/store";
 import { carLanded } from "../lib/costs";
 import { decodeVin } from "../lib/vin";
@@ -30,13 +30,15 @@ const cmpCars = computed(() => ui.cmp.map(id => state.cars.find(c => c._id === i
 const loading = computed(() => !state.carsLoaded && (state.data === "loading" || state.data === "stale"));
 
 function addFromVin() {
+  const v = vin.value.trim();
+  // A listing link: open the form with it and let it fill itself in (Chrome extension).
+  if (/^https?:\/\//i.test(v)) { ui.dialog = { kind: "car", car: { url: v }, autoFill: true }; vin.value = ""; return; }
   const d = decodeVin(vin.value);
   ui.dialog = { kind: "car", car: { vin: vin.value.toUpperCase().replace(/\s/g, ""), ...(d.err ? {} : { trim: d.trim === "?" ? "" : d.trim, year: d.year === "?" ? null : d.year }) } as any };
 }
 watch(() => ui.cmp.length, n => { if (n < 2) cmpOpen.value = false; });
 // Arriving from the "Add to Import Hub" bookmark: #/cars?add=<listing data>
 const route = useRoute(), router = useRouter();
-const sameUrl = (a?: string, b?: string) => !!a && !!b && a.split(/[?#]/)[0].replace(/\/$/, "").toLowerCase() === b.split(/[?#]/)[0].replace(/\/$/, "").toLowerCase();
 let pending = "";
 function takeImport() {
   const raw = route.query.add;
@@ -46,11 +48,11 @@ function takeImport() {
   if (state.auth === "loading" || (state.auth === "ok" && !state.carsLoaded)) return;
   const car = parseImport(pending); pending = "";
   if (!car) return;
-  const old = state.cars.find(c => (car.vin && c.vin === car.vin) || sameUrl(c.url, car.url));
+  const old = findSaved(state.cars, car);
   if (!old) { ui.dialog = { kind: "car", car: { status: "watching", sellerType: "dealer", ...car }, imported: true }; return; }
   // Already saved: add the listing's photos on their own. A new price still goes through the form (price history).
   const have = old.photos || [];
-  const photos = [...have, ...(car.photos || []).filter(u => !have.includes(u))].slice(0, 12);
+  const photos = [...have, ...(car.photos || []).filter(u => !have.includes(u))].slice(0, MAX_PHOTOS);
   const added = photos.length - have.length;
   ui.selCar = old._id;
   if (car.price && old.price !== car.price) { ui.dialog = { kind: "car", car: { ...old, photos, price: car.price }, imported: true }; return; }
@@ -70,10 +72,10 @@ watch(() => route.query.add, takeImport);
     </template>
     <form class="pillform" novalidate autocomplete="off" @submit.prevent="addFromVin">
       <label class="sr-only" for="hero-vin">{{ t.hero.vinL }}</label>
-      <input id="hero-vin" v-model="vin" maxlength="17" spellcheck="false" :placeholder="t.hero.vinPh">
+      <input id="hero-vin" v-model="vin" maxlength="600" spellcheck="false" :placeholder="t.hero.vinPh">
       <button class="cta" type="submit" :disabled="!canWrite">{{ t.cars.add }} <AIcon name="forward" /></button>
     </form>
-    <div v-if="vin.trim()" class="vinout"><VinInfo :vin="vin" center /></div>
+    <div v-if="vin.trim() && !/^https?:/i.test(vin.trim())" class="vinout"><VinInfo :vin="vin" center /></div>
   </HeroSection>
 
   <div class="content solo">

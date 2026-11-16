@@ -27,9 +27,9 @@ const FAKE_CG = `<!doctype html><html><head><title>Used 2021 Audi Q5 for sale in
 <script type="application/ld+json">{"@type":"Car","name":"2021 Audi Q5 Technik","vehicleIdentificationNumber":"WA1FAAFY2M2007731","offers":{"price":"29750"}}</script>
 </head><body><img src="http://localhost:4181/fake/logo.png" width="600" height="300">
 <div class="gallery"><div><img src="http://localhost:4181/fake/2021_audi_q5-pic-1-1024x768.jpeg"></div>
-<div><img data-src="http://localhost:4181/fake/2021_audi_q5-pic-2-1024x768.jpeg"></div><div><img data-src="http://localhost:4181/fake/2021_audi_q5-pic-3-1024x768.jpeg"></div></div>
-<script>window.__DATA__={"listing":{"pictures":[${[1, 2, 3, 4, 5, 6].map(n => `{"thumb":"${pic(n, "320x240")}","url":"${pic(n, "1024x768")}"}`).join(",")}]},
-"pad":"${"x".repeat(4000)}","similar":[{"url":"${pic(90, "1024x768")}"},{"url":"${pic(91, "1024x768")}"}]}</script>
+<div><img data-src="http://localhost:4181/fake/2021_audi_q5-pic-2-152x114.jpeg"></div><div><img data-src="http://localhost:4181/fake/2021_audi_q5-pic-3-152x114.jpeg"></div></div>
+<script>window.__DATA__={"listing":{"pictures":[${Array.from({ length: 28 }, (_, k) => k + 1).map(n => `{"thumb":"${pic(n, "320x240")}","url":"${pic(n, "1024x768")}"}`).join(",")}]},
+"pad":"${"x".repeat(20000)}","similar":[{"url":"${pic(90, "1024x768")}"},{"url":"${pic(91, "1024x768")}"}]}</script>
 <p>VIN WA1FAAFY2M2007731 · 88 000 km</p></body></html>`;
 function serve(dir, port) {
   return new Promise(r => {
@@ -147,7 +147,7 @@ for (const w of [390, 1440]) for (const scheme of ["light", "dark"]) {
   report.checks.added = !!newKey && s[newKey].seller === "Test dealer" && s[newKey].gst === false && s[newKey].priceHistory.length === 1 && s[newKey].addedBy === "manual";
   await p.click('[data-act="edit-car"][data-id="s3"]'); await sleep(200); await setVal(p, "#d-price", "26999");
   await p.click('#car-form [type=submit]'); await sleep(250);
-  s = await store(); report.checks.priceAppended = JSON.stringify(s["cars/s3"].priceHistory) + " dePrice=" + s["cars/s3"].dePrice;
+  s = await store(); report.checks.priceAppended = JSON.stringify(s["cars/s3"].priceHistory);
   const newId = newKey.split("/")[1];
   await p.click(`[data-act="edit-car"][data-id="${newId}"]`); await sleep(200);
   await p.click('[data-act="del-car"]'); await sleep(100); const still = !!(await store())[newKey];
@@ -243,10 +243,25 @@ for (const w of [390, 1440]) for (const scheme of ["light", "dark"]) {
   report.checks.inlineShow = await p.evaluate(() => !!document.querySelector("#side .show.inline .show-main img") && !document.querySelector(".show.stage"));
   report.checks.inlineOverflow = await p.evaluate(() => document.getElementById("side").scrollWidth <= document.getElementById("side").clientWidth + 1);
   await p.screenshot({ path: path.join(OUT, "slideshow-390.png") });
+  // "Just give it the link": hero box takes a link, the form fills itself in through the extension.
+  await p.setViewport({ width: 1440, height: 900 }); await p.keyboard.press("Escape"); await sleep(300);
+  await setVal(p, "#hero-vin", MOCK + "fake-cg.html?utm=x"); await p.click(".pillform .cta");
+  await p.waitForFunction(() => document.getElementById("d-price")?.value, { timeout: 45000 }).catch(() => {});
+  report.checks.linkFill = await p.evaluate(() => ["d-vin", "d-year", "d-trim", "d-price", "d-km"].map(id => document.getElementById(id)?.value).join(" | ") + " | photos " + document.getElementById("d-photos").value.split("\n").filter(Boolean).length);
+  report.checks.linkMsg = await p.$eval(".fillmsg", e => e.className + ": " + e.textContent.trim().slice(0, 30)).catch(() => null);
+  report.checks.linkDup = await p.evaluate(() => !!document.querySelector(".dupbanner")); // s3 already has this link
+  report.checks.noGermany = await p.evaluate(() => !document.getElementById("d-dePrice"));
+  await p.screenshot({ path: path.join(OUT, "linkfill-1440.png") });
+  await p.click('[data-act="open-dup"]'); await sleep(300);
+  report.checks.dupOpens = await p.evaluate(() => !!document.querySelector("#side") && !document.querySelector("#car-form"));
   await eb.close(); }
 { const p = await open(MOCK, "cars", 1440, "dark");
   await p.click('[data-act="details"][data-id="s2"]'); await sleep(300);
   report.checks.noExtOffer = await p.evaluate(() => !!document.querySelector('.show.stage a[href$="import-hub-extension.zip"]'));
+  await p.keyboard.press("Escape"); await sleep(200);
+  await p.click('[data-act="add-car"]'); await sleep(200);
+  report.checks.addNoExt = await p.evaluate(() => [!!document.getElementById("d-link"), !!document.querySelector('#car-form a[href$="import-hub-extension.zip"]'), !!document.querySelector("#car-form .impbox")].join(","));
+  await p.screenshot({ path: path.join(OUT, "add-noext-1440-dark.png") });
   await p.screenshot({ path: path.join(OUT, "slideshow-noext-1440-dark.png") });
   await p.close(); }
 

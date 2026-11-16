@@ -525,3 +525,13 @@ dialog { box-shadow: none }
 .steps-ol { margin: 0; padding-left: 1.25rem; display: grid; gap: 4px }
 @media (prefers-reduced-motion: no-preference) { .show-main img { animation: show-in .35s ease-out } }
 @keyframes show-in { from { opacity: 0 } to { opacity: 1 } }
+
+/* Add-car form: "paste the link" box */
+.linkbox { display: grid; gap: 10px; padding: 16px; background: var(--soft) }
+.linkbox .lab { display: grid; gap: 2px } .linkbox .lab .t { font-weight: 700 }
+.linkrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--tile); align-items: stretch }
+.linkrow .inp { background: var(--bg) }
+.fillmsg { margin: 0 } .fillmsg.done { color: var(--ink) } .fillmsg.fail { color: var(--err) }
+.linkbox .impbox { margin: 0 }
+.dupbanner { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between }
+.linkbox > a.btn { justify-self: start }

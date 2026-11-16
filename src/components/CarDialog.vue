@@ -11,8 +11,11 @@ import { t } from "../i18n";
 import { toast, ui } from "../ui";
 import VinInfo from "./VinInfo.vue";
 import ImportBookmark from "./ImportBookmark.vue";
+import { hasExtension, readWithExtension } from "../lib/extension";
+import { MAX_PHOTOS, findSaved, parseImport } from "../lib/importer";
+import { state } from "../data/store";
 
-const props = defineProps<{ car: Partial<Car> | null; imported?: boolean }>();
+const props = defineProps<{ car: Partial<Car> | null; imported?: boolean; autoFill?: boolean }>();
 const dlg = ref<HTMLDialogElement | null>(null);
 const old = props.car || {};
 const isNew = !old._id;
@@ -20,19 +23,42 @@ const str = (v: unknown) => (v == null ? "" : String(v));
 const f = reactive({
   title: str(old.title || "Audi Q5"), vin: str(old.vin), year: str(old.year), trim: str(old.trim), km: str(old.km), url: str(old.url),
   seller: str(old.seller), sellerType: old.sellerType || "dealer", contact: str(old.contact), stock: str(old.stock), location: str(old.location),
-  status: old.status || "watching", price: str(old.price), offer: str(old.offer), dePrice: str(old.dePrice),
+  status: old.status || "watching", price: str(old.price), offer: str(old.offer),
   gst: carGst({ gst: old.gst, sellerType: old.sellerType || "dealer" }), gstTouched: typeof old.gst === "boolean",
   acc: old.acc || "", cam: old.cam || "", flags: [...(old.flags || [])] as string[], notes: str(old.notes),
   photos: (old.photos || []).join("\n"),
 });
 const armed = ref(false);
-const photoList = computed(() => f.photos.split(/\s+/).filter(u => /^https?:\/\//i.test(u)).slice(0, 12));
+const photoList = computed(() => f.photos.split(/\s+/).filter(u => /^https?:\/\//i.test(u)).slice(0, MAX_PHOTOS));
 const busy = ref(false);
 const F = computed(() => t.value.f);
 function onVin() {
   const d = decodeVin(f.vin);
   if (!d.err) { if (!f.trim && d.trim !== "?") f.trim = d.trim; if (!f.year && d.year !== "?") f.year = String(d.year); }
 }
+// "Just give it the link": the Chrome extension reads the listing in the user's Chrome and fills the form.
+const isLink = (u: string) => /^https?:\/\/\S+\.\S+/i.test(u.trim());
+const fillState = ref<"" | "busy" | "done" | "fail" | "noext">("");
+const dup = ref<Car | undefined>(isNew ? findSaved(state.cars, { url: old.url }) : undefined);
+const base = import.meta.env.BASE_URL;
+async function fillFromLink() {
+  const url = f.url.trim();
+  if (!isLink(url) || fillState.value === "busy") return;
+  dup.value = findSaved(state.cars, { url });
+  if (!hasExtension.value) { fillState.value = "noext"; return; }
+  fillState.value = "busy";
+  const d = await readWithExtension(url);
+  const c = d ? parseImport(JSON.stringify(d)) : null;
+  if (!c || (!c.price && !c.vin && !c.photos?.length)) { fillState.value = "fail"; return; }
+  const put = (k: "title" | "vin" | "year" | "trim" | "price" | "km" | "seller" | "location", v: unknown) => { if (v != null && v !== "") f[k] = String(v); };
+  put("title", c.title); put("vin", c.vin); put("year", c.year); put("trim", c.trim); put("price", c.price); put("km", c.km); put("seller", c.seller); put("location", c.location);
+  if (c.photos?.length) f.photos = c.photos.join("\n");
+  onVin();
+  dup.value = findSaved(state.cars, { vin: c.vin, url });
+  fillState.value = "done";
+}
+const onPaste = () => setTimeout(() => { if (isLink(f.url)) fillFromLink(); });
+function openDup() { if (!dup.value) return; ui.selCar = dup.value._id; ui.detail = true; ui.dialog = null; }
 function onSellerType() { if (!f.gstTouched) f.gst = f.sellerType === "dealer"; }
 async function save() {
   if (!canWrite.value || busy.value) return;
@@ -42,9 +68,9 @@ async function save() {
   for (const [k, v] of Object.entries(old)) if (k !== "_id") base[k] = v;
   const data: Record<string, any> = Object.assign(base, {
     title: f.title || "Audi Q5", year: parseNum(f.year), trim: f.trim, price, km: parseNum(f.km), status: f.status, seller: f.seller,
-    sellerType: f.sellerType, contact: f.contact, stock: f.stock, location: f.location, offer: parseNum(f.offer), dePrice: parseNum(f.dePrice),
+    sellerType: f.sellerType, contact: f.contact, stock: f.stock, location: f.location, offer: parseNum(f.offer),
     gst: f.gst, acc: f.acc, cam: f.cam, vin: f.vin.toUpperCase().replace(/\s/g, ""), url: f.url, flags: f.flags, notes: f.notes, updatedAt: now,
-    photos: f.photos.split(/\s+/).filter(u => /^https?:\/\//i.test(u)).slice(0, 12),
+    photos: f.photos.split(/\s+/).filter(u => /^https?:\/\//i.test(u)).slice(0, MAX_PHOTOS),
   });
   // Price changes are appended to the history, never rewritten.
   const h = Array.isArray(old.priceHistory) ? [...old.priceHistory] : [];
@@ -67,7 +93,7 @@ async function del() {
     ui.cmp = ui.cmp.filter(x => x !== id); ui.dialog = null;
   } catch { toast(t.value.c.error); }
 }
-onMounted(() => { dlg.value?.showModal(); onVin(); });
+onMounted(() => { dlg.value?.showModal(); onVin(); if (props.autoFill) fillFromLink(); });
 </script>
 
 <template>
@@ -76,7 +102,20 @@ onMounted(() => { dlg.value?.showModal(); onVin(); });
       <div class="spread"><h2>{{ isNew ? t.cars.add : t.cars.edit }}</h2>
         <button class="closex" type="button" :aria-label="t.c.close" @click="ui.dialog = null"><AIcon name="cancel" /></button></div>
       <div v-if="imported" class="banner"><span class="msg"><span>{{ t.imp.got }}</span></span></div>
-      <ImportBookmark v-else-if="isNew" />
+      <section v-else-if="isNew" class="linkbox">
+        <div class="lab"><label class="t" for="d-link">{{ t.imp.linkL }}</label><small>{{ t.imp.linkH }}</small></div>
+        <div class="linkrow">
+          <div class="inp txt"><input id="d-link" v-model="f.url" type="url" inputmode="url" spellcheck="false" placeholder="https://www.cargurus.ca/…" @paste="onPaste" @keydown.enter.prevent="fillFromLink"></div>
+          <button class="btn primary" type="button" data-act="fill" :disabled="!isLink(f.url) || fillState === 'busy'" @click="fillFromLink">{{ t.imp.fill }}</button>
+        </div>
+        <p v-if="fillState" class="note fillmsg" :class="fillState" role="status">{{ { busy: t.imp.filling, done: t.imp.filled, fail: t.imp.fillFail, noext: t.imp.needExt }[fillState] }}</p>
+        <template v-if="!hasExtension">
+          <p v-if="fillState !== 'noext'" class="note">{{ t.imp.needExt }}</p>
+          <a class="btn" :href="base + 'import-hub-extension.zip'" download><AIcon name="download" :size="20" />{{ t.show.extDl }}</a>
+          <ImportBookmark />
+        </template>
+      </section>
+      <div v-if="dup" class="banner dupbanner"><span class="msg"><span>{{ t.imp.dup }}</span></span><button class="btn" type="button" data-act="open-dup" @click="openDup">{{ t.imp.openDup }}</button></div>
       <div class="form">
         <section class="group"><h3 class="label">{{ F.gCar }}</h3>
           <div class="row full"><div class="lab"><label for="d-title">{{ F.title }}</label></div><div class="inp txt"><input id="d-title" v-model="f.title"></div></div>
@@ -84,7 +123,7 @@ onMounted(() => { dlg.value?.showModal(); onVin(); });
           <div class="row"><div class="lab"><label for="d-year">{{ F.year }}</label></div><div class="inp"><input id="d-year" v-model="f.year" inputmode="numeric"></div></div>
           <div class="row full"><div class="lab"><label for="d-trim">{{ F.trim }}</label></div><div class="inp txt"><input id="d-trim" v-model="f.trim"></div></div>
           <div class="row"><div class="lab"><label for="d-km">{{ F.km }}</label></div><div class="inp"><input id="d-km" v-model="f.km" inputmode="numeric"><span class="u">KM</span></div></div>
-          <div class="row full"><div class="lab"><label for="d-url">{{ F.url }}</label></div><div class="inp txt"><input id="d-url" v-model="f.url" type="url"></div></div>
+          <div v-if="!isNew || imported" class="row full"><div class="lab"><label for="d-url">{{ F.url }}</label></div><div class="inp txt"><input id="d-url" v-model="f.url" type="url"></div></div>
         </section>
         <section class="group"><h3 class="label">{{ F.gSeller }}</h3>
           <div class="row full"><div class="lab"><label for="d-seller">{{ F.seller }}</label></div><div class="inp txt"><input id="d-seller" v-model="f.seller"></div></div>
@@ -97,7 +136,6 @@ onMounted(() => { dlg.value?.showModal(); onVin(); });
         <section class="group"><h3 class="label">{{ F.gPrice }}</h3>
           <div class="row"><div class="lab"><label for="d-price">{{ F.price.replace(/\s*\(.*\)/, "") }}</label></div><div class="inp"><input id="d-price" v-model="f.price" inputmode="decimal"><span class="u">CAD</span></div></div>
           <div class="row"><div class="lab"><label for="d-offer">{{ F.offer }}</label></div><div class="inp"><input id="d-offer" v-model="f.offer" inputmode="decimal"><span class="u">CAD</span></div></div>
-          <div class="row"><div class="lab"><label for="d-dePrice">{{ F.dePrice }}</label><small>{{ F.deH }}</small></div><div class="inp"><input id="d-dePrice" v-model="f.dePrice" inputmode="decimal"><span class="u">€</span></div></div>
           <label class="row sw" for="d-gst"><span class="lab"><span class="t">{{ F.gst }}</span><small>{{ F.gstH }}</small></span>
             <input id="d-gst" v-model="f.gst" class="switch" type="checkbox" role="switch" @change="f.gstTouched = true"></label>
         </section>

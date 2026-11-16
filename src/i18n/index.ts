@@ -17,7 +17,7 @@ const V3 = {
       badDomain: "Adresa acestui site nu e încă permisă în Firebase (Authentication → Settings → Authorized domains).",
       popup: "Browserul a blocat fereastra de conectare. Permite ferestrele pop-up pentru acest site și încearcă din nou.",
     },
-    hero: { vinPh: "Lipește un VIN de 17 caractere", vinL: "VIN", priceL: "Prețul mașinii în CAD" },
+    hero: { vinPh: "Lipește linkul anunțului sau un VIN", vinL: "Link sau VIN", priceL: "Prețul mașinii în CAD" },
     nav: { prev: "Înapoi", next: "Înainte", main: "Secțiuni" },
     chip: {
       cars: "{n} mașini active", contacts: "{n} contacte",
@@ -37,6 +37,9 @@ const V3 = {
     imp: {
       h: "Adaugă direct din anunț", lead: "Trage butonul în bara de favorite din Chrome. Pe pagina unui anunț (CarGurus, AutoTrader, Kijiji…) apasă-l: se deschide Import Hub cu prețul, kilometrii, anul, VIN-ul, vânzătorul și toate pozele deja completate. Dacă mașina e deja salvată, îi adaugă doar pozele.",
       dragOnly: "Trage butonul în bara de favorite; aici nu face nimic.", got: "Date preluate din anunț. Verifică-le înainte să salvezi.",
+      linkL: "Linkul anunțului", linkH: "Lipește linkul și apasă Completează: prețul, kilometrii, anul, VIN-ul, vânzătorul și pozele se completează singure.", fill: "Completează",
+      filling: "Citesc anunțul în Chrome…", filled: "Am completat din anunț. Verifică datele înainte să salvezi.", fillFail: "N-am putut citi anunțul. Completează de mână sau apasă butonul ＋ Import Hub pe pagina anunțului.",
+      needExt: "Ca să se completeze singur din link, instalează o dată extensia Import Hub în Chrome.", dup: "Mașina asta e deja salvată.", openDup: "Deschide-o",
       added: "Am adăugat {n} poze la mașina deja salvată.", same: "Mașina e deja salvată, cu toate pozele din anunț.",
       photos: "Poze", photosH: "Linkuri către poze, câte unul pe rând. Prima e poza principală. Le văd doar membrii familiei.",
     },
@@ -63,7 +66,7 @@ const V3 = {
       badDomain: "This site's address isn't allowed in Firebase yet (Authentication → Settings → Authorized domains).",
       popup: "The browser blocked the sign-in window. Allow pop-ups for this site and try again.",
     },
-    hero: { vinPh: "Paste a 17-character VIN", vinL: "VIN", priceL: "Car price in CAD" },
+    hero: { vinPh: "Paste the listing link or a VIN", vinL: "Link or VIN", priceL: "Car price in CAD" },
     nav: { prev: "Previous", next: "Next", main: "Sections" },
     chip: {
       cars: "{n} active cars", contacts: "{n} contacts",
@@ -83,6 +86,9 @@ const V3 = {
     imp: {
       h: "Add straight from a listing", lead: "Drag the button to Chrome's bookmarks bar. On a listing page (CarGurus, AutoTrader, Kijiji…) press it: Import Hub opens with the price, km, year, VIN, seller and every photo already filled in. If the car is already saved, it just adds the photos.",
       dragOnly: "Drag the button to the bookmarks bar; it does nothing here.", got: "Details taken from the listing. Check them before saving.",
+      linkL: "Listing link", linkH: "Paste the link and press Fill in: price, km, year, VIN, seller and photos fill in on their own.", fill: "Fill in",
+      filling: "Reading the listing in Chrome…", filled: "Filled in from the listing. Check the details before saving.", fillFail: "Couldn't read the listing. Fill it in by hand, or press the ＋ Import Hub bookmark on the listing page.",
+      needExt: "To fill in from a link on its own, install the Import Hub extension in Chrome once.", dup: "This car is already saved.", openDup: "Open it",
       added: "Added {n} photos to the car you already saved.", same: "This car is already saved, with all the listing's photos.",
       photos: "Photos", photosH: "Photo links, one per line. The first is the main photo. Only family members can see them.",
     },
@@ -109,7 +115,7 @@ const V3 = {
       badDomain: "L'adresse de ce site n'est pas encore autorisée dans Firebase (Authentication → Settings → Authorized domains).",
       popup: "Le navigateur a bloqué la fenêtre de connexion. Autorisez les fenêtres pop-up pour ce site et réessayez.",
     },
-    hero: { vinPh: "Collez un NIV de 17 caractères", vinL: "NIV", priceL: "Prix du véhicule en $ CA" },
+    hero: { vinPh: "Collez le lien de l'annonce ou un NIV", vinL: "Lien ou NIV", priceL: "Prix du véhicule en $ CA" },
     nav: { prev: "Précédent", next: "Suivant", main: "Sections" },
     chip: {
       cars: "{n} véhicules actifs", contacts: "{n} contacts",
@@ -129,6 +135,9 @@ const V3 = {
     imp: {
       h: "Ajouter directement depuis une annonce", lead: "Glissez le bouton dans la barre de favoris de Chrome. Sur la page d'une annonce (CarGurus, AutoTrader, Kijiji…), appuyez dessus : Import Hub s'ouvre avec le prix, le kilométrage, l'année, le NIV, le vendeur et toutes les photos déjà remplis. Si le véhicule est déjà enregistré, il ajoute seulement les photos.",
       dragOnly: "Glissez le bouton dans la barre de favoris ; ici, il ne fait rien.", got: "Données reprises de l'annonce. Vérifiez-les avant d'enregistrer.",
+      linkL: "Lien de l'annonce", linkH: "Collez le lien et appuyez sur Remplir : prix, kilométrage, année, NIV, vendeur et photos se remplissent tout seuls.", fill: "Remplir",
+      filling: "Lecture de l'annonce dans Chrome…", filled: "Rempli depuis l'annonce. Vérifiez les données avant d'enregistrer.", fillFail: "Impossible de lire l'annonce. Remplissez à la main ou appuyez sur le favori ＋ Import Hub sur la page de l'annonce.",
+      needExt: "Pour remplir tout seul depuis un lien, installez une fois l'extension Import Hub dans Chrome.", dup: "Ce véhicule est déjà enregistré.", openDup: "L'ouvrir",
       added: "{n} photos ajoutées au véhicule déjà enregistré.", same: "Ce véhicule est déjà enregistré, avec toutes les photos de l'annonce.",
       photos: "Photos", photosH: "Liens vers les photos, un par ligne. La première est la photo principale. Seuls les membres de la famille les voient.",
     },

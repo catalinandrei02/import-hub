@@ -11,7 +11,7 @@ export const ui = reactive({
   selCar: get("hub-car") || "",
   cmp: Array.isArray(cmp) ? cmp : [],
   detail: false,
-  dialog: null as null | { kind: "car"; car: Partial<Car> | null; imported?: boolean } | { kind: "contact"; contact: Contact | null },
+  dialog: null as null | { kind: "car"; car: Partial<Car> | null; imported?: boolean; autoFill?: boolean } | { kind: "contact"; contact: Contact | null },
   toast: "",
   priceInput: "25000",
   gstOn: true,

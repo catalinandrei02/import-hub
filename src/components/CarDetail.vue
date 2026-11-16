@@ -9,7 +9,7 @@ import { canWrite, queue, state } from "../data/store";
 import { carGst } from "../lib/costs";
 import { STATUSES } from "../lib/constants";
 import { carName, carTrim, countDone, history, safeUrl } from "../lib/cars";
-import { cad, eur, fmt, fmtDate } from "../lib/format";
+import { cad, fmt, fmtDate } from "../lib/format";
 import { DOCS, STEPS } from "../i18n/content";
 import { fill, lang, t } from "../i18n";
 import { copyText, toast, ui } from "../ui";
@@ -35,7 +35,7 @@ const rows = computed(() => {
   const c = car.value!, F = t.value.f, L = t.value.cars;
   return [
     [F.year, c.year || "—"], [F.trim, carTrim(c) || "—"], [F.km, c.km ? fmt(c.km) : "—"], [F.price, c.price ? cad(c.price) : "—"],
-    [F.offer, c.offer ? cad(c.offer) : "—"], [F.dePrice, c.dePrice ? eur(c.dePrice) : "—"], [F.gst, carGst(c) ? L.yes : L.no],
+    [F.offer, c.offer ? cad(c.offer) : "—"], [F.gst, carGst(c) ? L.yes : L.no],
     [F.sellerType, c.sellerType === "private" ? F.private : F.dealer], [F.contact, c.contact || "—"], [F.stock, c.stock || "—"],
     [F.acc, yn(c.acc)], [F.cam, yn(c.cam)],
     [t.value.c.added, (fmtDate(c.addedAt) || "—") + (c.addedBy === "claude" ? " · " + L.byClaude : "")], [t.value.c.updated, fmtDate(c.updatedAt) || "—"],

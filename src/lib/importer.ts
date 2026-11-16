@@ -7,6 +7,15 @@ import { decodeVin } from "./vin";
 import { readListing, type ListingData } from "./listingReader";
 export { readListing, type ListingData };
 
+/** Most photos kept per car. */
+export const MAX_PHOTOS = 40;
+
+const bareUrl = (u?: string) => String(u || "").split(/[?#]/)[0].replace(/\/$/, "").toLowerCase();
+/** The saved car that is the same listing: same VIN, or same link (ignoring query and hash). */
+export function findSaved<C extends Partial<Car>>(cars: C[], c: Partial<Car>): C | undefined {
+  return cars.find(x => (!!c.vin && c.vin.length === 17 && x.vin === c.vin) || (!!c.url && !!x.url && bareUrl(x.url) === bareUrl(c.url)));
+}
+
 /** The bookmark's href for this site. */
 export function bookmarkletHref(base: string): string {
   return "javascript:(" + readListing.toString() + ")(" + JSON.stringify(base) + ");void 0";
@@ -29,7 +38,7 @@ export function parseImport(raw: string): Partial<Car> | null {
   const year = cleanNum(d.y) || (dv.err || dv.year === "?" ? null : dv.year);
   const title = str(d.t).replace(/\b(19|20)\d{2}\b/, "").replace(/\s{2,}/g, " ").trim();
   const model = /Q5/i.test(title) ? "Audi Q5" : title.split(/[|–—-]/)[0].trim().slice(0, 40) || "Audi Q5";
-  const photos = (Array.isArray(d.i) ? d.i : []).map(u => str(u, 600)).filter(u => /^https?:\/\//i.test(u)).slice(0, 12);
+  const photos = (Array.isArray(d.i) ? d.i : []).map(u => str(u, 600)).filter(u => /^https?:\/\//i.test(u)).slice(0, MAX_PHOTOS);
   return {
     title: model, year: year && year > 1990 && year < 2100 ? year : null, vin: vin.length === 17 ? vin : "",
     trim: dv.err || dv.trim === "?" ? "" : dv.trim, price: cleanNum(d.p), km: cleanNum(d.k),

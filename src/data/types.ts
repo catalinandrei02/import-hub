@@ -14,7 +14,9 @@ export interface Car {
   steps?: Record<string, string | boolean>;
   addedBy?: "manual" | "claude"; addedAt?: string; updatedAt?: string;
   // v2 additions
-  gst?: boolean; contact?: string; stock?: string; offer?: number | null; dePrice?: number | null;
+  gst?: boolean; contact?: string; stock?: string; offer?: number | null;
+  /** v2, no longer shown (the Germany comparison was removed); old docs may still have it. */
+  dePrice?: number | null;
   docs?: Record<string, string | boolean>;
   /** v3: photo links taken from the listing (first = main photo). Hotlinked, visible only to members. */
   photos?: string[];

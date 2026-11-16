@@ -12,7 +12,6 @@ const lcs = computed(() => props.cars.map(c => carLanded(c, state.costs)));
 const min = (v: (number | null | undefined)[]) => { const x = v.filter((n): n is number => n != null && n > 0); return x.length > 1 ? Math.min(...x) : null; };
 const best = computed(() => ({ price: min(props.cars.map(c => c.price)), km: min(props.cars.map(c => c.km)), landed: min(lcs.value.map(r => r?.total)) }));
 const yn = (v?: string) => (v === "yes" ? t.value.cars.yes : v === "no" ? t.value.cars.no : t.value.cars.unknown);
-const vsDe = (c: Car, i: number) => { const r = lcs.value[i]; if (!c.dePrice || !r) return "—"; const d = r.total - c.dePrice; return (d > 0 ? "+" : "−") + eur(Math.abs(d)); };
 </script>
 <template>
   <section class="cmp glass deep">
@@ -30,8 +29,6 @@ const vsDe = (c: Car, i: number) => { const r = lcs.value[i]; if (!c.dePrice || 
           <tr><th scope="row">{{ t.f.flags }}</th><td v-for="c in cars" :key="c._id"><div v-if="c.flags?.length" class="chips"><span v-for="f in c.flags" :key="f" class="chip">{{ (t.f.flagList as any)[f] || f }}</span></div><template v-else>{{ t.cars.none }}</template></td></tr>
           <tr><th scope="row">{{ t.cars.gstRow }}</th><td v-for="c in cars" :key="c._id">{{ carGst(c) ? t.cars.yes : t.cars.no }}</td></tr>
           <tr><th scope="row">{{ t.cars.landed }}</th><td v-for="(c, i) in cars" :key="c._id" :class="{ best: lcs[i] && lcs[i]!.total === best.landed }">{{ lcs[i] ? eur(lcs[i]!.total) : "—" }}</td></tr>
-          <tr><th scope="row">{{ t.cars.de }}</th><td v-for="c in cars" :key="c._id">{{ c.dePrice ? eur(c.dePrice) : "—" }}</td></tr>
-          <tr><th scope="row">{{ t.cars.vsDe }}</th><td v-for="(c, i) in cars" :key="c._id">{{ vsDe(c, i) }}</td></tr>
         </tbody>
       </table>
     </div>

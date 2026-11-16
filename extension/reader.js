@@ -41,7 +41,7 @@
   all.forEach(im => { let inG = false; up(im.parentElement, 5, e => { if (gallery.has(e)) inG = true; }); if (inG) { const s = src(im); add(s.u, s.w); } });
   doc.querySelectorAll('link[rel="preload"][as="image"]').forEach(l => add(l.getAttribute("href") || best(l.getAttribute("imagesrcset") || "").u, 600));
   const main = found[0];
-  if (main && found.length < 12) {
+  if (main && found.length < 40) {
     const urlRe = /https?:(?:\\?\/){2}[^"'\s<>()]+?\.(?:jpe?g|webp|png)(?:\?[^"'\s<>]*)?/gi;
     const host = main.u.split("/")[2];
     doc.querySelectorAll("script:not([src])").forEach(sc => {
@@ -53,13 +53,19 @@
       const at = hits.findIndex(h => keyOf(h.u.replace(/\\\//g, "/")) === main.k);
       if (at < 0) return;
       // Walk out from the main photo while the links stay close together (one gallery array) and on the same host.
-      const near = (a                          , b                          ) => Math.abs(a.i - b.i) < 1500 && b.u.replace(/\\\//g, "/").split("/")[2] === host;
+      const near = (a                          , b                          ) => Math.abs(a.i - b.i) < 5000 && b.u.replace(/\\\//g, "/").split("/")[2] === host;
       let lo = at, hi = at;
       while (lo > 0 && near(hits[lo], hits[lo - 1])) lo--;
       while (hi < hits.length - 1 && near(hits[hi], hits[hi + 1])) hi++;
       hits.slice(lo, hi + 1).forEach(h => add(h.u));
     });
   }
+  // Sites that name sizes in the link (…-152x114.jpg / …-1024x768.jpg) have every size of every photo: use the largest
+  // size seen on that host for all its photos, so thumbnails don't end up as blurry main photos.
+  const dim = /-(\d{2,4})x(\d{2,4})(\.(?:jpe?g|webp|png))/i;
+  const top                         = {};
+  found.forEach(f => { const m = f.u.match(dim), h = f.u.split("/")[2]; if (m && (!top[h] || +m[1] > +(top[h].match(/\d+/) || [0])[0])) top[h] = "-" + m[1] + "x" + m[2]; });
+  found.forEach(f => { const m = f.u.match(dim), h = f.u.split("/")[2]; if (m && top[h]) f.u = f.u.replace(dim, top[h] + m[3]); });
   const imgs = found.sort((a, b) => a.o - b.o).map(f => f.u);
   const vinRe = /\b([A-HJ-NPR-Z0-9]{17})\b/;
   const near = text.match(/(?:VIN|NIV|Vehicle Identification)[^A-Z0-9]{0,12}([A-HJ-NPR-Z0-9]{17})/i);
@@ -73,7 +79,7 @@
   const data = {
     u: location.href.split("#")[0], t: title.slice(0, 120), p: String(offer.price || v.price || meta("product:price:amount") || ""),
     k: String(odo.value || (kmText ? kmText[1] : "")), y: year, v: vin.length === 17 ? vin : "",
-    s: String(seller.name || "").slice(0, 80), l: String(addr).slice(0, 60), i: imgs.slice(0, 12),
+    s: String(seller.name || "").slice(0, 80), l: String(addr).slice(0, 60), i: imgs.slice(0, 40),
   };
   if (!base) return data;
   window.open(base + "#/cars?add=" + encodeURIComponent(JSON.stringify(data)), "_blank");
