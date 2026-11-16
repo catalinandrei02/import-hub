@@ -11,7 +11,7 @@ const puppeteer = require(path.join(os.homedir(), "node_modules/puppeteer"));
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../..");
 const OUT = path.resolve(process.argv[2] || path.join(ROOT, "shots"));
 fs.mkdirSync(OUT, { recursive: true });
-const ROUTES = ["cars", "costs", "steps", "documents", "contacts", "messages", "search"];
+const ROUTES = ["cars", "costs", "steps", "documents", "contacts", "search"];
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml" };
 
 function serve(dir, port) {
@@ -104,6 +104,7 @@ for (const w of [390, 1440]) for (const scheme of ["light", "dark"]) {
   report.checks.signedOutBanner = await p.$eval(".banner", e => e.textContent.trim().slice(0, 60)).catch(() => null);
   report.checks.signedOutHasSignIn = await p.evaluate(() => [...document.querySelectorAll("button")].some(b => /Google/.test(b.textContent)));
   report.checks.signedOutHeroAddDisabled = await p.$eval(".pillform .cta", e => e.disabled);
+  await go(p, "steps"); report.checks.signedOutStepsEmpty = await p.$eval(".empty .big", e => e.textContent.slice(0, 60)).catch(() => null);
   await go(p, "costs"); report.checks.signedOutCosts = await p.$eval("#side .total", e => e.textContent);
   report.checks.signedOutSaveDisabled = await p.$eval("#rates-form [type=submit]", e => e.disabled);
   await go(p, "search"); report.checks.signedOutSearchDisabled = await p.$eval("#search-form [type=submit]", e => e.disabled);
@@ -141,19 +142,25 @@ for (const w of [390, 1440]) for (const scheme of ["light", "dark"]) {
   report.checks.stepDates = await p.$$eval(".tl .when", e => e.map(x => x.textContent));
   await go(p, "documents"); await p.click("#dc-d1_0"); await sleep(200);
   report.checks.docs = JSON.stringify((await store())["cars/s1"].docs);
-  await go(p, "messages");
-  report.checks.tplOffer = await p.$eval("#tpl-offer", e => e.textContent.slice(0, 120));
-  await p.click('[data-tpl="offer"][data-tl="fr"]'); await sleep(80);
-  report.checks.tplOfferFr = await p.$eval("#tpl-offer", e => (e.textContent.match(/budget est de [^$]*\$/) || [""])[0]);
   await go(p, "costs"); await setVal(p, "#r-cadEur", "0,65"); await sleep(60);
   await p.click('#rates-form [type=submit]'); await sleep(250);
   s = await store(); report.checks.ratesSaved = s["config/costs"]?.cadEur + " @ " + s["config/costs"]?.updatedAt;
   await setVal(p, "#r-insPct", "150"); await sleep(60);
   report.checks.rateValidation = await p.evaluate(() => document.querySelector("#rates-form [type=submit]").disabled && !!document.getElementById("r-insPct-e"));
-  await go(p, "search"); await p.click("#s-source-facebook"); await setVal(p, "#s-maxPrice", "27500");
+  await go(p, "search"); await sleep(200);
+  report.checks.searchLinks = await p.$$eval(".srtitle[data-site]", a => a.map(x => x.dataset.site + " " + x.href.slice(0, 90)));
+  report.checks.searchFoundAll = await p.$$eval(".sres:nth-of-type(2) .sr, .sres .sr button.srtitle", l => l.length);
+  await p.click("#s-trim-Progressiv"); await setVal(p, "#s-model", "Audi Q5 Progressiv"); await sleep(150);
+  report.checks.searchFoundProgressiv = await p.$$eval("button.srtitle", l => l.map(x => x.textContent.trim()));
+  await setVal(p, "#s-model", "Audi Q5"); await sleep(100);
+  await p.click("#s-source-facebook"); await setVal(p, "#s-maxPrice", "27500");
   await p.click('#search-form [type=submit]'); await sleep(250);
   s = await store(); report.checks.searchSaved = JSON.stringify({ maxPrice: s["config/search"].maxPrice, sources: s["config/search"].sources, freq: s["config/search"].frequencyDays });
   report.checks.scanUntouched = JSON.stringify(s["config/scan"]).length > 10 && !(await p.evaluate(() => window.__mock.writes.some(w => w[1] === "config/scan")));
+  await p.click(".ubtn"); await sleep(120);
+  report.checks.avatarOpensMenu = await p.evaluate(() => !!document.querySelector(".upop") && !!document.querySelector(".ubtn"));
+  await p.keyboard.press("Escape"); await sleep(80);
+  report.checks.menuClosesOnEscape = await p.evaluate(() => !document.querySelector(".upop"));
   await p.close(); }
 
 console.log(JSON.stringify(report, null, 1));

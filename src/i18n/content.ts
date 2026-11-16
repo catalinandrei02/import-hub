@@ -1,5 +1,5 @@
 // Domain content per language, ported unchanged from import-hub.html.
-// STEPS: [phase, title, detail, who, papers]. TPL: message templates (FR/EN only).
+// STEPS: [phase, title, detail, who, papers].
 export type Lang = "ro" | "en" | "fr";
 export const STEPS: Record<Lang, string[][]> = {
  "ro": [
@@ -504,66 +504,3 @@ export const LINKS: [string, string][] = [
   "https://vehicleflaws.com/recall/21V947000"
  ]
 ] as any;
-export interface Template { id: string; l: Record<Lang, string>; fr: string; en: string }
-export const TPL: Template[] = [
- {
-  "id": "first",
-  "l": {
-   "ro": "Primul contact cu un dealer",
-   "en": "First contact with a dealer",
-   "fr": "Premier contact avec un concessionnaire"
-  },
-  "fr": "Bonjour,\n\nJe suis intéressé par le [MODÈLE] [ANNÉE] (stock [STOCK], NIV [NIV]). Pourriez-vous m'envoyer le rapport Carfax et me confirmer que le véhicule est toujours disponible ?\n\nJ'achète comme particulier, pour ma famille. Le véhicule sera exporté vers l'Europe par une compagnie de transport que j'engage.\n\nMerci,\n[NOM]",
-  "en": "Hello,\n\nI'm interested in the [YEAR] [MODEL] (stock [STOCK], VIN [VIN]). Could you send me the Carfax report and confirm the car is still available?\n\nI'm buying as a private individual, for my family. The car will be exported to Europe by a shipping company I hire.\n\nThank you,\n[NAME]"
- },
- {
-  "id": "offer",
-  "l": {
-   "ro": "Ofertă + explicația exportului",
-   "en": "Offer + export explanation",
-   "fr": "Offre + explication de l'exportation"
-  },
-  "fr": "Bonjour [PRÉNOM],\n\nNous sommes toujours très intéressés par le [MODÈLE] (stock [STOCK]).\n\nNous ne sommes pas des commerçants : c'est une auto pour notre famille en Roumanie. Vous n'auriez qu'à déposer le véhicule à l'entrepôt de la compagnie de transport que nous avons engagée, Viamar Scilla (GO Transport, 180 Graveline, Saint-Laurent). Elle s'occupe de l'exportation et fournit tous les documents.\n\nSelon Revenu Québec, la TPS et la TVQ ne s'appliquent pas quand le vendeur remet le véhicule à un transporteur qui l'expédie hors du Canada :\nhttps://www.revenuquebec.ca/fr/entreprises/taxes/tpstvh-et-tvq/situations-particulieres-liees-a-la-tpstvh-et-a-la-tvq/exportations-hors-du-canada-ou-expeditions-hors-du-quebec/exportation-ou-expedition-de-biens/\n\nNous payons en entier par virement. Notre budget est de [PRIX] $, véhicule livré chez Viamar.\n\nMerci beaucoup,\n[NOM]",
-  "en": "Hi [FIRST NAME],\n\nWe're still very interested in the [MODEL] (stock [STOCK]).\n\nWe're not dealers: it's a car for our family in Romania. You would only need to drop the car off at the warehouse of the shipping company we hired, Viamar Scilla (GO Transport, 180 Graveline, Saint-Laurent). They handle the export and provide all the documents.\n\nAccording to Revenu Québec, GST and QST don't apply when the seller hands the car over to a carrier that ships it outside Canada:\nhttps://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/special-cases-gsthst-and-qst/exports-outside-canada-and-shipping-outside-quebec/exports-and-shipping-of-property/\n\nWe pay in full by bank transfer. Our budget is $[PRICE], with the car delivered to Viamar.\n\nThank you so much,\n[NAME]"
- },
- {
-  "id": "private",
-  "l": {
-   "ro": "Întrebări pentru vânzător privat",
-   "en": "Questions for a private seller",
-   "fr": "Questions pour un particulier"
-  },
-  "fr": "Bonjour,\n\nVotre [MODÈLE] m'intéresse. Avant de nous voir, quelques questions :\n\n1. Le véhicule est-il à votre nom, sans location ni prêt ?\n2. Avez-vous les factures d'entretien ?\n3. Accepteriez-vous une inspection dans un garage de mon choix ?\n4. Le véhicule sera exporté : seriez-vous d'accord pour le remettre directement à mon transporteur à Saint-Laurent, puis annuler l'immatriculation à la SAAQ ?\n\nMerci,\n[NOM]",
-  "en": "Hello,\n\nI'm interested in your [MODEL]. Before we meet, a few questions:\n\n1. Is the car in your name, with no lease or loan?\n2. Do you have the service invoices?\n3. Would you agree to an inspection at a garage of my choice?\n4. The car will be exported: would you hand it over directly to my carrier in Saint-Laurent, then cancel the registration with the SAAQ?\n\nThank you,\n[NAME]"
- },
- {
-  "id": "viamar",
-  "l": {
-   "ro": "Rezervare la Viamar",
-   "en": "Booking with Viamar",
-   "fr": "Réservation chez Viamar"
-  },
-  "fr": "Hello Bruno,\n\nI'd like to book another shared container from Montreal to Rotterdam for a [YEAR] [MODEL], VIN [VIN] (gas powered).\n\nThe buyer is [BUYER NAME]. The car will be dropped off at GO Transport by [SELLER]. Could you send me the booking forms and the insurance form for a value of [VALUE] CAD?\n\nThank you,\n[NAME]",
-  "en": "Hello Bruno,\n\nI'd like to book another shared container from Montreal to Rotterdam for a [YEAR] [MODEL], VIN [VIN] (gas powered).\n\nThe buyer is [BUYER NAME]. The car will be dropped off at GO Transport by [SELLER]. Could you send me the booking forms and the insurance form for a value of [VALUE] CAD?\n\nThank you,\n[NAME]"
- },
- {
-  "id": "marlog",
-  "l": {
-   "ro": "Documente pentru Marlog",
-   "en": "Papers for Marlog",
-   "fr": "Documents pour Marlog"
-  },
-  "fr": "Hello Martyna,\n\nThe [YEAR] [MODEL], VIN [VIN], is on its way to Rotterdam (booking [BOOKING], container [CONTAINER]). Please find attached: bill of lading, registration, bill of sale, ocean freight invoice, passport and your signed authorisation form.\n\nCould you give me an estimated release date so I can arrange the truck to Romania?\n\nThank you,\n[NAME]",
-  "en": "Hello Martyna,\n\nThe [YEAR] [MODEL], VIN [VIN], is on its way to Rotterdam (booking [BOOKING], container [CONTAINER]). Please find attached: bill of lading, registration, bill of sale, ocean freight invoice, passport and your signed authorisation form.\n\nCould you give me an estimated release date so I can arrange the truck to Romania?\n\nThank you,\n[NAME]"
- },
- {
-  "id": "saaq",
-  "l": {
-   "ro": "Reamintire SAAQ pentru vânzător",
-   "en": "SAAQ reminder for the seller",
-   "fr": "Rappel SAAQ pour le vendeur"
-  },
-  "fr": "Bonjour [PRÉNOM],\n\nLe véhicule est parti vers l'Europe. Voici le connaissement (B/L) et une copie du contrat. Vous pouvez maintenant annuler l'immatriculation avec le formulaire de la SAAQ pour un véhicule vendu hors du Québec :\nhttps://saaq.gouv.qc.ca/immatriculation/annuler-immatriculation-vehicule-emigre\n\nMerci encore,\n[NOM]",
-  "en": "Hi [FIRST NAME],\n\nThe car has left for Europe. Here are the bill of lading (B/L) and a copy of the contract. You can now cancel the registration with the SAAQ form for a vehicle sold outside Québec:\nhttps://saaq.gouv.qc.ca/immatriculation/annuler-immatriculation-vehicule-emigre\n\nThanks again,\n[NAME]"
- }
-];

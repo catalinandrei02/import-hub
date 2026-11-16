@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { canWrite, state } from "../data/store";
+import NoCar from "../components/NoCar.vue";
 import { carLabel, countDone } from "../lib/cars";
 import { fmtDate } from "../lib/format";
 import { tick } from "../lib/tick";
@@ -25,6 +26,7 @@ const done = computed(() => countDone(car.value?.docs, keys.value));
   <div class="content">
     <div class="main">
       <StatusBanner />
+      <NoCar v-if="!car" :hint="t.docs.pickHint" />
       <div class="cols">
         <section v-for="(g, gi) in DOCS[lang]" :key="g[0]" class="glass card">
           <h3>{{ g[0] }}</h3>

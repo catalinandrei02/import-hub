@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { canWrite, state } from "../data/store";
+import NoCar from "../components/NoCar.vue";
 import { carLabel } from "../lib/cars";
 import { fmtDate } from "../lib/format";
 import { tick } from "../lib/tick";
@@ -32,6 +33,7 @@ const next = computed(() => { const i = steps.value.findIndex((_, k) => !car.val
   <div class="content">
     <div class="main">
       <StatusBanner />
+      <NoCar v-if="!car" :hint="t.proc.pickHint" />
       <section class="glass pad" style="display:grid;gap:24px">
         <div v-for="p in phases" :key="p.name" class="group">
           <h2 class="label">{{ p.name }}</h2>

@@ -9,14 +9,14 @@ A small web tool the family uses for every future car import from Québec to Rom
 - track candidate cars (price, price history, VIN-decoded trim, red flags, estimated landed cost in Romania);
 - compute landed cost with shared, editable rates;
 - walk through the import process step by step for each car;
-- keep contacts, required documents, official links and ready-to-send message templates in one place (the Lessons section was removed at the owner's request; the official links are in the footer);
+- keep contacts, required documents and official links in one place (the Lessons and Messages sections were removed at the owner's request; the official links are in the footer);
 - configure an optional **auto-search** from the website, run by a scheduled task.
 
 Users: Catalin-Andrei (owner), his family (father-in-law may be the legal buyer), uncle Laszlo in Montreal who inspects cars.
 
 ## 2. Hard requirements
 
-1. **Three UI languages: Romanian (default), English, French.** Every visible string goes through the `T[lang]` dictionary. Process steps and documents exist in all three. Message templates are in **French and English only** (they are sent to Québec dealers), with a per-template FR/EN switch.
+1. **Three UI languages: Romanian (default), English, French.** Every visible string goes through the `T[lang]` dictionary. Process steps and documents exist in all three. 
 2. **Shared data**, not per-browser: cars, contacts, cost rates and search settings must be the same for everyone who opens the page.
 3. **Auto-search is configurable from the website** (on/off, frequency, model, trims, years, max price, max km, region/centre/radius, must-have ACC / 360° camera, plug-in bonus, dealer/private sellers, excluded dealers, free-text extra instructions). The scheduled task reads these settings; it never has them hardcoded.
 4. Works at phone width (390 px) with no horizontal scroll; light and dark themes.
@@ -26,11 +26,11 @@ Users: Catalin-Andrei (owner), his family (father-in-law may be the legal buyer)
 
 A **Vue 3 + Vite + TypeScript** single-page app in `src/`, deployed to **GitHub Pages** by `.github/workflows/deploy.yml` on every push to `main`. Hash routes (`#/cars`, `#/costs`, …) so Pages never 404s.
 
-Sections: **Cars · Costs · Steps · Documents · Contacts · Messages · Auto-search**. Design: night-sky site (canvas sky, glass nav pill, Inter Tight light display type, dark cards; dawn variant in light mode). Tokens live at the top of `src/styles/main.css`.
+Sections: **Cars · Costs · Steps · Documents · Contacts · Search**. Search works like a search engine: a query + filters show matching saved cars instantly and one result link per listing site (AutoTrader.ca and Kijiji take filters in the URL; CarGurus.ca, AutoHebdo and Audi certified go through a Google site: search, Facebook takes the query). Listings can't be fetched into the page from GitHub Pages; the daily task adds them to `cars`. The same filters are saved to `config/search`. Design: night-sky site (canvas sky, glass nav pill, Inter Tight light display type, dark cards; dawn variant in light mode). Tokens live at the top of `src/styles/main.css`.
 
 Layout of the code:
 - `src/lib/costs.ts`, `src/lib/vin.ts`: the cost formula and VIN decoder from §5. Covered by `tests/unit/costs.test.ts` (25,000 CAD + GST → 27,028 €).
-- `src/i18n/strings.ts` + `src/i18n/index.ts` (UI strings, RO default, EN, FR) and `src/i18n/content.ts` (steps, documents, official links, FR/EN templates).
+- `src/i18n/strings.ts` + `src/i18n/index.ts` (UI strings, RO default, EN, FR) and `src/i18n/content.ts` (steps, documents, official links).
 - `src/data/store.ts`: shared state; one subscription per query after sign-in; 10 s → "stale"; one write at a time per document (`queue()`).
 - `src/data/firebase.ts`: Firestore + Google sign-in. `src/data/mock.ts`: in-memory sample data for `npm run dev:mock` and the e2e tests; never deployed.
 - `src/firebase.config.ts`: the Firebase web config (not a secret). `null` → site renders read-only with the "not connected" banner. A `VITE_FIREBASE_CONFIG` Actions variable (JSON) overrides it.

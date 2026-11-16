@@ -74,7 +74,6 @@ watch(car, c => { if (!c) ui.detail = false; });
         <div class="rowx">
           <RouterLink class="link" to="/steps" @click="ui.detail = false">{{ t.tabs.process }} →</RouterLink>
           <RouterLink class="link" to="/documents" @click="ui.detail = false">{{ t.tabs.docs }} →</RouterLink>
-          <RouterLink class="link" to="/messages" @click="ui.detail = false">{{ t.tabs.tpl }} →</RouterLink>
         </div>
       </section>
       <section class="glass pad" style="display:grid;gap:12px">

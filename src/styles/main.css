@@ -104,6 +104,17 @@ img { max-width: 100% }
 .cta:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px }
 .user { display: inline-flex; align-items: center; gap: 8px }
 .avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex: none }
+.umenu { position: relative }
+.ubtn { all: unset; box-sizing: border-box; cursor: pointer; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--soft) }
+.ubtn:hover { background: var(--soft-hover) }
+.ubtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px }
+.ini-sm { display: grid; place-items: center; background: var(--cta); color: var(--on-cta); font-weight: 500 }
+.upop { position: absolute; right: 0; top: calc(100% + 8px); z-index: 60; min-width: 14rem; max-width: calc(100vw - 32px); padding: 8px; display: grid; gap: 2px; background: var(--sky-low) }
+.uname { margin: 0; padding: 8px 12px 10px; border-bottom: 1px solid var(--card-line); font-size: .9375rem; overflow-wrap: anywhere }
+.uitem { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; min-height: 44px; padding-inline: 12px; border-radius: 10px; font-size: .9375rem; color: var(--ink) }
+.uitem:hover, .uitem:focus-visible { background: var(--soft-hover) }
+.uitem:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px }
+.uitem.danger { color: var(--err) }
 
 /* Nav pill */
 .navrow { display: flex; justify-content: center; margin-top: 14px }
@@ -380,7 +391,20 @@ span.node { cursor: default }
 .tl .sd { font-size: .9375rem; font-weight: 300; color: var(--ink-2) }
 .tl .when { font-size: .8125rem; font-weight: 500; color: var(--accent) }
 
-/* Cards grid (docs, contacts, templates) */
+/* Search results */
+.srlist { list-style: none; margin: 0; padding: 0; display: grid }
+.sr { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 14px 0; border-top: 1px solid var(--card-line) }
+.sr:first-child { border-top: 0; padding-top: 4px }
+.fav { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--soft); font-weight: 500; color: var(--ink) }
+.srbody { display: grid; gap: 3px; min-width: 0 }
+.srhost { font-size: .8125rem; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.srtitle { all: unset; cursor: pointer; font-size: 1.1875rem; font-weight: 300; line-height: 1.3; color: var(--accent); overflow-wrap: anywhere; text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 4px }
+.srtitle:hover { text-decoration-color: currentColor }
+.srtitle:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 4px }
+.srsnip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: .875rem; color: var(--ink-2) }
+@media (max-width: 40rem) { .sr { grid-template-columns: 32px minmax(0, 1fr) } .sr > .btn { grid-column: 2 } .fav { width: 32px; height: 32px } }
+
+/* Cards grid (docs, contacts) */
 .cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: var(--gap); align-items: start }
 .card { display: grid; gap: 12px; align-content: start; padding: clamp(16px, 1.8vw, 24px); min-width: 0 }
 .card h3 { margin: 0; font-size: 1.25rem; font-weight: 300; line-height: 1.25; letter-spacing: -.01em }

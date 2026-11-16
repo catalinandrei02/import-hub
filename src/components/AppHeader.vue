@@ -2,9 +2,10 @@
 import { useRoute } from "vue-router";
 import { SECTIONS } from "../router";
 import { lang, t } from "../i18n";
-import { canWrite, signOut, state } from "../data/store";
+import { canWrite, state } from "../data/store";
 import { signInWithHelp } from "../lib/signin";
 import { ui } from "../ui";
+import UserMenu from "./UserMenu.vue";
 
 const route = useRoute();
 function addCar() { ui.dialog = { kind: "car", car: null }; }
@@ -34,10 +35,7 @@ const doSignIn = signInWithHelp;
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 3v12M3 9h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
           <span>{{ t.cars.add }}</span>
         </button>
-        <button v-if="state.user && state.auth !== 'none'" class="btn" type="button" :title="state.user.name" @click="signOut()">
-          <img v-if="state.user.photo" class="avatar" :src="state.user.photo" alt="" referrerpolicy="no-referrer" width="36" height="36">
-          <span class="sr-only">{{ t.auth.signOut }}</span><span v-if="!state.user.photo">{{ t.auth.signOut }}</span>
-        </button>
+        <UserMenu v-if="state.auth !== 'none'" />
       </template>
     </div>
   </header>

@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { landed, carGst, numCosts } from "../../src/lib/costs";
 import { decodeVin } from "../../src/lib/vin";
 import { DEF_COSTS } from "../../src/lib/constants";
-import { fillTemplate, templateValues } from "../../src/lib/templates";
 
 describe("landed cost (CLAUDE.md §5)", () => {
   it("25,000 CAD with GST lands at about 27,028 €", () => {
@@ -44,11 +43,26 @@ describe("VIN decoder (CLAUDE.md §5)", () => {
   it("rejects wrong length", () => expect(decodeVin("WA1")).toEqual({ err: "bad" }));
 });
 
-describe("message templates", () => {
-  it("fills known placeholders and leaves the rest marked", () => {
-    const vals = templateValues({ title: "Audi Q5", year: 2023, vin: "WA1EAAFY2P2004677", stock: "H1972", price: 27890, offer: 26500, contact: "Florence Tremblay", seller: "VW", sellerType: "dealer" } as any, "fr");
-    const out = fillTemplate("Bonjour [PRÉNOM], budget [PRIX] $ pour le [MODÈLE] [ANNÉE]. [NOM]", vals);
-    expect(out.plain).toBe("Bonjour Florence, budget 26 500 $ pour le Audi Q5 Progressiv 2023. [NOM]");
-    expect(out.parts.filter(p => p.kind === "missing").map(p => p.text)).toEqual(["[NOM]"]);
+import { matchCars, siteLinks, splitModel } from "../../src/lib/search";
+
+describe("search", () => {
+  const q = { text: "Audi Q5", yearMin: 2021, yearMax: 2024, maxPrice: 28000, maxKm: 120000, center: "Laval", radiusKm: 100 };
+  it("splits make and model", () => expect(splitModel("Audi Q5 Technik")).toEqual({ make: "audi", model: "q5", rest: "Technik" }));
+  it("builds AutoTrader and Kijiji links with filters in the URL", () => {
+    const l = Object.fromEntries(siteLinks(q, ["autotrader", "kijiji", "cargurus"]).map(x => [x.id, x.url]));
+    expect(l.autotrader).toBe("https://www.autotrader.ca/cars/audi/q5/reg_qc/cit_laval/ot_used/pr_28000?modelyearfrom=2021&modelyearto=2024&kmto=120000&radius=100");
+    expect(l.kijiji).toBe("https://www.kijiji.ca/b-cars-trucks/quebec/audi-q5/k0c174l9001?price=__28000&caryear=2021__2024&carmileageinkms=__120000");
+    expect(decodeURIComponent(l.cargurus)).toContain('site:cargurus.ca "Audi Q5" 2021..2024 Laval');
+  });
+  it("only lists the chosen sites", () => expect(siteLinks(q, ["kijiji"]).map(x => x.id)).toEqual(["kijiji"]));
+  it("matches saved cars by text and filters, never by unknown equipment", () => {
+    const cars = [
+      { _id: "a", title: "Audi Q5", year: 2021, price: 27000, km: 80000, cam: "", status: "watching", vin: "WA1FAAFY2M2004811" },
+      { _id: "b", title: "Audi Q5", year: 2023, price: 31000, km: 40000, status: "watching" },
+      { _id: "c", title: "Audi Q5", year: 2021, price: 25000, km: 90000, cam: "no", status: "watching" },
+      { _id: "d", title: "Audi Q5", year: 2022, price: 26000, km: 50000, status: "dropped" },
+    ] as any;
+    expect(matchCars(cars, { ...q, must360: true }).map(c => c._id)).toEqual(["a"]);
+    expect(matchCars(cars, { text: "technik" }).map(c => c._id)).toEqual(["a"]);
   });
 });

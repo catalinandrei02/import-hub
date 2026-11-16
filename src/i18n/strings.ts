@@ -7,8 +7,7 @@ export const BASE = {
    "process": "Pași",
    "docs": "Documente",
    "contacts": "Contacte",
-   "tpl": "Mesaje",
-   "search": "Căutare automată"
+   "search": "Caută"
   },
   "dbOff": "Datele comune nu sunt disponibile în această vizualizare. Pagina merge, dar modificările nu se salvează.",
   "loading": "Se încarcă datele…",
@@ -219,17 +218,6 @@ export const BASE = {
    "copied": "Copiat",
    "empty": "Niciun contact încă."
   },
-  "tpl": {
-   "h": "Mesaje gata de trimis",
-   "lead": "Alege o mașină și textele se completează singure cu modelul, anul, VIN-ul, stocul, prețul și prenumele persoanei de contact. Ce rămâne marcat completezi tu. Textele sunt în franceză sau engleză, pentru dealerii din Québec.",
-   "copy": "Copiază textul",
-   "copied": "Copiat",
-   "filled": "Completat din mașina aleasă",
-   "missing": "Lipsesc din fișa mașinii",
-   "missingHint": "Adaugă-le cu „Editează” ca să se completeze singure.",
-   "allFilled": "Toate datele mașinii sunt completate. Ce rămâne marcat (numele tău, nr. de booking) completezi tu.",
-   "noCar": "Nicio mașină aleasă: textele rămân cu paranteze drepte."
-  },
   "search": {
    "h": "Căutare automată",
    "lead": "O sarcină programată pornește zilnic, citește setările de aici și, când e momentul, caută mașini noi. Ce găsește apare în tab-ul Mașini, marcat „găsită automat”, iar prețurile mașinilor urmărite se actualizează.",
@@ -325,8 +313,7 @@ export const BASE = {
    "process": "Steps",
    "docs": "Documents",
    "contacts": "Contacts",
-   "tpl": "Messages",
-   "search": "Auto-search"
+   "search": "Search"
   },
   "dbOff": "Shared data isn't available in this view. The page works, but changes won't be saved.",
   "loading": "Loading data…",
@@ -537,17 +524,6 @@ export const BASE = {
    "copied": "Copied",
    "empty": "No contacts yet."
   },
-  "tpl": {
-   "h": "Ready-to-send messages",
-   "lead": "Pick a car and the texts fill in its model, year, VIN, stock number, price and the contact's first name. What stays highlighted is yours to fill. Texts are in French or English, for Québec dealers.",
-   "copy": "Copy text",
-   "copied": "Copied",
-   "filled": "Filled from the selected car",
-   "missing": "Missing from the car's file",
-   "missingHint": "Add them with “Edit” and they fill in by themselves.",
-   "allFilled": "All the car's details are filled in. What stays highlighted (your name, booking no.) is yours to fill.",
-   "noCar": "No car selected: the texts keep their square brackets."
-  },
   "search": {
    "h": "Auto-search",
    "lead": "A scheduled task runs daily, reads the settings here and, when a search is due, looks for new cars. What it finds appears in the Cars tab marked “found automatically”, and prices of watched cars get updated.",
@@ -643,8 +619,7 @@ export const BASE = {
    "process": "Étapes",
    "docs": "Documents",
    "contacts": "Contacts",
-   "tpl": "Messages",
-   "search": "Recherche auto"
+   "search": "Recherche"
   },
   "dbOff": "Les données partagées ne sont pas disponibles ici. La page fonctionne, mais les changements ne sont pas enregistrés.",
   "loading": "Chargement des données…",
@@ -854,17 +829,6 @@ export const BASE = {
    "copy": "Copier",
    "copied": "Copié",
    "empty": "Aucun contact pour l'instant."
-  },
-  "tpl": {
-   "h": "Messages prêts à envoyer",
-   "lead": "Choisissez un véhicule et les textes se remplissent avec le modèle, l'année, le NIV, le numéro de stock, le prix et le prénom de la personne-ressource. Ce qui reste surligné est à compléter. Les textes sont en français ou en anglais, pour les concessionnaires du Québec.",
-   "copy": "Copier le texte",
-   "copied": "Copié",
-   "filled": "Rempli à partir du véhicule choisi",
-   "missing": "Manquant dans la fiche du véhicule",
-   "missingHint": "Ajoutez-les avec « Modifier » et ils se rempliront.",
-   "allFilled": "Toutes les données du véhicule sont remplies. Ce qui reste surligné (votre nom, n° de réservation) est à compléter.",
-   "noCar": "Aucun véhicule choisi : les textes gardent leurs crochets."
   },
   "search": {
    "h": "Recherche automatique",
