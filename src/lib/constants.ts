@@ -1,0 +1,9 @@
+export const STATUSES = ["watching","contacted","offer","inspection","bought","shipped","arrived","dropped"] as const;
+export type Status = (typeof STATUSES)[number];
+export const ST_CLASS: Record<string, string> = {"watching":"","contacted":"info","offer":"info","inspection":"warn","bought":"ok","shipped":"ok","arrived":"ok","dropped":"bad"};
+export const FLAGS = ["accident","lease","recall","service","rust","noexport"] as const;
+export const DEF_COSTS = {"cadEur":0.64,"usdEur":0.89,"shipUsd":1450,"fuelUsd":0,"insPct":1.5,"dutyPct":10,"vatPct":21,"marlogEur":1030,"roadEur":800,"rarEur":800};
+export type Costs = typeof DEF_COSTS;
+export const RATE_KEYS = Object.keys(DEF_COSTS) as (keyof Costs)[];
+export const SOURCES = ["cargurus", "autohebdo", "kijiji", "autotrader", "certified", "facebook"] as const;
+export const DEF_SEARCH = {"enabled":true,"frequencyDays":7,"model":"Audi Q5","trims":["Technik"],"yearMin":2021,"yearMax":2024,"maxPrice":28000,"maxKm":120000,"region":"Québec","center":"Laval","radiusKm":100,"mustAcc":true,"must360":true,"phevBonus":true,"dealers":true,"privates":true,"exclude":"VW Lauzon Blainville","extra":"","sources":["cargurus","autohebdo","kijiji","autotrader","certified","facebook"]};

@@ -1,0 +1,28 @@
+{
+  "name": "import-hub",
+  "private": true,
+  "version": "3.0.0",
+  "type": "module",
+  "description": "Family tool for importing used cars from Québec to Romania.",
+  "scripts": {
+    "dev": "vite",
+    "dev:mock": "vite --mode mock",
+    "build": "vue-tsc --noEmit && vite build",
+    "build:mock": "vite build --mode mock --outDir dist-mock",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "e2e": "npm run build:mock && node tests/e2e/check.mjs"
+  },
+  "dependencies": {
+    "firebase": "13.3.0",
+    "vue": "3.5.45",
+    "vue-router": "5.5.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.11",
+    "typescript": "5.9.3",
+    "vite": "8.3.8",
+    "vitest": "5.1.0",
+    "vue-tsc": "3.3.14"
+  }
+}
