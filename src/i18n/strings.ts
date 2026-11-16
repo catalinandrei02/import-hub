@@ -7,7 +7,6 @@ export const BASE = {
    "process": "Pași",
    "docs": "Documente",
    "contacts": "Contacte",
-   "lessons": "Lecții",
    "tpl": "Mesaje",
    "search": "Căutare automată"
   },
@@ -220,11 +219,6 @@ export const BASE = {
    "copied": "Copiat",
    "empty": "Niciun contact încă."
   },
-  "lessons": {
-   "h": "Lecții învățate",
-   "lead": "Ce am aflat din Q7 și din căutarea pentru Q5.",
-   "links": "Surse oficiale"
-  },
   "tpl": {
    "h": "Mesaje gata de trimis",
    "lead": "Alege o mașină și textele se completează singure cu modelul, anul, VIN-ul, stocul, prețul și prenumele persoanei de contact. Ce rămâne marcat completezi tu. Textele sunt în franceză sau engleză, pentru dealerii din Québec.",
@@ -331,7 +325,6 @@ export const BASE = {
    "process": "Steps",
    "docs": "Documents",
    "contacts": "Contacts",
-   "lessons": "Lessons",
    "tpl": "Messages",
    "search": "Auto-search"
   },
@@ -544,11 +537,6 @@ export const BASE = {
    "copied": "Copied",
    "empty": "No contacts yet."
   },
-  "lessons": {
-   "h": "Lessons learned",
-   "lead": "What we learned from the Q7 and from the Q5 search.",
-   "links": "Official sources"
-  },
   "tpl": {
    "h": "Ready-to-send messages",
    "lead": "Pick a car and the texts fill in its model, year, VIN, stock number, price and the contact's first name. What stays highlighted is yours to fill. Texts are in French or English, for Québec dealers.",
@@ -655,7 +643,6 @@ export const BASE = {
    "process": "Étapes",
    "docs": "Documents",
    "contacts": "Contacts",
-   "lessons": "Leçons",
    "tpl": "Messages",
    "search": "Recherche auto"
   },
@@ -867,11 +854,6 @@ export const BASE = {
    "copy": "Copier",
    "copied": "Copié",
    "empty": "Aucun contact pour l'instant."
-  },
-  "lessons": {
-   "h": "Leçons apprises",
-   "lead": "Ce qu'on a appris avec le Q7 et la recherche du Q5.",
-   "links": "Sources officielles"
   },
   "tpl": {
    "h": "Messages prêts à envoyer",

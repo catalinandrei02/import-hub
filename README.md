@@ -32,4 +32,3 @@ Every push to `main` builds and deploys through `.github/workflows/deploy.yml`. 
 - `src/`: the app (views, components, data layer, i18n, cost and VIN logic).
 - `tests/unit/`, `tests/e2e/`: checks from `CLAUDE.md` §7.
 - `CLAUDE.md`: build rules, data model, formula, VIN decoder, auto-search task spec. `PROJECT_BRIEF.md`: domain knowledge.
-- `legacy/`: the earlier single-file Artifact versions and the standalone calculator.

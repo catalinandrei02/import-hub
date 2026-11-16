@@ -24,7 +24,7 @@ Users: Catalin-Andrei (owner), his family (father-in-law may be the legal buyer)
 
 ## 3. Current implementation (v3: Vue site on GitHub Pages)
 
-A **Vue 3 + Vite + TypeScript** single-page app in `src/`, deployed to **GitHub Pages** by `.github/workflows/deploy.yml` on every push to `main`. Hash routes (`#/cars`, `#/costs`, …) so Pages never 404s. The old Artifact pages are kept in `legacy/` for reference only.
+A **Vue 3 + Vite + TypeScript** single-page app in `src/`, deployed to **GitHub Pages** by `.github/workflows/deploy.yml` on every push to `main`. Hash routes (`#/cars`, `#/costs`, …) so Pages never 404s.
 
 Sections: **Cars · Costs · Steps · Documents · Contacts · Messages · Auto-search**. Design: night-sky site (canvas sky, glass nav pill, Inter Tight light display type, dark cards; dawn variant in light mode). Tokens live at the top of `src/styles/main.css`.
 
