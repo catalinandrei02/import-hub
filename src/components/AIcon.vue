@@ -14,8 +14,12 @@ import car from "@audi/audi-icon/dist/svg/static/car-small.svg?raw";
 import carSearch from "@audi/audi-icon/dist/svg/static/car-search-small.svg?raw";
 import documents from "@audi/audi-icon/dist/svg/static/documents-small.svg?raw";
 import share from "@audi/audi-icon/dist/svg/static/share-small.svg?raw";
+import download from "@audi/audi-icon/dist/svg/static/download-small.svg?raw";
+import play from "@audi/audi-icon/dist/svg/static/play-small.svg?raw";
+import pause from "@audi/audi-icon/dist/svg/static/pause-small.svg?raw";
+import refresh from "@audi/audi-icon/dist/svg/static/rotate-right-small.svg?raw";
 
-const ICONS = { forward, back, cancel, search, edit, user, "arrow-down": arrowDown, calculator, car, "car-search": carSearch, documents, share };
+const ICONS = { forward, back, cancel, search, edit, user, "arrow-down": arrowDown, calculator, car, "car-search": carSearch, documents, share, download, play, pause, refresh };
 export type IconName = keyof typeof ICONS;
 const props = defineProps<{ name: IconName; size?: number }>();
 // Drop the <title> so the icon stays decorative; the button or link around it carries the label.

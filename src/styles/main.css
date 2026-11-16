@@ -485,9 +485,6 @@ dialog { box-shadow: none }
 .cphoto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block }
 .hero-art.hasphoto { padding: 0; overflow: hidden; position: relative; min-height: 260px }
 .hero-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block }
-.gallery { display: grid; grid-auto-flow: column; grid-auto-columns: 82%; gap: var(--tile); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin }
-.gallery a { scroll-snap-align: start; display: block; aspect-ratio: 4 / 3; background: var(--surface-2) }
-.gallery img { width: 100%; height: 100%; object-fit: cover; display: block }
 .thumbs { display: flex; gap: var(--tile); overflow-x: auto; scrollbar-width: thin }
 .thumbs img { width: 96px; height: 72px; object-fit: cover; flex: none; background: var(--surface-2) }
 .thumbs img.broken { opacity: .3 }
@@ -495,3 +492,36 @@ dialog { box-shadow: none }
 .impbox > div { flex: 1 1 22rem; display: grid; gap: 4px }
 .impt { margin: 0; font-weight: 600 }
 .bm { cursor: grab }
+.hero-art img.stock { object-position: 20% 62% }
+
+/* Car photo slideshow: a black stage beside the details drawer (wide screens) or a block inside it (phones). */
+.show { display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: var(--tile); background: #000; color: #fff; min-width: 0 }
+.show.stage { position: fixed; z-index: 71; top: 0; bottom: 0; left: 0; right: min(34rem, 100%); padding: var(--tile) }
+.show.inline { grid-template-rows: auto auto }
+.show-main { position: relative; min-height: 0; overflow: hidden; background: #000 }
+.show.inline .show-main { aspect-ratio: 4 / 3 }
+.show-main img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block }
+.show-nav, .show-ctl { all: unset; box-sizing: border-box; cursor: pointer; display: grid; place-items: center; width: 56px; height: 56px; background: #000; color: #fff }
+.show-nav { position: absolute; top: 50%; translate: 0 -50% }
+.show-nav.prev { left: 0 } .show-nav.next { right: 0 }
+.show-nav:hover, .show-ctl:hover { background: #fff; color: #000 }
+.show-nav:focus-visible, .show-ctl:focus-visible, .show-thumbs button:focus-visible { outline: 2px solid #fff; outline-offset: -4px }
+.show-ctl[disabled] { opacity: .4; cursor: default }
+.show-bar { position: absolute; left: 0; bottom: 0; display: flex; align-items: stretch; background: #000 }
+.show-count { display: grid; place-items: center; min-width: 72px; padding-inline: 14px; font-variant-numeric: tabular-nums; font-size: .875rem }
+.show-thumbs { display: grid; grid-auto-flow: column; grid-auto-columns: 112px; gap: var(--tile); overflow-x: auto; scrollbar-width: thin; scrollbar-color: #555 #000 }
+.show.inline .show-thumbs { grid-auto-columns: 72px }
+.show-thumbs button { all: unset; box-sizing: border-box; cursor: pointer; aspect-ratio: 4 / 3; background: #222; opacity: .55 }
+.show-thumbs button[aria-current="true"] { opacity: 1; box-shadow: inset 0 -3px 0 #fff }
+.show-thumbs button:hover { opacity: 1 }
+.show-thumbs img { width: 100%; height: 100%; object-fit: cover; display: block }
+.show-empty { display: grid; align-content: center; justify-items: center; gap: 20px; padding: 32px 24px; text-align: left }
+.show.stage .show-empty { grid-row: 1 / -1 }
+.show-art { width: min(100%, 30rem); color: #fff }
+.show-msg { display: grid; gap: 12px; width: min(100%, 30rem); justify-items: start }
+.show-msg .note, .show-msg .label { color: #d0d0d0 } .show-msg .big { color: #fff; margin: 0 }
+.show-msg .label { border-color: #333 }
+.show-msg .btn { background: #fff; color: #000 } .show-msg .btn.primary { background: #fff; color: #000 }
+.steps-ol { margin: 0; padding-left: 1.25rem; display: grid; gap: 4px }
+@media (prefers-reduced-motion: no-preference) { .show-main img { animation: show-in .35s ease-out } }
+@keyframes show-in { from { opacity: 0 } to { opacity: 1 } }

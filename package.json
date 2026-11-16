@@ -11,6 +11,7 @@
     "build:mock": "vite build --mode mock --outDir dist-mock",
     "preview": "vite preview",
     "test": "vitest run",
+    "build:ext": "node --experimental-strip-types --no-warnings scripts/build-ext.mjs",
     "e2e": "npm run build:mock && node tests/e2e/check.mjs"
   },
   "dependencies": {

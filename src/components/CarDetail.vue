@@ -1,3 +1,6 @@
+<script lang="ts">
+const tried = new Set<string>(); // cars whose photos were already fetched this visit
+</script>
 <script setup lang="ts">
 import AIcon from "./AIcon.vue";
 // Car detail drawer: right-hand sheet on desktop, full screen on phones.
@@ -13,6 +16,9 @@ import { copyText, toast, ui } from "../ui";
 import CostPanels from "./CostPanels.vue";
 import ProgressRing from "./ProgressRing.vue";
 import VinInfo from "./VinInfo.vue";
+import PhotoShow from "./PhotoShow.vue";
+import { hasExtension, readWithExtension } from "../lib/extension";
+import { parseImport } from "../lib/importer";
 
 const car = computed(() => state.cars.find(c => c._id === ui.selCar) || null);
 const closeBtn = ref<HTMLButtonElement | null>(null);
@@ -44,11 +50,36 @@ const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !ui.dialog) clos
 onMounted(() => { document.body.classList.add("lock"); document.addEventListener("keydown", onKey); nextTick(() => closeBtn.value?.focus()); });
 onBeforeUnmount(() => { document.body.classList.remove("lock"); document.removeEventListener("keydown", onKey); });
 watch(car, c => { if (!c) ui.detail = false; });
+
+// Photos: slideshow beside the drawer on wide screens, inside it on phones.
+const wideMq = typeof matchMedia === "function" ? matchMedia("(min-width: 62rem)") : null;
+const wide = ref(!!wideMq?.matches);
+const onWide = (e: MediaQueryListEvent) => (wide.value = e.matches);
+onMounted(() => wideMq?.addEventListener("change", onWide));
+onBeforeUnmount(() => wideMq?.removeEventListener("change", onWide));
+// With the Chrome extension, a car with a listing link and no photos gets them on its own the first time it's opened.
+const listing = computed(() => safeUrl(car.value?.url) || "");
+const canFetch = computed(() => hasExtension.value && canWrite.value && !!listing.value);
+const fetchingId = ref("");
+async function fetchPhotos() {
+  const c = car.value, url = listing.value;
+  if (!c || !canFetch.value || fetchingId.value) return;
+  tried.add(c._id); fetchingId.value = c._id;
+  try {
+    const d = await readWithExtension(url);
+    const photos = (d && parseImport(JSON.stringify(d))?.photos) || [];
+    if (!photos.length) { toast(t.value.show.failed); return; }
+    await queue("cars/" + c._id, b => b.update("cars/" + c._id, { photos, updatedAt: new Date().toISOString() }));
+    toast(fill(t.value.show.got, { n: photos.length }));
+  } catch { toast(t.value.c.error); } finally { fetchingId.value = ""; }
+}
+watch(() => [car.value?._id, canFetch.value], () => { const c = car.value; if (c && canFetch.value && !c.photos?.length && !tried.has(c._id)) fetchPhotos(); }, { immediate: true });
 </script>
 
 <template>
   <Teleport to="body">
     <div class="scrim" @click="close"></div>
+    <PhotoShow v-if="car && wide" :photos="car.photos || []" :name="carName(car)" :wide="true" :fetching="fetchingId === car._id" :has-ext="hasExtension" :has-url="!!listing" :can-fetch="canFetch" @refresh="fetchPhotos" />
     <aside v-if="car" id="side" class="drawer sheet" role="dialog" aria-modal="true" :aria-label="carName(car)">
       <section class="glass pad dhead">
         <div class="top">
@@ -67,9 +98,7 @@ watch(car, c => { if (!c) ui.detail = false; });
           <button class="btn" type="button" data-act="edit-car" :data-id="car._id" @click="ui.dialog = { kind: 'car', car }"><AIcon name="edit" :size="20" />{{ t.cars.edit }}</button>
         </div>
       </section>
-      <div v-if="car.photos?.length" class="gallery" :aria-label="t.imp.photos" tabindex="0">
-        <a v-for="(u, i) in car.photos" :key="u" :href="u" target="_blank" rel="noopener noreferrer"><img :src="u" :alt="carName(car) + ' ' + (i + 1)" loading="lazy" referrerpolicy="no-referrer"></a>
-      </div>
+      <PhotoShow v-if="!wide" :photos="car.photos || []" :name="carName(car)" :wide="false" :fetching="fetchingId === car._id" :has-ext="hasExtension" :has-url="!!listing" :can-fetch="canFetch" @refresh="fetchPhotos" />
       <CostPanels v-if="car.price" :price="car.price" :gst="carGst(car)" :costs="state.costs" :cap="t.cars.landedCap" :extra="carGst(car) ? t.cars.withGst : t.cars.noGst" />
       <section class="glass pad" style="display:grid;gap:12px">
         <h3 class="label">{{ t.cars.progress }}</h3>

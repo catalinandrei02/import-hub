@@ -34,12 +34,6 @@ function addFromVin() {
   ui.dialog = { kind: "car", car: { vin: vin.value.toUpperCase().replace(/\s/g, ""), ...(d.err ? {} : { trim: d.trim === "?" ? "" : d.trim, year: d.year === "?" ? null : d.year }) } as any };
 }
 watch(() => ui.cmp.length, n => { if (n < 2) cmpOpen.value = false; });
-// Hero photo: the selected car's main photo, else the newest active car that has one.
-const heroPhoto = computed(() => {
-  const sel = state.cars.find(c => c._id === ui.selCar && c.photos?.length);
-  const any = active.value.filter(c => c.photos?.length).sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")))[0];
-  return (sel || any)?.photos?.[0] || "";
-});
 // Arriving from the "Add to Import Hub" bookmark: #/cars?add=<listing data>
 const route = useRoute(), router = useRouter();
 const sameUrl = (a?: string, b?: string) => !!a && !!b && a.split(/[?#]/)[0].replace(/\/$/, "").toLowerCase() === b.split(/[?#]/)[0].replace(/\/$/, "").toLowerCase();
@@ -70,7 +64,7 @@ watch(() => route.query.add, takeImport);
 </script>
 
 <template>
-  <HeroSection :title="t.cars.h" :lead="t.cars.lead" :photo="heroPhoto">
+  <HeroSection :title="t.cars.h" :lead="t.cars.lead">
     <template #proof>
       <span><b>{{ fill(t.chip.cars, { n: active.length }).split(" ")[0] }}</b> {{ fill(t.chip.cars, { n: active.length }).split(" ").slice(1).join(" ") }}<template v-if="cheapest"> · {{ t.cars.cheapest }} {{ eur(cheapest) }}</template></span>
     </template>

@@ -219,6 +219,37 @@ for (const w of [390, 1440]) for (const scheme of ["light", "dark"]) {
   await p.screenshot({ path: path.join(OUT, "import-1280-light.png") });
   await p.close(); }
 
+// 6. Chrome extension (extension/, loaded unpacked): opening a car with a listing link and no photos fetches them,
+// and the slideshow shows them beside the drawer. Without the extension the slideshow offers the download.
+{ const ext = path.join(ROOT, "extension");
+  const eb = await puppeteer.launch({ headless: "new", args: [`--disable-extensions-except=${ext}`, `--load-extension=${ext}`] });
+  const p = await eb.newPage(); await p.setViewport({ width: 1440, height: 900 });
+  p.on("pageerror", e => report.errors.push("ext: " + e.message));
+  await p.goto(MOCK + "#/cars", { waitUntil: "networkidle0" }); await sleep(500);
+  report.checks.extDetected = await p.evaluate(() => document.documentElement.dataset.importHub === "1");
+  await p.click('[data-act="edit-car"][data-id="s3"]'); await sleep(200);
+  await setVal(p, "#d-url", MOCK + "fake-cg.html");
+  await p.click('#car-form [type=submit]'); await sleep(400);
+  await p.click('[data-act="details"][data-id="s3"]');
+  const t0 = Date.now();
+  await p.waitForFunction(() => (window.__mock.store.get("cars/s3").photos || []).length > 0, { timeout: 45000 }).catch(() => {});
+  await sleep(600);
+  report.checks.extFetched = JSON.stringify({ photos: await p.evaluate(() => (window.__mock.store.get("cars/s3").photos || []).length), secs: Math.round((Date.now() - t0) / 1000) });
+  report.checks.stage = await p.evaluate(() => { const s = document.querySelector(".show.stage"); const r = s?.getBoundingClientRect(); return s ? JSON.stringify({ w: Math.round(r.width), img: !!s.querySelector(".show-main img"), thumbs: s.querySelectorAll(".show-thumbs button").length, count: s.querySelector(".show-count")?.textContent }) : null; });
+  await p.click(".show-nav.next"); await sleep(200);
+  report.checks.stageNext = await p.$eval(".show-count", e => e.textContent);
+  await p.screenshot({ path: path.join(OUT, "slideshow-1440.png") });
+  await p.setViewport({ width: 390, height: 844 }); await sleep(300);
+  report.checks.inlineShow = await p.evaluate(() => !!document.querySelector("#side .show.inline .show-main img") && !document.querySelector(".show.stage"));
+  report.checks.inlineOverflow = await p.evaluate(() => document.getElementById("side").scrollWidth <= document.getElementById("side").clientWidth + 1);
+  await p.screenshot({ path: path.join(OUT, "slideshow-390.png") });
+  await eb.close(); }
+{ const p = await open(MOCK, "cars", 1440, "dark");
+  await p.click('[data-act="details"][data-id="s2"]'); await sleep(300);
+  report.checks.noExtOffer = await p.evaluate(() => !!document.querySelector('.show.stage a[href$="import-hub-extension.zip"]'));
+  await p.screenshot({ path: path.join(OUT, "slideshow-noext-1440-dark.png") });
+  await p.close(); }
+
 console.log(JSON.stringify(report, null, 1));
 await browser.close(); mockSrv.close(); prodSrv.close();
 process.exitCode = report.errors.length || report.overflow.length || report.i18n.length ? 1 : 0;

@@ -16,6 +16,10 @@ npm test             # cost formula, VIN decoder, templates
 npm run e2e          # browser checks at 390/1440 px, light/dark, RO/EN/FR
 ```
 
+## Chrome extension (optional)
+
+`extension/` fetches photos from listing links in your own Chrome (VPN included): open a car that has a link and no photos, and they appear in the slideshow. Install: download `import-hub-extension.zip` from the site (shown in an empty slideshow) or use the folder, open `chrome://extensions`, turn on Developer mode, **Load unpacked**. After changing `src/lib/listingReader.ts`, run `npm run build:ext`.
+
 ## Connect Firebase (once)
 
 1. Create a project at console.firebase.google.com, add a **Web app**, and copy its config into `src/firebase.config.ts` (or into an Actions variable `VITE_FIREBASE_CONFIG` as JSON).
