@@ -4,11 +4,12 @@ const ALLOWED = [/^https:\/\/catalinandrei02\.github\.io\/import-hub\//, /^http:
 let chain = Promise.resolve();
 
 chrome.runtime.onMessage.addListener((msg, sender, reply) => {
-  if (!msg || msg.type !== "read" || !sender.tab || !ALLOWED.some(r => r.test(sender.url || ""))) return;
+  if (!msg || (msg.type !== "read" && msg.type !== "search") || !sender.tab || !ALLOWED.some(r => r.test(sender.url || ""))) return;
   let url;
   try { url = new URL(msg.url); } catch { reply({ error: "bad url" }); return; }
   if (url.protocol !== "https:" && url.protocol !== "http:") { reply({ error: "bad url" }); return; }
-  chain = chain.then(() => read(url.href)).then(data => reply({ data }), e => reply({ error: String(e && e.message || e) }));
+  const file = msg.type === "search" ? "search.js" : "reader.js";
+  chain = chain.then(() => read(url.href, file)).then(data => reply({ data }), e => reply({ error: String(e && e.message || e) }));
   return true; // answer later
 });
 
@@ -23,19 +24,20 @@ function loaded(tabId, timeout) {
   });
 }
 
-async function run(tabId) {
-  const [res] = await chrome.scripting.executeScript({ target: { tabId }, files: ["reader.js"] });
+async function run(tabId, file) {
+  const [res] = await chrome.scripting.executeScript({ target: { tabId }, files: [file] });
   return res && res.result;
 }
 
-async function read(url) {
+async function read(url, file) {
   const win = await chrome.windows.create({ url, focused: false, state: "minimized" });
   const tabId = win.tabs[0].id;
   try {
     await loaded(tabId, 30000);
     await wait(2500); // listing sites fill the gallery with scripts after load
-    let data = await run(tabId);
-    if (!data || !data.i || !data.i.length) { await wait(4000); data = await run(tabId); }
+    let data = await run(tabId, file);
+    const empty = d => !d || (file === "search.js" ? d.blocked : !d.i || !d.i.length);
+    if (empty(data)) { await wait(4000); data = await run(tabId, file); }
     return data;
   } finally {
     chrome.windows.remove(win.id).catch(() => {});

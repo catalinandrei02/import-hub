@@ -26,7 +26,7 @@ Users: Catalin-Andrei (owner), his family (father-in-law may be the legal buyer)
 
 A **Vue 3 + Vite + TypeScript** single-page app in `src/`, deployed to **GitHub Pages** by `.github/workflows/deploy.yml` on every push to `main`. Hash routes (`#/cars`, `#/costs`, …) so Pages never 404s.
 
-Sections: **Cars · Costs · Steps · Documents · Contacts · Search**. Search works like a search engine: a query + filters show matching saved cars instantly and one result link per listing site (AutoTrader.ca and Kijiji take filters in the URL; CarGurus.ca, AutoHebdo and Audi certified go through a Google site: search, Facebook takes the query). Listings can't be fetched into the page from GitHub Pages; the daily task adds them to `cars`. The same filters are saved to `config/search`. Design: automotive-OEM look after audi.ca, applying only the layout principles Audi publishes openly (straight right-angled blocks bled to the edge, asymmetric splits, full-tone colour blocks for emphasis, rectangular tiles with narrow gaps, no frames/overlaps/transparency). The hero (owner's request) is `public/hero.jpg` edge to edge with the text centred over a dark veil; our car drawing is the fallback if the image fails. Interface icons come from `@audi/audi-icon` (Apache-2.0; keep `public/LICENSE-audi-icon.txt` and the footer credit; import only the icons used, via `src/components/AIcon.vue`; never logo or ring icons, since Apache-2.0 grants no trademark rights). Never use the rings, the Audi wordmark as our brand, Audi Type (its licence allows use only for work done for AUDI AG), their component code or photos: the site is public. Tokens live at the top of `src/styles/main.css`.
+Sections: **Cars · Costs · Steps · Documents · Contacts · Search**. Search works like a search engine: a query + filters show matching saved cars instantly and one result link per listing site (AutoTrader.ca and Kijiji take filters in the URL; CarGurus.ca, AutoHebdo and Audi certified go through a Google site: search, Facebook takes the query). Listings can't be fetched into the page from GitHub Pages; the **daily run through the Chrome extension** (`src/lib/priceCheck.ts`) adds new CarGurus.ca matches to `cars`. The same filters are saved to `config/search`. Design: automotive-OEM look after audi.ca, applying only the layout principles Audi publishes openly (straight right-angled blocks bled to the edge, asymmetric splits, full-tone colour blocks for emphasis, rectangular tiles with narrow gaps, no frames/overlaps/transparency). The hero (owner's request) is `public/hero.jpg` edge to edge with the text centred over a dark veil; our car drawing is the fallback if the image fails. Interface icons come from `@audi/audi-icon` (Apache-2.0; keep `public/LICENSE-audi-icon.txt` and the footer credit; import only the icons used, via `src/components/AIcon.vue`; never logo or ring icons, since Apache-2.0 grants no trademark rights). Never use the rings, the Audi wordmark as our brand, Audi Type (its licence allows use only for work done for AUDI AG), their component code or photos: the site is public. Tokens live at the top of `src/styles/main.css`.
 
 Layout of the code:
 - `src/lib/costs.ts`, `src/lib/vin.ts`: the cost formula and VIN decoder from §5. Covered by `tests/unit/costs.test.ts` (25,000 CAD + GST → 27,028 €).
@@ -95,6 +95,16 @@ config/prices       (v3) the last daily price check: lastRun, by (first name), c
                     site is open in Chrome and the last run is over 20 h old (or "Check now"): re-reads every active car
                     (watching/contacted/offer/inspection) with a link, appends price changes to priceHistory, flags gone
                     listings, adds photos if missing; never touches status or steps. Strip on the Cars page (PriceCheckBar.vue).
+
+                    Auto-search part (same run, if config/search is enabled, includes "cargurus" and is due per frequencyDays):
+                    reads ONE CarGurus.ca search page (Audi Q5 = /Cars/l-Used-Audi-Q5-d1988, Q5 Sportback = d3140; location
+                    from the browser), results in `window.__remixContext` → loaderData["routes/($intl).Cars.$seoPath"].search.tiles
+                    (type LISTING_*; data: id, yearMakeModelTrim, vin, priceDto.current, mileage, distance (miles), sellerDto,
+                    options[], pictureData) via `readSearch` (extension/search.js, extension ≥ 1.3.0); filters locally with
+                    `skipReason` (years, price, km, radius, trims via title/VIN, ACC/360 from options, dealer/private, exclude);
+                    adds up to 8 new cars a run (all photos from their details page), addedBy "claude" (shown as found
+                    automatically). Fields searchRun, searchTotal, blocked, found[{id,title,price}]. CarGurus uses DataDome:
+                    keep it to one page per run; `blocked` tells the user to open cargurus.ca and pass the check — never bypass it.
 
 config/scan         written ONLY by the scheduled task:
                     lastRun (ISO), found (number), summary (text, in the UI language of the owner — Romanian)

@@ -115,3 +115,24 @@ describe("PDF pieces", () => {
     expect(parts.join("")).toBe(s);
   });
 });
+
+import { skipReason, hitToCar } from "../../src/lib/priceCheck";
+import { DEF_SEARCH } from "../../src/lib/constants";
+describe("auto-search filters", () => {
+  const h = { id: "1", t: "2022 Audi Q5 45 TFSI quattro Technik", v: "WA1FAAFY0N2000001", p: 27500, k: 60000, d: 20, s: "Good Dealer", st: "dealer", l: "", o: ["Adaptive Cruise Control", "360 Camera"], i: "" };
+  const S = DEF_SEARCH as any;
+  it("keeps a matching car and says why others are skipped", () => {
+    expect(skipReason(h, S)).toBe("");
+    expect(skipReason({ ...h, t: "2019 Audi Q5 Technik" }, S)).toBe("year");
+    expect(skipReason({ ...h, p: 31000 }, S)).toBe("price");
+    expect(skipReason({ ...h, k: 150000 }, S)).toBe("km");
+    expect(skipReason({ ...h, t: "2022 Audi Q5 Progressiv", v: "WA1EAAFY0N2000001" }, S)).toBe("trim");
+    expect(skipReason({ ...h, o: ["Adaptive Cruise Control"] }, S)).toBe("cam");
+    expect(skipReason({ ...h, s: "VW Lauzon Blainville" }, S)).toBe("excluded");
+    expect(skipReason({ ...h, d: 90 }, S)).toBe("distance");
+  });
+  it("turns a result into a watched car without inventing options", () => {
+    const c = hitToCar({ ...h, o: [] }, ["https://x.test/1.jpg"], "2026-11-16T10:00:00Z");
+    expect([c.title, c.year, c.trim, c.price, c.status, c.addedBy, c.acc, c.cam, (c.priceHistory as any[]).length]).toEqual(["Audi Q5", 2022, "Technik", 27500, "watching", "claude", "", "", 1]);
+  });
+});

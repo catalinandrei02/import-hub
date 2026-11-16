@@ -9,9 +9,13 @@ const V3 = {
     brand: { line1: "pentru mașini", line2: "din Québec în România" },
     langL: "Limba",
     prices: {
-      h: "Verificarea prețurilor", running: "Verific prețurile din anunțuri… {d} din {n}", last: "Ultima verificare: {d}, de {n}",
+      h: "Verificarea zilnică", running: "Verific prețurile din anunțuri… {d} din {n}",
+      searching: "Caut mașini noi pe CarGurus…", adding: "Adaug mașinile noi găsite… {d} din {n}", search: "Căutare CarGurus: {d} · rezultate: {t} · mașini noi: {n}",
+      newCar: "nouă", blocked: "CarGurus a cerut o verificare anti-robot. Deschide cargurus.ca în Chrome, treci de verificare, apoi apasă Verifică acum.",
+      updateExt: "Ca să caute singur mașini noi, extensia Import Hub trebuie actualizată la 1.3: descarc-o din nou, dezarhiveaz-o peste cea veche și apasă ↻ în chrome://extensions.",
+      noModel: "Căutarea automată pe CarGurus știe deocamdată doar Audi Q5 și Q5 Sportback.", last: "Ultima verificare: {d}, de {n}",
       summary: "anunțuri citite: {k} · prețuri schimbate: {c} · dispărute: {g}", errors: "necitite: {n}", never: "Prețurile n-au fost verificate încă.",
-      now: "Verifică acum", none: "Nimic de verificat", gone: "Anunț dispărut?", doneToast: "Gata: {c} prețuri schimbate, {g} anunțuri dispărute.",
+      now: "Verifică acum", none: "Nimic de verificat", gone: "Anunț dispărut?", doneToast: "Gata: mașini noi {n}, prețuri schimbate {c}, anunțuri dispărute {g}.",
       needExt: "Prețurile se verifică singure o dată pe zi când cineva deschide site-ul în Chrome cu extensia Import Hub.",
     },
     carfax: {
@@ -86,9 +90,13 @@ const V3 = {
     brand: { line1: "for cars", line2: "from Québec to Romania" },
     langL: "Language",
     prices: {
-      h: "Price check", running: "Checking prices on the listings… {d} of {n}", last: "Last check: {d}, by {n}",
+      h: "Daily check", running: "Checking prices on the listings… {d} of {n}",
+      searching: "Searching CarGurus for new cars…", adding: "Adding the new cars found… {d} of {n}", search: "CarGurus search: {d} · results: {t} · new cars: {n}",
+      newCar: "new", blocked: "CarGurus asked for an anti-bot check. Open cargurus.ca in Chrome, pass the check, then press Check now.",
+      updateExt: "To search for new cars on its own, the Import Hub extension needs version 1.3: download it again, unzip it over the old one and press ↻ in chrome://extensions.",
+      noModel: "Automatic CarGurus search only knows the Audi Q5 and Q5 Sportback for now.", last: "Last check: {d}, by {n}",
       summary: "listings read: {k} · prices changed: {c} · gone: {g}", errors: "unread: {n}", never: "Prices haven't been checked yet.",
-      now: "Check now", none: "Nothing to check", gone: "Listing gone?", doneToast: "Done: {c} prices changed, {g} listings gone.",
+      now: "Check now", none: "Nothing to check", gone: "Listing gone?", doneToast: "Done: {n} new cars, {c} prices changed, {g} listings gone.",
       needExt: "Prices are checked by themselves once a day when someone opens the site in Chrome with the Import Hub extension.",
     },
     carfax: {
@@ -163,9 +171,13 @@ const V3 = {
     brand: { line1: "pour les véhicules", line2: "du Québec vers la Roumanie" },
     langL: "Langue",
     prices: {
-      h: "Vérification des prix", running: "Vérification des prix dans les annonces… {d} sur {n}", last: "Dernière vérification : {d}, par {n}",
+      h: "Vérification quotidienne", running: "Vérification des prix dans les annonces… {d} sur {n}",
+      searching: "Recherche de nouveaux véhicules sur CarGurus…", adding: "Ajout des nouveaux véhicules trouvés… {d} sur {n}", search: "Recherche CarGurus : {d} · résultats : {t} · nouveaux véhicules : {n}",
+      newCar: "nouveau", blocked: "CarGurus a demandé une vérification anti-robot. Ouvrez cargurus.ca dans Chrome, passez la vérification, puis appuyez sur Vérifier maintenant.",
+      updateExt: "Pour chercher seule de nouveaux véhicules, l'extension Import Hub doit être en version 1.3 : téléchargez-la à nouveau, décompressez-la par-dessus l'ancienne et appuyez sur ↻ dans chrome://extensions.",
+      noModel: "La recherche automatique sur CarGurus ne connaît pour l'instant que l'Audi Q5 et le Q5 Sportback.", last: "Dernière vérification : {d}, par {n}",
       summary: "annonces lues : {k} · prix modifiés : {c} · disparues : {g}", errors: "non lues : {n}", never: "Les prix n'ont pas encore été vérifiés.",
-      now: "Vérifier maintenant", none: "Rien à vérifier", gone: "Annonce disparue ?", doneToast: "Terminé : {c} prix modifiés, {g} annonces disparues.",
+      now: "Vérifier maintenant", none: "Rien à vérifier", gone: "Annonce disparue ?", doneToast: "Terminé : nouveaux véhicules {n}, prix modifiés {c}, annonces disparues {g}.",
       needExt: "Les prix sont vérifiés automatiquement une fois par jour quand quelqu'un ouvre le site dans Chrome avec l'extension Import Hub.",
     },
     carfax: {

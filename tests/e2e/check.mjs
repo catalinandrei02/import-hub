@@ -50,10 +50,25 @@ const next = { props: { pageProps: { listingDetails: {
 } } } };
 const FAKE_AT = `<!doctype html><html><head><title>2023 Audi Q5 | $ 36,895 | 28,669 km | AutoTrader.ca</title></head>
 <body><p>Free delivery within 100 km</p><script id="__NEXT_DATA__" type="application/json">${JSON.stringify(next)}</script></body></html>`;
+// A CarGurus.ca search page (Remix data, like the real one): 8 results against the default Search settings
+// (Technik, 2021–2024, ≤ 28,000 $, ≤ 120,000 km, ACC + 360°, excluded "VW Lauzon Blainville"): 2 new matches.
+const hit = (id, o) => ({ type: "LISTING_USED_STANDARD", data: { id, yearMakeModelTrim: "2022 Audi Q5 45 TFSI quattro Technik", vin: "WA1FAAFY0N20" + String(id).padStart(5, "0"),
+  priceDto: { current: 27500 }, mileage: { value: 60000, unit: "KILOMETERS" }, distance: 20, sellerDto: { serviceProviderName: "Good Dealer" },
+  options: ["Adaptive Cruise Control", "360-Degree Camera", "Heated Seats"], pictureData: { url: `http://localhost:4181/fake/srp-${id}-1024x768.jpeg` }, ...o } });
+const srp = { state: { loaderData: { "routes/($intl).Cars.$seoPath": { search: { totalListings: 275, tiles: [
+  hit(91001), hit(91002, { priceDto: { current: 26900 } }),
+  hit(91003, { yearMakeModelTrim: "2019 Audi Q5 Technik" }), hit(91004, { priceDto: { current: 31000 } }),
+  hit(91005, { yearMakeModelTrim: "2022 Audi Q5 Progressiv", vin: "WA1EAAFY0N2091005" }), hit(91006, { options: ["Adaptive Cruise Control"] }),
+  hit(91007, { sellerDto: { serviceProviderName: "VW Lauzon Blainville" } }), hit(91008, { vin: "WA1FAAFY2M2004811" }),
+  { type: "SEO_PRECISION_TILE", data: {} },
+] } } } } };
+const FAKE_SRP = `<!doctype html><html><head><title>Used Audi Q5 for Sale - CarGurus.ca</title></head><body>
+<script>window.__remixContext = ${JSON.stringify(srp)};</script></body></html>`;
 function serve(dir, port) {
   return new Promise(r => {
     const s = http.createServer((req, res) => {
       if (req.url.startsWith("/fake-cgr")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_CGR); }
+      if (req.url.startsWith("/fake-srp")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_SRP); }
       if (req.url.startsWith("/fake-gone")) { res.writeHead(200, { "content-type": "text/html" }); return res.end("<!doctype html><title>Listing not found - CarGurus</title><p>This listing is no longer available.</p>"); }
       if (req.url.startsWith("/fake-at")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_AT); }
       if (req.url.startsWith("/fake-cg")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_CG); }
@@ -381,6 +396,9 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   await p.waitForFunction(() => { const c = window.__mock.store.get("config/prices"); return c && c.checked > 0 && !document.querySelector(".pb-bar"); }, { timeout: 120000 }).catch(() => {});
   await sleep(400);
   const pr = await p.evaluate(() => ({ c: window.__mock.store.get("config/prices"), s3: window.__mock.store.get("cars/s3"), gone: [...window.__mock.store].filter(([k, v]) => k.startsWith("cars/") && v.gone).length }));
+  const found = await p.evaluate(() => { const c = window.__mock.store.get("config/prices"); const cars = [...window.__mock.store].filter(([k, v]) => k.startsWith("cars/") && v.addedBy === "claude" && String(v.vin).startsWith("WA1FAAFY0N2091")).map(([, v]) => v);
+    return { found: (c.found || []).map(f => f.title + " " + f.price), total: c.searchTotal, blocked: c.blocked, added: cars.map(v => [v.vin.slice(-5), v.price, v.km, v.acc, v.cam, v.status, v.photos.length, v.location, v.url.split("/").pop()].join("/")) }; });
+  report.checks.autoSearch = JSON.stringify(found);
   report.checks.priceCheck = JSON.stringify({ checked: pr.c?.checked, changes: (pr.c?.changes || []).map(x => x.from + "→" + x.to), gone: pr.c?.gone?.length, carsMarkedGone: pr.gone, s3: pr.s3.price, historyAdded: (pr.s3.priceHistory || []).length - before, statusKept: pr.s3.status });
   report.checks.priceBar = await p.$eval('[data-sec="prices"]', e => e.innerText.replace(/\s+/g, " ").slice(0, 120)).catch(() => null);
   report.checks.goneChip = await p.evaluate(() => document.querySelectorAll(".car .chip.bad").length > 0);

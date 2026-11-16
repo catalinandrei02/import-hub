@@ -626,3 +626,4 @@ dialog { box-shadow: none }
 .pb-t { display: grid; gap: 4px; min-width: 0 } .pb-t .label { margin: 0 } .pb-t .note { margin: 0 }
 .pb-bar { height: 4px; background: var(--soft) } .pb-bar span { display: block; height: 100%; background: var(--ink); transition: width .3s }
 .pb-list b.down { color: var(--ok) } .pb-list b.up { color: var(--err) } .pb-list b.bad { color: var(--err) }
+.pb-list b.new { color: var(--ink) } .pb-warn { color: var(--warn) !important }

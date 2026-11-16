@@ -10,13 +10,15 @@ import LoginGate from "./components/LoginGate.vue";
 import { state, canWrite } from "./data/store";
 import { watch } from "vue";
 import { hasExtension } from "./lib/extension";
-import { isDue, runPriceCheck } from "./lib/priceCheck";
+import { isDue, isSearchDue, runDaily } from "./lib/priceCheck";
 
 // Daily price check: starts by itself once per visit when the last one is over 20 h old and this Chrome has the extension.
 let tried = false;
 watch(() => [hasExtension.value, canWrite.value, state.carsLoaded, state.pricesLoaded], () => {
-  if (tried || !hasExtension.value || !canWrite.value || !state.carsLoaded || !state.pricesLoaded || !isDue(state.prices)) return;
-  tried = true; runPriceCheck();
+  if (tried || !hasExtension.value || !canWrite.value || !state.carsLoaded || !state.pricesLoaded) return;
+  const prices = isDue(state.prices), search = isSearchDue(state.prices, state.search);
+  if (!prices && !search) return;
+  tried = true; runDaily({ prices, search });
 }, { immediate: true });
 </script>
 

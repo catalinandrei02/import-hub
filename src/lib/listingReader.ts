@@ -122,3 +122,36 @@ export function readListing(base?: string): ListingData | void {
   window.open(base + "#/cars?add=" + encodeURIComponent(JSON.stringify(data)), "_blank");
 }
 
+
+/** One result on a listing site's search page (CarGurus.ca: window.__remixContext → loaderData[...] .search.tiles). */
+export interface SearchHit { id: string; t: string; v: string; p: number | null; k: number | null; d: number | null; s: string; st: string; l: string; o: string[]; i: string }
+export interface SearchData { u: string; total: number | null; hits: SearchHit[]; blocked?: boolean }
+
+/**
+ * Reads a search results page. Self-contained like readListing (its source text runs in the extension's tab).
+ * Checked on a real CarGurus.ca page, Nov 2026. `blocked` = the page has no results data (e.g. an anti-bot check).
+ */
+export function readSearch(): SearchData {
+  const doc = document;
+  const out: SearchData = { u: location.href.split("#")[0], total: null, hits: [] };
+  const json = (start: string) => { const sc = Array.from(doc.querySelectorAll("script:not([src])")).find(x => (x.textContent || "").startsWith(start)); if (!sc) return null; try { return JSON.parse((sc.textContent || "").slice(start.length).replace(/^\s*=\s*/, "").replace(/;\s*$/, "")); } catch { return null; } };
+  const ctx: any = (window as any).__remixContext || json("window.__remixContext");
+  const r: any = Object.values((ctx && ctx.state && ctx.state.loaderData) || {}).find((x: any) => x && x.search && Array.isArray(x.search.tiles));
+  if (!r) { out.blocked = true; return out; }
+  out.total = typeof r.search.totalListings === "number" ? r.search.totalListings : null;
+  for (const tile of r.search.tiles) {
+    const x: any = tile && /LISTING/.test(String(tile.type)) ? tile.data : null;
+    if (!x || !x.id) continue;
+    const m = x.mileage || {}, sd = x.sellerDto || {}, pr = x.priceDto || {};
+    const km = typeof m.value === "number" ? (/MILE/i.test(String(m.unit)) ? Math.round(m.value * 1.609) : m.value) : null;
+    out.hits.push({
+      id: String(x.id), t: String(x.yearMakeModelTrim || x.listingTitle || "").slice(0, 120), v: String(x.vin || "").toUpperCase(),
+      p: typeof pr.current === "number" ? pr.current : null, k: km, d: typeof x.distance === "number" ? x.distance : null,
+      s: String(sd.serviceProviderName || sd.name || "").slice(0, 80),
+      st: /priv/i.test(String(sd.sellerType || sd.type || "")) || sd.privateSeller === true || sd.isPrivate === true ? "private" : "dealer",
+      l: String((sd.address && sd.address.city) || sd.city || "").slice(0, 60),
+      o: Array.isArray(x.options) ? x.options.map(String).slice(0, 60) : [], i: String((x.pictureData && x.pictureData.url) || ""),
+    });
+  }
+  return out;
+}

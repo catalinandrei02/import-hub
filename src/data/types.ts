@@ -55,6 +55,9 @@ export interface PriceRun {
   lastRun?: string; by?: string; checked?: number; errors?: number;
   changes?: { id: string; title: string; from: number | null; to: number }[];
   gone?: { id: string; title: string }[];
+  // auto-search (CarGurus.ca, one search page per run)
+  searchRun?: string; searchTotal?: number | null; blocked?: boolean;
+  found?: { id: string; title: string; price: number | null }[];
 }
 
 export interface Scan { lastRun?: string; found?: number; summary?: string }
