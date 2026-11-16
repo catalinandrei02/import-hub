@@ -658,3 +658,20 @@ dialog { box-shadow: none }
 .hero2.small { aspect-ratio: auto; height: clamp(220px, 30vh, 320px) }
 .hero2.small .h2-media img { object-position: 50% 58% }
 @media (max-width: 40rem) { .hero2.small { aspect-ratio: auto; height: 200px } .hero2.small .h2-media img { object-position: 50% 62% } }
+
+/* Dark only (owner): Audi's dark web palette from the style guide — black, white, the grey scale, Audi red. No light mode, no switch. */
+:root {
+  --bg: #000000; --surface: #1a1a1a; --surface-2: #262626; --card: #0d0d0d;
+  --ink: #ffffff; --ink-2: #b3b3b3; --ink-3: #8c8c8c; --line: #333333; --line-2: #595959;
+  --panel: #1a1a1a; --on-panel: #ffffff; --on-panel-2: #b3b3b3; --panel-line: #333333;
+  --hero: #000000; --on-hero: #ffffff; --on-hero-2: #b3b3b3; --hero-field: #ffffff; --hero-field-ink: #000000;
+  --cta: #ffffff; --on-cta: #000000; --cta-hover: #d9d9d9; --soft: #1a1a1a; --soft-hover: #333333;
+  --accent: #ffffff; --focus: #ffffff; --red: #ff3d5f;
+  --ok: #4fc36a; --warn: #f0b04a; --err: #ff6b81;
+  --g1: #ffffff; --g2: #808080; --g3: #ff3d5f; --g4: #4c4c4c;
+  --art: #333333; --art-2: #4c4c4c; --tyre: #0d0d0d; --rim: #737373;
+  --switch-off: #595959; --switch-on: #ffffff; --thumb: #000000;
+  --on-deep: #ffffff; --on-deep-2: #b3b3b3; --deep-line: #333333;
+  --shadow: rgba(0,0,0,.6); --scrim: rgba(0,0,0,.7);
+  color-scheme: dark;
+}
