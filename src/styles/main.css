@@ -571,3 +571,20 @@ dialog { box-shadow: none }
   .hero.full .hero-art img.stock { object-position: 55% 62% }
   .hero.full .hero-in { padding-bottom: clamp(36px, 6vh, 72px); background: linear-gradient(90deg, #000 0%, #000 26%, rgba(0,0,0,.82) 38%, rgba(0,0,0,0) 58%) }
 }
+
+/* Admin page and avatar badge */
+.admin { display: grid; gap: var(--tile) }
+.admin .pad { display: grid; gap: 12px }
+.arows { list-style: none; margin: 0; padding: 0; display: grid }
+.arow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px; border-top: 1px solid var(--line) }
+.arow:first-child { border-top: 0 }
+.arow .who { display: grid; gap: 4px; min-width: 0 } .arow .who small { color: var(--ink-2); overflow-wrap: anywhere }
+.arow .who b { display: flex; flex-wrap: wrap; align-items: center; gap: 8px }
+.aact { display: flex; flex-wrap: wrap; gap: var(--tile) }
+.addrow { display: grid; gap: 12px; max-width: 36rem }
+.addrow .btn { justify-self: start }
+.umenu { position: relative }
+.udot { position: absolute; top: 2px; right: 2px; z-index: 1; min-width: 18px; height: 18px; padding-inline: 4px; display: grid; place-items: center; background: var(--red); color: #fff; font-size: .6875rem; font-weight: 700; border-radius: 9px }
+.ucount { margin-left: auto; padding-left: 12px; font-weight: 700; color: var(--red) }
+.label .ucount { margin-left: 8px; padding: 0 }
+.gate-sent { color: #fff !important }

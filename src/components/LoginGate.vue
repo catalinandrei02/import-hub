@@ -31,6 +31,7 @@ async function other() { await signOut(); await signInWithHelp(); }
           <p v-else-if="mode === 'none'" class="lead">{{ t.gate.none }}</p>
           <button v-else-if="mode === 'signedOut'" class="cta gate-btn" type="button" data-act="sign-in" @click="signInWithHelp">{{ t.auth.signIn }}</button>
           <template v-else>
+            <p v-if="state.requestSent" class="lead gate-sent">{{ t.gate.sent }}</p>
             <p class="lead">{{ t.auth.noAccess }}</p>
             <p><code class="gate-code">{{ state.user?.uid }}</code></p>
             <div class="gate-row">

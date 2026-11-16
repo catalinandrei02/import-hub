@@ -15,6 +15,7 @@ export const router = createRouter({
   routes: [
     { path: "/", redirect: "/cars" },
     ...SECTIONS.map(s => ({ path: s.path, name: s.key, component: s.component })),
+    { path: "/admin", name: "admin", component: () => import("./views/AdminView.vue") }, // from the avatar menu, admins only
     { path: "/:any(.*)*", redirect: "/cars" },
   ],
   scrollBehavior: () => ({ top: 0 }),

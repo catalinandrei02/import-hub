@@ -39,7 +39,7 @@ Layout of the code:
 - `src/data/firebase.ts`: Firestore + Google sign-in. `src/data/mock.ts`: in-memory sample data for `npm run dev:mock` and the e2e tests; never deployed.
 - `src/firebase.config.ts`: the Firebase web config (not a secret). `null` → the login screen says the site isn't connected. A `VITE_FIREBASE_CONFIG` Actions variable (JSON) overrides it.
 
-Backend: **Firebase Firestore** with the same collection/doc shapes as §4. Access: `firestore.rules`. Only signed-in Google accounts whose uid has a document in `members/{uid}` can read or write. The owner adds members in the Firebase console; the site shows a new person their uid ("Copy code"). Never put anyone's email address in the repo, the rules or the db. `config/scan` is not writable from the site.
+Backend: **Firebase Firestore** with the same collection/doc shapes as §4. Access: `firestore.rules`. Only signed-in Google accounts whose uid has a document in `members/{uid}` can read or write. Admins add members from the Admin page (access requests or add by code); the very first admin (the owner) is created once in the Firebase console. Never put anyone's email address in the repo, the rules or the db. `config/scan` is not writable from the site.
 
 Rules that still apply:
 - **Login screen** (`LoginGate.vue`, owner's request): the site is shown only when `state.auth === "ok"` (signed in and a member). Everyone else gets a full-page screen: sign in with Google / checking / no access (with the uid to send the owner, "use another account", sign out) / not connected. The real protection stays in `firestore.rules`; the static files on Pages are public anyway.
@@ -65,6 +65,12 @@ cars/{autoId}
   -- added in v3 (optional): photos: [url, ...]  (up to 40 photo links from the listing, first = main; hotlinked, members only)
 
 contacts/{autoId}   name, role, phone, email, notes
+
+members/{uid}       name (first name), role: "admin"|"member", addedAt — who may use the site. The owner creates his own
+                    doc once in the Firebase console with role "admin"; after that admins manage members from the site
+                    (avatar menu → Admin, `AdminView.vue`). Rules: admins read/write all, can't demote or remove themselves.
+requests/{uid}      name (first name), at — written automatically by someone who signs in without access; admins approve
+                    (creates members/{uid}, deletes the request) or reject. The waiting login screen opens by itself on approval.
 
 views/{carId}       (v3) total, byUser: {<uid>: {n, name (first name only, never email), last (ISO)}}
                     one count each time a member opens the car's details (recordView in store.ts, atomic increments);

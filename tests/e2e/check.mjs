@@ -216,6 +216,34 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   report.checks.viewsChip = await p.$eval('[data-act="details"][data-id="s1"]', b => b.closest(".car").querySelector(".chip.views")?.textContent).catch(() => null);
   await p.close(); }
 
+// 4c. Admin page (avatar menu): approve a request, change a role, remove a member (two presses), add by code
+{ const p = await open(MOCK, "cars", 1280, "light");
+  const store = () => p.evaluate(() => Object.fromEntries(window.__mock.store));
+  report.checks.adminBadge = await p.$eval(".udot", e => e.textContent).catch(() => null);
+  await p.click(".ubtn"); await sleep(150);
+  await p.click('[data-act="admin"]'); await sleep(400);
+  report.checks.adminRoute = await p.evaluate(() => location.hash + " " + document.querySelectorAll('[data-sec="members"] .arow').length + " members, " + document.querySelectorAll('[data-sec="requests"] .arow').length + " request");
+  await p.click('[data-act="approve"]'); await sleep(300);
+  let s = await store();
+  report.checks.adminApproved = JSON.stringify({ member: s["members/SampleRequestLaszlo00000002"], requestGone: !s["requests/SampleRequestLaszlo00000002"] });
+  await p.click('[data-id="SampleMemberAna0000000001"] [data-act="role"]'); await sleep(300);
+  s = await store(); report.checks.adminRole = s["members/SampleMemberAna0000000001"].role;
+  await p.click('[data-id="SampleMemberAna0000000001"] [data-act="remove"]'); await sleep(150);
+  s = await store(); const still = !!s["members/SampleMemberAna0000000001"];
+  await p.click('[data-id="SampleMemberAna0000000001"] [data-act="remove"]'); await sleep(300);
+  s = await store(); report.checks.adminRemoveTwoPress = still && !s["members/SampleMemberAna0000000001"];
+  await setVal(p, "#a-code", "NewPersonCode0000000000003"); await setVal(p, "#a-name", "Maria Pop"); await p.click('[data-act="add-member"]'); await sleep(300);
+  s = await store(); report.checks.adminAdded = JSON.stringify(s["members/NewPersonCode0000000000003"]);
+  report.checks.adminSelfNoActions = await p.evaluate(() => !document.querySelector('[data-id="mock-user"] [data-act]'));
+  for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
+    await p.setViewport({ width: w, height: 900 }); await p.emulateMediaFeatures([{ name: "prefers-color-scheme", value: scheme }]); await sleep(200);
+    const o = await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth); if (!o) report.overflow.push(`admin ${w} ${scheme}`);
+    await p.screenshot({ path: path.join(OUT, `admin-${w}-${scheme}.png`), fullPage: true });
+  }
+  for (const l of ["en", "fr"]) { await setLang(p, l); report.checks["admin_" + l] = await p.$eval('[data-sec="requests"] .label', e => e.textContent.trim()); }
+  await setLang(p, "ro");
+  await p.close(); }
+
 // 5. "Add to Import Hub" bookmark: run it on a listing page, open the app from it, save the car with its photos
 { const p = await open(MOCK, "cars", 1280, "light");
   await p.click('[data-act="add-car"]'); await sleep(200);

@@ -1,5 +1,5 @@
 rules_version = '2';
-// Import Hub: only signed-in family members can read or write.
+// Import Hub: only signed-in family members can read or write; admins manage members and access requests.
 // A member is a Google account whose uid has a document in /members (add it in the Firebase console;
 // the site shows each new person their uid under "Copy code").
 // The scheduled auto-search task writes with a service account, which bypasses these rules.
@@ -8,9 +8,25 @@ service cloud.firestore {
     function isMember() {
       return request.auth != null && exists(/databases/$(database)/documents/members/$(request.auth.uid));
     }
+    // Admins: members whose doc has role "admin" (the owner sets his own once in the console).
+    function isAdmin() {
+      return isMember() && get(/databases/$(database)/documents/members/$(request.auth.uid)).data.get('role', 'member') == 'admin';
+    }
     match /members/{uid} {
-      allow read: if request.auth != null && request.auth.uid == uid;
-      allow write: if false;
+      allow read: if request.auth != null && (request.auth.uid == uid || isAdmin());
+      // Admins add members and change roles, but can't demote or remove themselves.
+      allow create, update: if isAdmin()
+        && request.resource.data.keys().hasOnly(['name', 'role', 'addedAt'])
+        && request.resource.data.role in ['member', 'admin']
+        && (request.auth.uid != uid || request.resource.data.role == 'admin');
+      allow delete: if isAdmin() && request.auth.uid != uid;
+    }
+    // Access requests: anyone signed in may ask for themself (first name only); admins read and clear them.
+    match /requests/{uid} {
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['name', 'at'])
+        && request.resource.data.name is string && request.resource.data.name.size() <= 40;
+      allow read, delete: if isAdmin();
     }
     match /cars/{id} { allow read, write: if isMember(); }
     match /contacts/{id} { allow read, write: if isMember(); }

@@ -36,4 +36,9 @@ export interface SearchSettings {
 /** views/{carId}: how often each member opened the car (v3). Names are first names only; never emails. */
 export interface ViewDoc { total?: number; byUser?: Record<string, { n?: number; name?: string; last?: string }> }
 
+/** members/{uid}: who may use the site. Written only by admins (and the owner's first one in the console). */
+export interface Member { _id: string; name?: string; role?: "admin" | "member"; addedAt?: string }
+/** requests/{uid}: sent automatically when someone signs in who isn't a member yet. First name only. */
+export interface AccessRequest { _id: string; name?: string; at?: string }
+
 export interface Scan { lastRun?: string; found?: number; summary?: string }

@@ -9,6 +9,9 @@ const SAMPLE: Record<string, Record<string, any>> = {
   "cars/s5": { title: "Audi Q5", year: 2021, vin: "WA1EAAFY0M2063089", km: 70000, price: 23500, priceHistory: [{ date: "2026-09-01", price: 23500 }], seller: "Sample dealer D", sellerType: "dealer", location: "Blainville", status: "dropped", acc: "no", cam: "no", flags: ["rust"], steps: {}, addedBy: "manual" },
   "contacts/k1": { name: "Sample Shipper", role: "Shipping line, Montréal", phone: "000-000-0000", email: "", notes: "Bookings, quotes" },
   "contacts/k2": { name: "Sample Warehouse", role: "Drop-off warehouse", phone: "", email: "", notes: "" },
+  "members/mock-user": { name: "Test", role: "admin", addedAt: "2026-11-01T10:00:00Z" },
+  "members/SampleMemberAna0000000001": { name: "Ana", role: "member", addedAt: "2026-11-02T10:00:00Z" },
+  "requests/SampleRequestLaszlo00000002": { name: "Laszlo", at: "2026-11-16T09:00:00Z" },
   "config/scan": { lastRun: "2026-11-15T07:00:00Z", found: 2, summary: "Exemplu: 1 mașină nouă și o scădere de preț de 500 CAD." },
 };
 

@@ -8,6 +8,14 @@ const V3 = {
   ro: {
     brand: { line1: "pentru mașini", line2: "din Québec în România" },
     langL: "Limba",
+    admin: {
+      menu: "Administrare", h: "Administrare", lead: "Cine are acces la site, cererile noi și cât folosește fiecare site-ul. Doar adminii văd pagina asta.",
+      reqH: "Cereri de acces", reqNone: "Nicio cerere nouă.", approve: "Aprobă", reject: "Respinge",
+      memH: "Membri", admin: "Admin", member: "Membru", you: "tu", makeAdmin: "Fă admin", makeMember: "Fă membru", remove: "Scoate", sure: "Sigur? Apasă din nou",
+      code: "Cod", views: "Mașini deschise", last: "Ultima dată", never: "niciodată",
+      addH: "Adaugă după cod", addLead: "Dacă cineva ți-a trimis codul de pe pagina de intrare.", addCode: "Codul persoanei", addName: "Prenume", add: "Adaugă", added: "Adăugat.", badCode: "Codul pare greșit (20–40 de litere și cifre).",
+      topH: "Cele mai deschise mașini", none: "Încă nimic.", only: "Doar adminii văd pagina asta.",
+    },
     views: {
       h: "Vizualizări", one: "{n} vizualizare", few: "{n} vizualizări", many: "{n} de vizualizări",
       how: "Se numără de fiecare dată când cineva din familie deschide mașina.", none: "Încă n-a deschis-o nimeni.", you: "tu", last: "ultima dată",
@@ -15,7 +23,7 @@ const V3 = {
     gate: {
       lead: "Site-ul privat al familiei pentru mașinile aduse din Québec în România. Intră cu contul Google ca să continui.",
       checking: "Se verifică contul…", none: "Site-ul nu e încă legat de baza de date, așa că nu se poate intra.", other: "Intră cu alt cont",
-      private: "Doar membrii familiei au acces.",
+      private: "Doar membrii familiei au acces.", sent: "Am trimis automat o cerere proprietarului. Pagina se deschide singură după ce te aprobă.",
     },
     auth: {
       signIn: "Intră cu Google", signOut: "Ieși din cont", account: "Contul tău", copyCode: "Copiază codul",
@@ -66,6 +74,14 @@ const V3 = {
   en: {
     brand: { line1: "for cars", line2: "from Québec to Romania" },
     langL: "Language",
+    admin: {
+      menu: "Admin", h: "Admin", lead: "Who has access, new requests and how much each person uses the site. Only admins see this page.",
+      reqH: "Access requests", reqNone: "No new requests.", approve: "Approve", reject: "Reject",
+      memH: "Members", admin: "Admin", member: "Member", you: "you", makeAdmin: "Make admin", makeMember: "Make member", remove: "Remove", sure: "Sure? Press again",
+      code: "Code", views: "Cars opened", last: "Last seen", never: "never",
+      addH: "Add by code", addLead: "If someone sent you the code from the sign-in page.", addCode: "Their code", addName: "First name", add: "Add", added: "Added.", badCode: "That code looks wrong (20–40 letters and digits).",
+      topH: "Most opened cars", none: "Nothing yet.", only: "Only admins can see this page.",
+    },
     views: {
       h: "Views", one: "{n} view", few: "{n} views", many: "{n} views",
       how: "Counted each time someone in the family opens this car.", none: "Nobody has opened it yet.", you: "you", last: "last",
@@ -73,7 +89,7 @@ const V3 = {
     gate: {
       lead: "The family's private site for cars brought from Québec to Romania. Sign in with your Google account to continue.",
       checking: "Checking your account…", none: "The site isn't connected to its database yet, so nobody can sign in.", other: "Use another account",
-      private: "Only family members have access.",
+      private: "Only family members have access.", sent: "A request was sent to the owner automatically. This page opens by itself once you're approved.",
     },
     auth: {
       signIn: "Sign in with Google", signOut: "Sign out", account: "Your account", copyCode: "Copy code",
@@ -124,6 +140,14 @@ const V3 = {
   fr: {
     brand: { line1: "pour les véhicules", line2: "du Québec vers la Roumanie" },
     langL: "Langue",
+    admin: {
+      menu: "Administration", h: "Administration", lead: "Qui a accès au site, les nouvelles demandes et l'utilisation de chacun. Seuls les administrateurs voient cette page.",
+      reqH: "Demandes d'accès", reqNone: "Aucune nouvelle demande.", approve: "Approuver", reject: "Refuser",
+      memH: "Membres", admin: "Administrateur", member: "Membre", you: "vous", makeAdmin: "Rendre administrateur", makeMember: "Rendre membre", remove: "Retirer", sure: "Sûr ? Appuyez à nouveau",
+      code: "Code", views: "Véhicules ouverts", last: "Dernière visite", never: "jamais",
+      addH: "Ajouter par code", addLead: "Si quelqu'un vous a envoyé le code de la page de connexion.", addCode: "Son code", addName: "Prénom", add: "Ajouter", added: "Ajouté.", badCode: "Ce code semble incorrect (20 à 40 lettres et chiffres).",
+      topH: "Véhicules les plus ouverts", none: "Rien pour l'instant.", only: "Seuls les administrateurs peuvent voir cette page.",
+    },
     views: {
       h: "Consultations", one: "{n} consultation", few: "{n} consultations", many: "{n} consultations",
       how: "Comptées chaque fois qu'un membre de la famille ouvre ce véhicule.", none: "Personne ne l'a encore ouvert.", you: "vous", last: "dernière fois",
@@ -131,7 +155,7 @@ const V3 = {
     gate: {
       lead: "Le site privé de la famille pour les véhicules amenés du Québec en Roumanie. Connectez-vous avec votre compte Google pour continuer.",
       checking: "Vérification du compte…", none: "Le site n'est pas encore relié à sa base de données ; personne ne peut se connecter.", other: "Utiliser un autre compte",
-      private: "Seuls les membres de la famille y ont accès.",
+      private: "Seuls les membres de la famille y ont accès.", sent: "Une demande a été envoyée automatiquement au propriétaire. Cette page s'ouvrira d'elle-même une fois approuvée.",
     },
     auth: {
       signIn: "Se connecter avec Google", signOut: "Se déconnecter", account: "Votre compte", copyCode: "Copier le code",
