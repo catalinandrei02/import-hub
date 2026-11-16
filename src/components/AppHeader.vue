@@ -2,12 +2,13 @@
 import { useRoute } from "vue-router";
 import { SECTIONS } from "../router";
 import { lang, t } from "../i18n";
-import { canWrite, signIn, signOut, state } from "../data/store";
-import { ui, toast } from "../ui";
+import { canWrite, signOut, state } from "../data/store";
+import { signInWithHelp } from "../lib/signin";
+import { ui } from "../ui";
 
 const route = useRoute();
 function addCar() { ui.dialog = { kind: "car", car: null }; }
-async function doSignIn() { try { await signIn(); } catch { toast(t.value.auth.error); } }
+const doSignIn = signInWithHelp;
 </script>
 
 <template>

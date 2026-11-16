@@ -11,7 +11,7 @@ const puppeteer = require(path.join(os.homedir(), "node_modules/puppeteer"));
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../..");
 const OUT = path.resolve(process.argv[2] || path.join(ROOT, "shots"));
 fs.mkdirSync(OUT, { recursive: true });
-const ROUTES = ["cars", "costs", "steps", "documents", "contacts", "lessons", "messages", "search"];
+const ROUTES = ["cars", "costs", "steps", "documents", "contacts", "messages", "search"];
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml" };
 
 function serve(dir, port) {

@@ -1,6 +1,6 @@
 # Import Hub
 
-A family website for importing used cars from Québec to Romania (Viamar Montreal → Rotterdam, Marlog customs in NL, then RAR in Romania). It tracks candidate cars with price history and landed cost, compares them, walks through the import steps and papers per car, and keeps contacts, lessons and ready-to-send FR/EN messages. Available in Romanian, English and French.
+A family website for importing used cars from Québec to Romania (Viamar Montreal → Rotterdam, Marlog customs in NL, then RAR in Romania). It tracks candidate cars with price history and landed cost, compares them, walks through the import steps and papers per car, and keeps contacts, official links and ready-to-send FR/EN messages. Available in Romanian, English and French.
 
 Built with Vue 3, Vite and TypeScript. Data lives in Firebase Firestore behind Google sign-in (family members only). Hosted on GitHub Pages.
 

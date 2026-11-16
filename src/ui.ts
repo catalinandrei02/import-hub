@@ -20,7 +20,7 @@ watch(() => ui.selCar, v => put("hub-car", v));
 watch(() => ui.cmp.slice(), v => put("hub-cmp", JSON.stringify(v)));
 
 let timer: ReturnType<typeof setTimeout> | undefined;
-export function toast(msg: string) { ui.toast = msg; clearTimeout(timer); timer = setTimeout(() => (ui.toast = ""), 2200); }
+export function toast(msg: string) { ui.toast = msg; clearTimeout(timer); timer = setTimeout(() => (ui.toast = ""), Math.max(2200, msg.length * 60)); }
 
 export async function copyText(text: string, done: string) {
   try { await navigator.clipboard.writeText(text); toast(done); } catch { /* clipboard refused: text stays selectable on screen */ }

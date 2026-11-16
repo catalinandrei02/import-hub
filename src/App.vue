@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { t } from "./i18n";
+import { LINKS } from "./i18n/content";
 import { ui } from "./ui";
 import SkyCanvas from "./components/SkyCanvas.vue";
 import AppHeader from "./components/AppHeader.vue";
@@ -15,8 +16,11 @@ import ContactDialog from "./components/ContactDialog.vue";
     <AppHeader />
     <main id="main" class="wrap" tabindex="-1"><RouterView /></main>
     <footer class="foot wrap">
-      <span>Import Hub · CA → NL → RO</span>
-      <span>{{ t.foot.line }}</span>
+      <div class="foot-col"><span>Import Hub · CA → NL → RO</span><span>{{ t.foot.line }}</span></div>
+      <nav class="foot-links" :aria-label="t.foot.sources">
+        <h2 class="label">{{ t.foot.sources }}</h2>
+        <ul class="links"><li v-for="l in LINKS" :key="l[1]"><a :href="l[1]" target="_blank" rel="noopener">{{ l[0] }}</a></li></ul>
+      </nav>
     </footer>
   </div>
   <CarDetail v-if="ui.detail" />

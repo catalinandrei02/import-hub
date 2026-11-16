@@ -7,7 +7,6 @@ export const SECTIONS = [
   { path: "/steps", key: "process", component: () => import("./views/StepsView.vue") },
   { path: "/documents", key: "docs", component: () => import("./views/DocsView.vue") },
   { path: "/contacts", key: "contacts", component: () => import("./views/ContactsView.vue") },
-  { path: "/lessons", key: "lessons", component: () => import("./views/LessonsView.vue") },
   { path: "/messages", key: "tpl", component: () => import("./views/MessagesView.vue") },
   { path: "/search", key: "search", component: () => import("./views/SearchView.vue") },
 ] as const;

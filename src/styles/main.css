@@ -380,7 +380,7 @@ span.node { cursor: default }
 .tl .sd { font-size: .9375rem; font-weight: 300; color: var(--ink-2) }
 .tl .when { font-size: .8125rem; font-weight: 500; color: var(--accent) }
 
-/* Cards grid (docs, contacts, lessons, templates) */
+/* Cards grid (docs, contacts, templates) */
 .cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: var(--gap); align-items: start }
 .card { display: grid; gap: 12px; align-content: start; padding: clamp(16px, 1.8vw, 24px); min-width: 0 }
 .card h3 { margin: 0; font-size: 1.25rem; font-weight: 300; line-height: 1.25; letter-spacing: -.01em }
@@ -391,11 +391,6 @@ span.node { cursor: default }
 .checks li.plain::before { content: ""; width: 6px; height: 6px; margin-top: 9px; border-radius: 50%; background: var(--accent) }
 .checks label { cursor: pointer }
 .checks small { display: block; font-size: .75rem; font-weight: 500; color: var(--accent) }
-.quote { font-size: clamp(1.125rem, 1.4vw, 1.375rem); font-weight: 300; line-height: 1.35; letter-spacing: -.01em; margin: 0 }
-.quote::before { content: "“" } .quote::after { content: "”" }
-.lesson .tag { display: inline-flex; align-items: center; gap: 8px; font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2) }
-.lesson .tag::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--warn) }
-.lesson.good .tag::before { background: var(--ok) }
 .links { margin: 0; padding-left: 18px; display: grid; gap: 8px; font-size: .9375rem }
 .tpl pre { margin: 0; padding: 14px 16px; border-radius: 12px; background: var(--field); border: 1px solid var(--field-line); white-space: pre-wrap; overflow-wrap: anywhere; font: 300 .9375rem/1.55 var(--sans) }
 .tpl pre b { font-weight: 500; color: var(--accent) }
@@ -408,11 +403,14 @@ dialog::backdrop { background: var(--scrim); -webkit-backdrop-filter: blur(6px);
 .dlg { display: grid; gap: 24px; padding: clamp(18px, 3vw, 36px) }
 .dlg h2 { margin: 0; font-size: 2rem; font-weight: 300; letter-spacing: -.02em }
 .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 90; max-width: calc(100vw - 32px);
-  padding: 12px 22px; border-radius: 999px; background: var(--deep); color: var(--on-deep); font-size: .9375rem }
+  width: max-content; padding: 12px 22px; border-radius: 22px; background: var(--deep); color: var(--on-deep); font-size: .9375rem; text-align: center }
 
 /* Footer */
-.foot { margin-top: clamp(32px, 6vh, 64px); padding-top: 20px; border-top: 1px solid var(--card-line); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between;
-  font-size: .875rem; font-weight: 300; color: var(--ink-2) }
+.foot { margin-top: clamp(32px, 6vh, 64px); padding-top: 24px; border-top: 1px solid var(--card-line); display: grid; gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); font-size: .875rem; font-weight: 300; color: var(--ink-2) }
+.foot-col { display: grid; gap: 6px; align-content: start }
+.foot-links { min-width: 0 }
+.foot .links { font-size: .875rem; overflow-wrap: anywhere }
 
 @media (max-width: 40rem) {
   .head { min-height: 48px }

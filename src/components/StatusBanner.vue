@@ -2,8 +2,9 @@
 // Connection / sign-in / loading / stale states for everything that reads shared data.
 import { computed } from "vue";
 import { t } from "../i18n";
-import { signIn, state } from "../data/store";
-import { copyText, toast } from "../ui";
+import { state } from "../data/store";
+import { signInWithHelp } from "../lib/signin";
+import { copyText } from "../ui";
 
 const view = computed(() => {
   const L = t.value;
@@ -15,7 +16,7 @@ const view = computed(() => {
   if (state.data === "off" && state.auth === "ok") return { warn: true, msg: L.dbOff };
   return null;
 });
-async function doSignIn() { try { await signIn(); } catch { toast(t.value.auth.error); } }
+const doSignIn = signInWithHelp;
 </script>
 
 <template>
