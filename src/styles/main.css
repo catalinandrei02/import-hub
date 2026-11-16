@@ -588,3 +588,7 @@ dialog { box-shadow: none }
 .ucount { margin-left: auto; padding-left: 12px; font-weight: 700; color: var(--red) }
 .label .ucount { margin-left: 8px; padding: 0 }
 .gate-sent { color: #fff !important }
+
+/* Avatar menu floats over the page (.glass sets position: relative, which put it in the header's flow). */
+.umenu > .upop { position: absolute; right: 0; top: calc(100% + 8px); z-index: 60 }
+.uname { display: grid; gap: 2px } .urole { font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2) }

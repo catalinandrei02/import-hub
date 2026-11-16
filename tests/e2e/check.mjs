@@ -220,7 +220,9 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
 { const p = await open(MOCK, "cars", 1280, "light");
   const store = () => p.evaluate(() => Object.fromEntries(window.__mock.store));
   report.checks.adminBadge = await p.$eval(".udot", e => e.textContent).catch(() => null);
+  const hdr0 = await p.$eval("header", e => e.getBoundingClientRect().height).catch(() => 0);
   await p.click(".ubtn"); await sleep(150);
+  report.checks.menuFloats = await p.evaluate(h0 => { const u = document.querySelector(".upop"); return getComputedStyle(u).position + " header " + (Math.round(document.querySelector("header").getBoundingClientRect().height) === Math.round(h0) ? "unchanged" : "MOVED") + " role " + document.querySelector('[data-role="me"]').textContent; }, hdr0);
   await p.click('[data-act="admin"]'); await sleep(400);
   report.checks.adminRoute = await p.evaluate(() => location.hash + " " + document.querySelectorAll('[data-sec="members"] .arow').length + " members, " + document.querySelectorAll('[data-sec="requests"] .arow').length + " request");
   await p.click('[data-act="approve"]'); await sleep(300);

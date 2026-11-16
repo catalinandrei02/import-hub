@@ -30,7 +30,7 @@ async function doSignOut() { close(); await signOut(); }
       <AIcon v-else name="user" />
     </button>
     <div v-if="open" class="upop glass" role="menu">
-      <p class="uname">{{ state.user.name || t.auth.account }}</p>
+      <p class="uname"><span>{{ state.user.name || t.auth.account }}</span><span class="urole" data-role="me">{{ isAdmin ? t.admin.admin : t.admin.member }}</span></p>
       <RouterLink v-if="isAdmin" class="uitem" to="/admin" role="menuitem" data-act="admin" @click="close()">{{ t.admin.menu }}<span v-if="state.requests.length" class="ucount">{{ state.requests.length }}</span></RouterLink>
       <button ref="first" class="uitem" type="button" role="menuitem" @click="copyText(state.user.uid, t.c.copied); close(true)">{{ t.auth.copyCode }}</button>
       <button class="uitem danger" type="button" role="menuitem" data-act="sign-out" @click="doSignOut">{{ t.auth.signOut }}</button>
