@@ -37,12 +37,14 @@ Layout of the code:
 - Hero image: `public/hero.jpg` (+ `hero-1200.jpg`), the owner's photo with the badges on the wheel caps painted out. Keep any hero photo free of Audi logos.
 - `src/data/store.ts`: shared state; one subscription per query after sign-in; 10 s → "stale"; one write at a time per document (`queue()`).
 - `src/data/firebase.ts`: Firestore + Google sign-in. `src/data/mock.ts`: in-memory sample data for `npm run dev:mock` and the e2e tests; never deployed.
-- `src/firebase.config.ts`: the Firebase web config (not a secret). `null` → site renders read-only with the "not connected" banner. A `VITE_FIREBASE_CONFIG` Actions variable (JSON) overrides it.
+- `src/firebase.config.ts`: the Firebase web config (not a secret). `null` → the login screen says the site isn't connected. A `VITE_FIREBASE_CONFIG` Actions variable (JSON) overrides it.
 
 Backend: **Firebase Firestore** with the same collection/doc shapes as §4. Access: `firestore.rules`. Only signed-in Google accounts whose uid has a document in `members/{uid}` can read or write. The owner adds members in the Firebase console; the site shows a new person their uid ("Copy code"). Never put anyone's email address in the repo, the rules or the db. `config/scan` is not writable from the site.
 
 Rules that still apply:
-- No data → render everything, disable save buttons, show the banner (not connected / signed out / no access / loading / stale).
+- **Login screen** (`LoginGate.vue`, owner's request): the site is shown only when `state.auth === "ok"` (signed in and a member). Everyone else gets a full-page screen: sign in with Google / checking / no access (with the uid to send the owner, "use another account", sign out) / not connected. The real protection stays in `firestore.rules`; the static files on Pages are public anyway.
+- Signed in but data still loading or stale → render everything, disable save buttons, show the banner (loading / stale).
+- The Cars list opens on "All" (Toate) every time.
 - **Never hardcode seed data in the app.** Seed Firestore from `PROJECT_BRIEF.md` §8 (console import or a one-off script with a service account).
 - Commands: `npm run dev`, `npm run dev:mock`, `npm test`, `npm run build`, `npm run e2e` (Puppeteer from `~/node_modules`; Playwright isn't installed on this machine). `.npmrc` sets `legacy-peer-deps` because npm 11.0.0 crashes on this dependency tree without it.
 
@@ -118,7 +120,7 @@ Create **one daily** scheduled task (cloud, no local device needed). Its prompt 
 - `npm test` (unit) and `npm run e2e` (browser): every section at 390 px and 1440 px, light and dark, no `pageerror`, `scrollWidth <= viewport`.
 - Switch RO/EN/FR on every tab: no missing keys, no English leftovers in RO/FR.
 - Costs tab with default values: 25,000 CAD + GST → ~27,028 €.
-- No Firebase config (plain `npm run build`) → site renders, banner shows, buttons disabled.
+- Signed out (production build) → only the login screen on every route, 390 and 1440 px, no page content.
 - Add / edit / delete car (delete needs a second press), tick process steps, save rates, save search settings — each round-trips through the db.
 - Never put the owner's personal email address in the page, the db or the task prompt.
 

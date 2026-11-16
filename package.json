@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "build:ext": "node --experimental-strip-types --no-warnings scripts/build-ext.mjs",
-    "e2e": "npm run build:mock && node tests/e2e/check.mjs"
+    "e2e": "npm run build && npm run build:mock && node tests/e2e/check.mjs"
   },
   "dependencies": {
     "@audi/audi-icon": "3.4.0",

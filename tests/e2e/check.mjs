@@ -85,7 +85,7 @@ async function open(base, route, w, scheme, ls = {}) {
   return p;
 }
 const go = async (p, r) => { await p.evaluate(r => { location.hash = "#/" + r; }, r); await sleep(220); };
-const setLang = async (p, l) => { await p.select("#lang", l); await sleep(120); };
+const setLang = async (p, l) => { await p.select(await p.$("#gate-lang") ? "#gate-lang" : "#lang", l); await sleep(120); };
 const setVal = (p, sel, v) => p.$eval(sel, (e, v) => { e.focus(); e.value = v; e.dispatchEvent(new Event("input", { bubbles: true })); e.dispatchEvent(new Event("change", { bubbles: true })); }, v);
 
 // 1. Every route × width × theme × language
@@ -140,21 +140,22 @@ for (const w of [390, 1440]) for (const scheme of ["light", "dark"]) {
   report.checks.costs26500noGst = await p.$eval("#side .total", e => e.textContent);
   await p.close(); }
 
-// 3. Production build, signed out: renders, sign-in banner, writes disabled
-{ const p = await open(PROD, "cars", 390, "dark"); await sleep(1500);
-  report.checks.signedOutBanner = await p.$eval(".banner", e => e.textContent.trim().slice(0, 60)).catch(() => null);
-  report.checks.signedOutHasSignIn = await p.evaluate(() => [...document.querySelectorAll("button")].some(b => /Google/.test(b.textContent)));
-  report.checks.signedOutHeroAddDisabled = await p.$eval(".pillform .cta", e => e.disabled);
-  await go(p, "steps"); report.checks.signedOutStepsEmpty = await p.$eval(".empty .big", e => e.textContent.slice(0, 60)).catch(() => null);
-  await go(p, "costs"); report.checks.signedOutCosts = await p.$eval("#side .total", e => e.textContent);
-  report.checks.signedOutSaveDisabled = await p.$eval("#rates-form [type=submit]", e => e.disabled);
-  await go(p, "search"); report.checks.signedOutSearchDisabled = await p.$eval("#search-form [type=submit]", e => e.disabled);
-  await p.screenshot({ path: path.join(OUT, "signedout-390-dark.png") });
-  await p.close(); }
-
+// 3. Production build, signed out: only the login screen, on every route, both widths and themes; no site content.
+for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
+  const p = await open(PROD, "cars", w, scheme); await sleep(1500);
+  const look = () => p.evaluate(() => ({ gate: !!document.querySelector(".gate"), mode: document.querySelector(".gate")?.dataset.mode, header: !!document.querySelector(".app, header nav"), cars: !!document.querySelector(".car, .hero"), sw: document.documentElement.scrollWidth, vw: innerWidth }));
+  const seen = [];
+  for (const r of ["cars", "costs", "steps", "documents", "contacts", "search"]) { await go(p, r); const l = await look(); seen.push(l.gate && !l.header && !l.cars ? l.mode : "LEAK " + r + " " + JSON.stringify(l)); if (l.sw > l.vw) report.overflow.push(`gate ${w} ${scheme} ${r}`); }
+  report.checks[`gate_${w}_${scheme}`] = [...new Set(seen)].join(",");
+  report.checks[`gateSignIn_${w}`] = await p.$eval('[data-act="sign-in"]', e => e.textContent.trim()).catch(() => null);
+  await setLang(p, "en"); report.checks[`gateEn_${w}`] = await p.$eval('[data-act="sign-in"]', e => e.textContent.trim()).catch(() => null); await setLang(p, "ro");
+  await p.screenshot({ path: path.join(OUT, `gate-${w}-${scheme}.png`) });
+  await p.close();
+}
 // 4. Round trips through the mock store
 { const p = await open(MOCK, "cars", 1280, "dark");
   const store = () => p.evaluate(() => Object.fromEntries(window.__mock.store));
+  report.checks.filterDefaultAll = await p.$eval('[data-filter="all"]', e => e.getAttribute("aria-pressed"));
   report.checks.cardLanded = await p.$$eval(".car", cs => cs.map(c => c.querySelector(".ctt").textContent + " = " + c.querySelector(".rate").innerText.replace(/\n/g, " ")));
   await setVal(p, "#hero-vin", "WA1FAAFY0M2006299"); await sleep(80);
   report.checks.heroVinChips = await p.$$eval(".hero .chip", cs => cs.map(c => c.textContent));

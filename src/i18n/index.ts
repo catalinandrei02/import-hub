@@ -7,6 +7,11 @@ const V3 = {
   ro: {
     brand: { line1: "pentru mașini", line2: "din Québec în România" },
     langL: "Limba",
+    gate: {
+      lead: "Site-ul privat al familiei pentru mașinile aduse din Québec în România. Intră cu contul Google ca să continui.",
+      checking: "Se verifică contul…", none: "Site-ul nu e încă legat de baza de date, așa că nu se poate intra.", other: "Intră cu alt cont",
+      private: "Doar membrii familiei au acces.",
+    },
     auth: {
       signIn: "Intră cu Google", signOut: "Ieși din cont", account: "Contul tău", copyCode: "Copiază codul",
       signedOut: "Intră cu contul Google ca să vezi și să modifici mașinile familiei.",
@@ -56,6 +61,11 @@ const V3 = {
   en: {
     brand: { line1: "for cars", line2: "from Québec to Romania" },
     langL: "Language",
+    gate: {
+      lead: "The family's private site for cars brought from Québec to Romania. Sign in with your Google account to continue.",
+      checking: "Checking your account…", none: "The site isn't connected to its database yet, so nobody can sign in.", other: "Use another account",
+      private: "Only family members have access.",
+    },
     auth: {
       signIn: "Sign in with Google", signOut: "Sign out", account: "Your account", copyCode: "Copy code",
       signedOut: "Sign in with Google to see and change the family's cars.",
@@ -105,6 +115,11 @@ const V3 = {
   fr: {
     brand: { line1: "pour les véhicules", line2: "du Québec vers la Roumanie" },
     langL: "Langue",
+    gate: {
+      lead: "Le site privé de la famille pour les véhicules amenés du Québec en Roumanie. Connectez-vous avec votre compte Google pour continuer.",
+      checking: "Vérification du compte…", none: "Le site n'est pas encore relié à sa base de données ; personne ne peut se connecter.", other: "Utiliser un autre compte",
+      private: "Seuls les membres de la famille y ont accès.",
+    },
     auth: {
       signIn: "Se connecter avec Google", signOut: "Se déconnecter", account: "Votre compte", copyCode: "Copier le code",
       signedOut: "Connectez-vous avec Google pour voir et modifier les véhicules de la famille.",

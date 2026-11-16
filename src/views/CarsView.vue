@@ -16,9 +16,8 @@ import CarCard from "../components/CarCard.vue";
 import CompareTable from "../components/CompareTable.vue";
 import VinInfo from "../components/VinInfo.vue";
 
-const get = (k: string) => { try { return localStorage.getItem(k); } catch { return null; } };
-const filter = ref<"active" | "dropped" | "all">((get("hub-filter") as any) || "active");
-watch(filter, v => { try { localStorage.setItem("hub-filter", v); } catch { /* ignore */ } });
+// Opens on "All" every time (owner's choice).
+const filter = ref<"active" | "dropped" | "all">("all");
 const vin = ref("");
 const cmpOpen = ref(false);
 

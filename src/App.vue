@@ -6,9 +6,13 @@ import AppHeader from "./components/AppHeader.vue";
 import CarDetail from "./components/CarDetail.vue";
 import CarDialog from "./components/CarDialog.vue";
 import ContactDialog from "./components/ContactDialog.vue";
+import LoginGate from "./components/LoginGate.vue";
+import { state } from "./data/store";
 </script>
 
 <template>
+  <LoginGate v-if="state.auth !== 'ok'" />
+  <template v-else>
   <a class="skip" href="#main">{{ t.c.skip }}</a>
   <div class="app">
     <AppHeader />
@@ -26,5 +30,6 @@ import ContactDialog from "./components/ContactDialog.vue";
   <CarDetail v-if="ui.detail" />
   <CarDialog v-if="ui.dialog?.kind === 'car'" :car="ui.dialog.car" :imported="ui.dialog.imported" :auto-fill="ui.dialog.autoFill" />
   <ContactDialog v-if="ui.dialog?.kind === 'contact'" :contact="ui.dialog.contact" />
+  </template>
   <div v-if="ui.toast" class="toast" role="status">{{ ui.toast }}</div>
 </template>
