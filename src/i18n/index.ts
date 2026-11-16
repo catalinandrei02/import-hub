@@ -8,6 +8,11 @@ const V3 = {
   ro: {
     brand: { line1: "pentru mașini", line2: "din Québec în România" },
     langL: "Limba",
+    carfax: {
+      h: "Carfax", none: "Încă nu e niciun raport Carfax. Adaugă linkul sau încarcă PDF-ul.", linkL: "Linkul raportului Carfax", addLink: "Adaugă linkul",
+      upload: "Încarcă PDF", uploading: "Se încarcă… {p}%", max: "PDF, maxim 10 MB.", opening: "Se deschide…", del: "Șterge", sure: "Sigur? Apasă din nou",
+      by: "adăugat de {n}, {d}", added: "Adăugat.", badLink: "Linkul trebuie să înceapă cu https://", notPdf: "Alege un fișier PDF.", tooBig: "PDF-ul e prea mare (maxim 10 MB).", chip: "Carfax",
+    },
     admin: {
       menu: "Administrare", h: "Administrare", lead: "Cine are acces la site, cererile noi și cât folosește fiecare site-ul. Doar adminii văd pagina asta.",
       reqH: "Cereri de acces", reqNone: "Nicio cerere nouă.", approve: "Aprobă", reject: "Respinge",
@@ -74,6 +79,11 @@ const V3 = {
   en: {
     brand: { line1: "for cars", line2: "from Québec to Romania" },
     langL: "Language",
+    carfax: {
+      h: "Carfax", none: "No Carfax report yet. Add the link or upload the PDF.", linkL: "Carfax report link", addLink: "Add link",
+      upload: "Upload PDF", uploading: "Uploading… {p}%", max: "PDF, up to 10 MB.", opening: "Opening…", del: "Delete", sure: "Sure? Press again",
+      by: "added by {n}, {d}", added: "Added.", badLink: "The link must start with https://", notPdf: "Choose a PDF file.", tooBig: "The PDF is too large (10 MB max).", chip: "Carfax",
+    },
     admin: {
       menu: "Admin", h: "Admin", lead: "Who has access, new requests and how much each person uses the site. Only admins see this page.",
       reqH: "Access requests", reqNone: "No new requests.", approve: "Approve", reject: "Reject",
@@ -140,6 +150,11 @@ const V3 = {
   fr: {
     brand: { line1: "pour les véhicules", line2: "du Québec vers la Roumanie" },
     langL: "Langue",
+    carfax: {
+      h: "Carfax", none: "Pas encore de rapport Carfax. Ajoutez le lien ou téléversez le PDF.", linkL: "Lien du rapport Carfax", addLink: "Ajouter le lien",
+      upload: "Téléverser le PDF", uploading: "Téléversement… {p} %", max: "PDF, 10 Mo maximum.", opening: "Ouverture…", del: "Supprimer", sure: "Sûr ? Appuyez à nouveau",
+      by: "ajouté par {n}, {d}", added: "Ajouté.", badLink: "Le lien doit commencer par https://", notPdf: "Choisissez un fichier PDF.", tooBig: "Le PDF est trop volumineux (10 Mo maximum).", chip: "Carfax",
+    },
     admin: {
       menu: "Administration", h: "Administration", lead: "Qui a accès au site, les nouvelles demandes et l'utilisation de chacun. Seuls les administrateurs voient cette page.",
       reqH: "Demandes d'accès", reqNone: "Aucune nouvelle demande.", approve: "Approuver", reject: "Refuser",

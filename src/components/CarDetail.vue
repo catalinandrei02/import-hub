@@ -17,6 +17,7 @@ import CostPanels from "./CostPanels.vue";
 import ProgressRing from "./ProgressRing.vue";
 import VinInfo from "./VinInfo.vue";
 import PhotoShow from "./PhotoShow.vue";
+import CarfaxSection from "./CarfaxSection.vue";
 import { hasExtension, readWithExtension } from "../lib/extension";
 import { parseImport } from "../lib/importer";
 
@@ -108,6 +109,7 @@ watch(() => [car.value?._id, canFetch.value], () => { const c = car.value; if (c
       </section>
       <PhotoShow v-if="!wide" :photos="car.photos || []" :name="carName(car)" :wide="false" :fetching="fetchingId === car._id" :has-ext="hasExtension" :has-url="!!listing" :can-fetch="canFetch" @refresh="fetchPhotos" />
       <CostPanels v-if="car.price" :price="car.price" :gst="carGst(car)" :costs="state.costs" :cap="t.cars.landedCap" :extra="carGst(car) ? t.cars.withGst : t.cars.noGst" />
+      <CarfaxSection :car="car" />
       <section class="glass pad" style="display:grid;gap:12px">
         <h3 class="label">{{ t.cars.progress }}</h3>
         <div class="ringrow"><ProgressRing :n="done" :total="nSteps" />

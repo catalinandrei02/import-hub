@@ -29,6 +29,18 @@ service cloud.firestore {
       allow read, delete: if isAdmin();
     }
     match /cars/{id} { allow read, write: if isMember(); }
+    // PDFs (Carfax reports): a small description plus the file in pieces of base64 text under 1 MB each.
+    match /files/{fileId} {
+      allow read, delete: if isMember();
+      allow create: if isMember()
+        && request.resource.data.keys().hasOnly(['name', 'type', 'size', 'chunks', 'carId', 'addedAt'])
+        && request.resource.data.type == 'application/pdf'
+        && request.resource.data.size is int && request.resource.data.size <= 10485760;
+      match /chunks/{n} {
+        allow read, delete: if isMember();
+        allow create: if isMember() && request.resource.data.keys().hasOnly(['d']) && request.resource.data.d is string;
+      }
+    }
     match /contacts/{id} { allow read, write: if isMember(); }
     // How often each member opened each car (counts only; first names, no emails).
     match /views/{carId} {

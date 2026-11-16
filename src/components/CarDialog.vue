@@ -11,6 +11,7 @@ import { t } from "../i18n";
 import { toast, ui } from "../ui";
 import VinInfo from "./VinInfo.vue";
 import ImportBookmark from "./ImportBookmark.vue";
+import { deletePdf } from "../data/files";
 import { hasExtension, readWithExtension } from "../lib/extension";
 import { MAX_PHOTOS, findSaved, parseImport } from "../lib/importer";
 import { state } from "../data/store";
@@ -90,6 +91,8 @@ async function del() {
   const id = old._id!;
   try {
     await queue("cars/" + id, b => b.remove("cars/" + id));
+    // Its Carfax PDFs go too (best effort).
+    for (const it of old.carfax || []) if (it.kind === "pdf" && it.fileId) deletePdf(it.fileId).catch(() => {});
     if (ui.selCar === id) { ui.selCar = ""; ui.detail = false; }
     ui.cmp = ui.cmp.filter(x => x !== id); ui.dialog = null;
   } catch { toast(t.value.c.error); }

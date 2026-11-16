@@ -20,7 +20,14 @@ export interface Car {
   docs?: Record<string, string | boolean>;
   /** v3: photo links taken from the listing (first = main photo). Hotlinked, visible only to members. */
   photos?: string[];
+  /** v3: Carfax reports, as links or PDFs (PDFs live in files/{fileId}, split into chunks). */
+  carfax?: CarfaxItem[];
   [k: string]: unknown;
+}
+
+export interface CarfaxItem {
+  id: string; kind: "link" | "pdf"; url?: string; fileId?: string; name?: string; size?: number;
+  addedAt?: string; addedBy?: string; // first name
 }
 
 export interface Contact { _id: string; name?: string; role?: string; phone?: string; email?: string; notes?: string }

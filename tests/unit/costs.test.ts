@@ -104,3 +104,14 @@ describe("pluralForm (view counts)", () => {
     expect([0, 1, 20].map(n => pluralForm(n, "en"))).toEqual(["few", "one", "few"]);
   });
 });
+
+import { splitChunks } from "../../src/data/files";
+describe("PDF pieces", () => {
+  it("splits base64 into pieces under the Firestore limit and joins back", () => {
+    const s = "A".repeat(1_500_001);
+    const parts = splitChunks(s);
+    expect(parts.length).toBe(3);
+    expect(Math.max(...parts.map(p => p.length))).toBeLessThan(1_000_000);
+    expect(parts.join("")).toBe(s);
+  });
+});

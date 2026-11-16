@@ -26,7 +26,7 @@ Users: Catalin-Andrei (owner), his family (father-in-law may be the legal buyer)
 
 A **Vue 3 + Vite + TypeScript** single-page app in `src/`, deployed to **GitHub Pages** by `.github/workflows/deploy.yml` on every push to `main`. Hash routes (`#/cars`, `#/costs`, …) so Pages never 404s.
 
-Sections: **Cars · Costs · Steps · Documents · Contacts · Search**. Search works like a search engine: a query + filters show matching saved cars instantly and one result link per listing site (AutoTrader.ca and Kijiji take filters in the URL; CarGurus.ca, AutoHebdo and Audi certified go through a Google site: search, Facebook takes the query). Listings can't be fetched into the page from GitHub Pages; the daily task adds them to `cars`. The same filters are saved to `config/search`. Design: automotive-OEM look after audi.ca, applying only the layout principles Audi publishes openly (straight right-angled blocks bled to the edge, asymmetric splits, full-tone colour blocks for emphasis, rectangular tiles with narrow gaps, no frames/overlaps/transparency). The hero is a split: black text block + full-bleed tile with our own car drawing. Interface icons come from `@audi/audi-icon` (Apache-2.0; keep `public/LICENSE-audi-icon.txt` and the footer credit; import only the icons used, via `src/components/AIcon.vue`; never logo or ring icons, since Apache-2.0 grants no trademark rights). Never use the rings, the Audi wordmark as our brand, Audi Type (its licence allows use only for work done for AUDI AG), their component code or photos: the site is public. Tokens live at the top of `src/styles/main.css`.
+Sections: **Cars · Costs · Steps · Documents · Contacts · Search**. Search works like a search engine: a query + filters show matching saved cars instantly and one result link per listing site (AutoTrader.ca and Kijiji take filters in the URL; CarGurus.ca, AutoHebdo and Audi certified go through a Google site: search, Facebook takes the query). Listings can't be fetched into the page from GitHub Pages; the daily task adds them to `cars`. The same filters are saved to `config/search`. Design: automotive-OEM look after audi.ca, applying only the layout principles Audi publishes openly (straight right-angled blocks bled to the edge, asymmetric splits, full-tone colour blocks for emphasis, rectangular tiles with narrow gaps, no frames/overlaps/transparency). The hero (owner's request) is `public/hero.jpg` edge to edge with the text centred over a dark veil; our car drawing is the fallback if the image fails. Interface icons come from `@audi/audi-icon` (Apache-2.0; keep `public/LICENSE-audi-icon.txt` and the footer credit; import only the icons used, via `src/components/AIcon.vue`; never logo or ring icons, since Apache-2.0 grants no trademark rights). Never use the rings, the Audi wordmark as our brand, Audi Type (its licence allows use only for work done for AUDI AG), their component code or photos: the site is public. Tokens live at the top of `src/styles/main.css`.
 
 Layout of the code:
 - `src/lib/costs.ts`, `src/lib/vin.ts`: the cost formula and VIN decoder from §5. Covered by `tests/unit/costs.test.ts` (25,000 CAD + GST → 27,028 €).
@@ -63,6 +63,7 @@ cars/{autoId}
      contact (seller's contact person), stock, offer (our offer, CAD), dePrice (mobile.de, EUR; no longer shown or written, the Germany comparison was removed at the owner's request),
      docs: {d<group>_<item>:"YYYY-MM-DD"}   (Documents-tab checklist per car)
   -- added in v3 (optional): photos: [url, ...]  (up to 40 photo links from the listing, first = main; hotlinked, members only)
+     carfax: [{id, kind:"link"|"pdf", url?, fileId?, name?, size?, addedAt, addedBy (first name)}]  (Carfax section in the details)
 
 contacts/{autoId}   name, role, phone, email, notes
 
@@ -71,6 +72,10 @@ members/{uid}       name (first name), role: "admin"|"member", addedAt — who m
                     (avatar menu → Admin, `AdminView.vue`). Rules: admins read/write all, can't demote or remove themselves.
 requests/{uid}      name (first name), at — written automatically by someone who signs in without access; admins approve
                     (creates members/{uid}, deletes the request) or reject. The waiting login screen opens by itself on approval.
+
+files/{fileId}      (v3) PDFs without Firebase Storage (free plan): name, type "application/pdf", size (≤10 MB), chunks, carId,
+                    addedAt; the file itself in files/{fileId}/chunks/{000..} = {d: base64 piece ≤700k chars} (src/data/files.ts).
+                    Deleting a Carfax PDF or its car deletes the pieces.
 
 views/{carId}       (v3) total, byUser: {<uid>: {n, name (first name only, never email), last (ISO)}}
                     one count each time a member opens the car's details (recordView in store.ts, atomic increments);
@@ -135,6 +140,8 @@ Create **one daily** scheduled task (cloud, no local device needed). Its prompt 
 - Never put the owner's personal email address in the page, the db or the task prompt.
 
 ## 8. Ideas for later (not required now)
+
+- CarGurus' developer APIs (cargurus.com/Cars/developers) are for dealers/partners only (appId + authToken from CarGurus; stats on their own inventory, reviews, SMS, SEM). There is no buyer-side listings or price API, so price tracking has to read the listing pages (extension in the user's Chrome, or the scheduled task).
 
 - Per-car documents checklist + file uploads (`assets` capability) for contract, B/L, Marlog invoice.
 - Exchange rates refreshed by the scheduled task (write to `config/costs` only when the owner opts in).

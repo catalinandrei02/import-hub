@@ -39,6 +39,8 @@ export function connectMock(): Connection {
       async set(p, d) { log("set", p); store.set(p, clone(d)); emit(); },
       async update(p, d) { log("update", p); if (!store.has(p)) throw new Error("not found"); store.set(p, { ...store.get(p), ...clone(d) }); emit(); },
       async remove(p) { log("delete", p); store.delete(p); emit(); },
+      async get(p) { return store.has(p) ? clone(store.get(p)!) : null; },
+      async list(p) { const depth = p.split("/").length + 1; return [...store.keys()].filter(k => k.startsWith(p + "/") && k.split("/").length === depth).map(k => ({ id: k.split("/").pop()!, data: clone(store.get(k)!) })); },
       async bump(p, inc, set) {
         log("bump", p);
         const o: Record<string, any> = store.get(p) ? clone(store.get(p)!) : {};

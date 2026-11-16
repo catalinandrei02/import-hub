@@ -97,8 +97,11 @@ for (const w of [390, 1440]) for (const scheme of ["light", "dark"]) {
     for (const r of ROUTES) {
       await go(p, r);
       const x = await p.evaluate(() => { const c = document.body.cloneNode(true); c.querySelectorAll("pre,.links,script,style,dialog,canvas,select").forEach(n => n.remove());
-        return { sw: document.documentElement.scrollWidth, vw: innerWidth, text: c.innerText }; });
+        // Hero content clipped at the edges (the hero hides overflow, so scrollWidth can't see it).
+        const clipped = [...document.querySelectorAll(".hero-in > *")].filter(e => { const b = e.getBoundingClientRect(); return b.width && (b.left < -1 || b.right > innerWidth + 1); }).map(e => e.className || e.tagName);
+        return { sw: document.documentElement.scrollWidth, vw: innerWidth, text: c.innerText, clipped }; });
       if (x.sw > x.vw) report.overflow.push(`${w} ${scheme} ${l} ${r}: ${x.sw} > ${x.vw}`);
+      if (x.clipped.length) report.overflow.push(`${w} ${scheme} ${l} ${r} hero clipped: ${x.clipped.join(",")}`);
       const bad = x.text.match(/.{0,30}(undefined|\[object|NaN|\{n\}|\{v\}|\{d\}|\{f\}).{0,30}/);
       if (bad) report.i18n.push(`${w} ${scheme} ${l} ${r}: ${bad[0]}`);
       texts[l][r] = x.text;
@@ -225,6 +228,32 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   report.checks.denyOpensOnApproval = await p.evaluate(() => !document.querySelector(".gate") && document.querySelectorAll(".car").length);
   await p.click(".ubtn"); await sleep(150);
   report.checks.memberMenu = await p.evaluate(() => [...document.querySelectorAll(".upop .uitem")].map(e => e.textContent.trim()).join(",") + " / " + document.querySelector('[data-role="me"]').textContent);
+  await p.close(); }
+
+// 4e. Carfax per car: add a link, upload a PDF, open it, delete it (two presses) and its pieces go too
+{ const p = await open(MOCK, "cars", 1280, "light");
+  const pdf = path.join(OUT, "carfax-test.pdf");
+  fs.writeFileSync(pdf, "%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n" + "x".repeat(2000));
+  await p.click('[data-act="details"][data-id="s2"]'); await sleep(300);
+  await setVal(p, "#cfx-link", "https://www.carfax.ca/example-report"); await p.click('[data-act="add-carfax-link"]'); await sleep(300);
+  const inp = await p.$("#cfx-file"); await inp.uploadFile(pdf); await sleep(800);
+  let st = await p.evaluate(() => Object.fromEntries(window.__mock.store));
+  const cf = st["cars/s2"].carfax || []; const pdfItem = cf.find(x => x.kind === "pdf");
+  const fileKeys = Object.keys(st).filter(k => pdfItem && k.startsWith("files/" + pdfItem.fileId));
+  report.checks.carfaxStored = JSON.stringify({ items: cf.map(x => x.kind).sort(), pdfSize: pdfItem?.size, fileDocs: fileKeys.length, by: pdfItem?.addedBy });
+  report.checks.carfaxList = await p.$$eval('[data-sec="carfax"] .cfx li', ls => ls.map(l => l.dataset.kind + ":" + l.querySelector(".cfx-t a, .cfx-t .link").textContent.trim()).join(" | "));
+  report.checks.carfaxOpens = await p.evaluate(async () => {
+    let got = null; const fake = { location: { set href(u) { got = u; } }, close() {} }; window.open = () => fake;
+    document.querySelector('[data-act="open-pdf"]').click();
+    for (let i = 0; i < 40 && !got; i++) await new Promise(r => setTimeout(r, 50));
+    if (!got) return null; const b = await (await fetch(got)).blob(); return b.type + " " + b.size;
+  });
+  const del = '[data-kind="pdf"] [data-act="del-carfax"]';
+  await p.click(del); await sleep(150); await p.click(del); await sleep(500);
+  st = await p.evaluate(() => Object.fromEntries(window.__mock.store));
+  report.checks.carfaxDeleted = JSON.stringify({ left: (st["cars/s2"].carfax || []).map(x => x.kind), fileDocs: Object.keys(st).filter(k => k.startsWith("files/")).length });
+  await p.keyboard.press("Escape"); await sleep(250);
+  report.checks.carfaxChip = await p.$eval('[data-act="details"][data-id="s2"]', b => [...b.closest(".car").querySelectorAll(".chip")].some(c => /Carfax/.test(c.textContent)));
   await p.close(); }
 
 // 4c. Admin page (avatar menu): approve a request, change a role, remove a member (two presses), add by code

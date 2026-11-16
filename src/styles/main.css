@@ -592,3 +592,30 @@ dialog { box-shadow: none }
 /* Avatar menu floats over the page (.glass sets position: relative, which put it in the header's flow). */
 .umenu > .upop { position: absolute; right: 0; top: calc(100% + 8px); z-index: 60 }
 .uname { display: grid; gap: 2px } .urole { font-size: .75rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2) }
+
+/* Carfax section */
+.cfx { list-style: none; margin: 0; padding: 0; display: grid }
+.cfx li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 10px; border-top: 1px solid var(--line) }
+.cfx li:first-child { border-top: 0 }
+.cfx-t { display: grid; gap: 2px; min-width: 0 } .cfx-t a, .cfx-t .link { overflow-wrap: anywhere; text-align: left }
+.carfax .rowx { align-items: center }
+
+/* Hero v3 (owner's request): photo edge to edge on every width, text centred over it with a dark veil for contrast. */
+.hero.full .hero-in { justify-items: center; text-align: center; align-content: center;
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px)); padding-right: max(var(--gutter), env(safe-area-inset-right, 0px)) }
+.hero.full .proof { justify-content: center }
+.hero.full .lead, .hero.full h1 { margin-inline: auto }
+.hero.full .pillform, .hero.full .vinout { margin-inline: auto }
+.hero.full .pillform { text-align: left }
+.hero.full .hero-art, .hero.full .hero-art img { left: 0; right: 0; width: 100% }
+.hero.full .hero-art img { top: 0; bottom: 0; height: 100%; object-fit: cover; object-position: 50% 70% }
+.hero.full .hero-in { padding-block: clamp(40px, 9vh, 96px); background: radial-gradient(90% 85% at 50% 50%, rgba(0,0,0,.72), rgba(0,0,0,.45) 70%, rgba(0,0,0,.3)) }
+@media (max-width: 61.99rem) { .hero.full { min-height: 560px } .hero.full .hero-art img { object-position: 30% 85% } .hero.full .hero-in { background: rgba(0,0,0,.58) } }
+@media (min-width: 62rem) {
+  .hero.full .hero-art { left: 0; width: 100% }
+  .hero.full .hero-art img.stock { object-position: 50% 66% }
+  .hero.full .hero-in { padding-bottom: clamp(40px, 9vh, 96px) }
+}
+.hero.full .hero-in { grid-template-columns: minmax(0, 1fr); min-width: 0 }
+.hero.full .hero-in > * { max-width: 100% }
+.hero.full .proof { flex-wrap: wrap }

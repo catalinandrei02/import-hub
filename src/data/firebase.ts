@@ -1,7 +1,7 @@
 import { initializeApp, type FirebaseOptions } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import {
-  addDoc, collection, deleteDoc, doc, initializeFirestore, onSnapshot, persistentLocalCache, setDoc, updateDoc, increment,
+  addDoc, collection, deleteDoc, doc, initializeFirestore, onSnapshot, persistentLocalCache, setDoc, updateDoc, increment, getDoc, getDocs,
 } from "firebase/firestore";
 import type { Connection, ErrCode } from "./backend";
 
@@ -27,6 +27,8 @@ export function connectFirebase(config: FirebaseOptions): Connection {
       update: (p, d) => updateDoc(doc(db, p), strip(d)),
       remove: p => deleteDoc(doc(db, p)),
       add: async (p, d) => (await addDoc(collection(db, p), strip(d))).id,
+      get: async p => { const s = await getDoc(doc(db, p)); return s.exists() ? s.data() : null; },
+      list: async p => (await getDocs(collection(db, p))).docs.map(d => ({ id: d.id, data: d.data() })),
       bump: (p, inc, set) => setDoc(doc(db, p), nest({ ...strip(set), ...Object.fromEntries(Object.entries(inc).map(([k, n]) => [k, increment(n)])) }), { merge: true }),
     },
     auth: {

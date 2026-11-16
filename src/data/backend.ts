@@ -12,6 +12,9 @@ export interface Backend {
   update(path: string, data: Record<string, any>): Promise<void>;
   remove(path: string): Promise<void>;
   add(collection: string, data: Record<string, any>): Promise<string>;
+  /** One-time reads (no live updates), for big things like PDF pieces. */
+  get(path: string): Promise<Record<string, any> | null>;
+  list(collection: string): Promise<DocSnap[]>;
   /** Creates or merges a document: `inc` keys (dotted paths) are added to atomically, `set` keys are written. */
   bump(path: string, inc: Record<string, number>, set: Record<string, unknown>): Promise<void>;
 }
