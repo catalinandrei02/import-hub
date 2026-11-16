@@ -5,3 +5,4 @@ dist-mock/
 .env.local
 *.local
 shots/
+.tmp-photos/

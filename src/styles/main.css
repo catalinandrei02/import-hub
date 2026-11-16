@@ -657,3 +657,27 @@ dialog { box-shadow: none }
 .utheme .seg button { all: unset; cursor: pointer; display: grid; place-items: center; width: 36px; height: 32px; color: var(--ink-2) }
 .utheme .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg) }
 .utheme .seg button:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px }
+
+/* Compact hero (owner: the cars are the main thing, show them sooner). */
+.hero.full .hero-in { gap: 12px; padding-block: clamp(28px, 5vh, 56px) !important }
+.hero.full h1 { font-size: clamp(2rem, 3.6vw, 3.25rem) }
+.hero.full .lead { font-size: 1rem }
+.hero.full .pillform { margin-top: 4px }
+@media (min-width: 62rem) { .hero.full { min-height: clamp(300px, 40vh, 420px) } }
+@media (max-width: 61.99rem) {
+  .hero.full { min-height: 0 }
+  .hero.full .hero-in { padding-block: 28px 24px !important }
+  .hero.full h1 { font-size: clamp(1.75rem, 8vw, 2.25rem) }
+}
+@media (max-width: 40rem) { .hero.full .lead { display: none } }
+
+/* Daily check: one compact line under the cars; details folded. */
+.pricebar { padding: 10px 16px; gap: 6px; margin: var(--tile) 0 0 }
+.pb-line { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; font-size: .8125rem; color: var(--ink-2) }
+.pb-line .label { margin: 0; font-size: .6875rem; border: 0; padding: 0 }
+.pb-line .pb-sum { flex: 1 1 16rem; min-width: 0 }
+.pb-line .btn { min-height: 32px; padding-inline: 12px; font-size: .8125rem }
+.pb-warn-dot { color: var(--warn); font-weight: 700 }
+.pricebar details { font-size: .8125rem } .pricebar summary { cursor: pointer; color: var(--ink-2); padding-block: 2px }
+.pricebar details[open] summary { margin-bottom: 6px }
+.pricebar details .note { margin: 0 0 4px }

@@ -110,7 +110,7 @@ export const BASE = {
    "gCar": "Mașina",
    "gSeller": "Vânzătorul",
    "gPrice": "Preț",
-   "gEquip": "Dotări și semnale de alarmă"
+   "gEquip": "Semnale de alarmă"
   },
   "vin": {
    "model": "Model",
@@ -412,7 +412,7 @@ export const BASE = {
    "gCar": "The car",
    "gSeller": "The seller",
    "gPrice": "Price",
-   "gEquip": "Equipment and red flags"
+   "gEquip": "Red flags"
   },
   "vin": {
    "model": "Model",
@@ -714,7 +714,7 @@ export const BASE = {
    "gCar": "Le véhicule",
    "gSeller": "Le vendeur",
    "gPrice": "Prix",
-   "gEquip": "Équipement et signaux d'alerte"
+   "gEquip": "Signaux d'alerte"
   },
   "vin": {
    "model": "Modèle",

@@ -20,8 +20,6 @@ const dl = computed(() => priceDelta(c.value));
 const first = computed(() => history(c.value)[0]?.price);
 const done = computed(() => STEPS[lang.value].filter((_, i) => c.value.steps?.["s" + i]).length);
 const hue = computed(() => [...String(c.value.seller || c.value._id)].reduce((a, ch) => a + ch.charCodeAt(0), 0) % 360);
-const yn = (v?: string) => (v === "yes" ? t.value.cars.yes : v === "no" ? t.value.cars.no : t.value.cars.unknown);
-const ync = (v?: string) => (v === "yes" ? "ok" : v === "no" ? "bad" : "");
 function toggleCmp(e: Event) {
   const on = (e.target as HTMLInputElement).checked, id = c.value._id;
   if (on && ui.cmp.length >= 3) { (e.target as HTMLInputElement).checked = false; toast(t.value.cars.compareMax); return; }
@@ -54,8 +52,9 @@ function open() { ui.selCar = c.value._id; ui.detail = true; }
         </span>
       </button>
       <div class="chips">
-        <span class="chip" :class="ync(car.acc)">{{ t.cars.acc }}: {{ yn(car.acc) }}</span>
-        <span class="chip" :class="ync(car.cam)">{{ t.cars.cam }}: {{ yn(car.cam) }}</span>
+        <!-- ACC / 360° only when known to be there (from the listing's equipment or the trim); no "?" noise. -->
+        <span v-if="car.acc === 'yes'" class="chip ok">{{ t.cars.acc }} ✓</span>
+        <span v-if="car.cam === 'yes'" class="chip ok">{{ t.cars.cam }} ✓</span>
         <span class="chip">{{ t.cars.stepsL }} {{ done }}/{{ STEPS[lang].length }}</span>
         <span v-if="car.gone" class="chip bad" :title="car.gone">{{ t.prices.gone }}</span>
         <span v-if="car.carfax?.length" class="chip info">{{ t.carfax.chip }} ✓</span>

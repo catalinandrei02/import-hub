@@ -150,9 +150,6 @@ onMounted(() => { dlg.value?.showModal(); onVin(); if (props.autoFill) fillFromL
             <input id="d-gst" v-model="f.gst" class="switch" type="checkbox" role="switch" @change="f.gstTouched = true"></label>
         </section>
         <section class="group"><h3 class="label">{{ F.gEquip }}</h3>
-          <div v-for="k in (['acc', 'cam'] as const)" :key="k" class="row"><div class="lab"><span :id="'d-' + k + '-l'" class="t">{{ F[k] }}</span></div>
-            <div class="seg sm" role="radiogroup" :aria-labelledby="'d-' + k + '-l'" style="justify-self:end">
-              <label v-for="o in [['', t.cars.unknown], ['yes', t.cars.yes], ['no', t.cars.no]]" :key="o[0]"><input v-model="f[k]" type="radio" :name="k" :value="o[0]">{{ o[1] }}</label></div></div>
           <label v-for="fl in FLAGS" :key="fl" class="row sw" :for="'d-flag-' + fl"><span class="lab"><span class="t">{{ (F.flagList as any)[fl] }}</span></span>
             <input :id="'d-flag-' + fl" v-model="f.flags" class="switch" type="checkbox" role="switch" :value="fl"></label>
         </section>

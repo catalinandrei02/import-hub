@@ -82,7 +82,6 @@ watch(() => route.query.add, takeImport);
   <div class="content solo">
     <div class="main">
       <StatusBanner />
-      <PriceCheckBar v-if="state.auth === 'ok'" />
       <div class="secrow">
          <h2 class="seclabel">{{ t.cars.h }}</h2>
         <div class="rowx">
@@ -108,6 +107,7 @@ watch(() => route.query.add, takeImport);
         <div class="cars"><CarCard v-for="c in list" :key="c._id" :car="c" /></div>
       </template>
       <p v-if="bestDrop" class="note" style="text-align:center">{{ t.cars.bestDrop }}: ▼ {{ cad(bestDrop) }}</p>
+      <PriceCheckBar v-if="state.auth === 'ok'" />
     </div>
   </div>
 </template>
