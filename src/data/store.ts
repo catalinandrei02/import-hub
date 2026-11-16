@@ -21,7 +21,7 @@ export const state = reactive({
   views: {} as Record<string, ViewDoc>, viewsOn: false,
   me: null as Omit<Member, "_id"> | null,          // my own members/{uid} doc
   members: [] as Member[], requests: [] as AccessRequest[], // admins only
-  requestSent: false,
+  request: "" as "" | "sending" | "sent" | "failed", // my access request, while I have no access
 });
 export const isAdmin = computed(() => state.auth === "ok" && state.me?.role === "admin");
 
@@ -37,7 +37,7 @@ function resetData() {
   unsubs.forEach(u => u()); unsubs = [];
   adminUnsubs.forEach(u => u()); adminUnsubs = [];
   waitUnsub?.(); waitUnsub = null;
-  Object.assign(state, { cars: [], carsLoaded: false, contacts: [], contactsLoaded: false, costs: { ...DEF_COSTS }, costsAt: "", search: { ...DEF_SEARCH }, scan: null, views: {}, viewsOn: false, me: null, members: [], requests: [], requestSent: false });
+  Object.assign(state, { cars: [], carsLoaded: false, contacts: [], contactsLoaded: false, costs: { ...DEF_COSTS }, costsAt: "", search: { ...DEF_SEARCH }, scan: null, views: {}, viewsOn: false, me: null, members: [], requests: [], request: "" });
 }
 
 function onErr(code: ErrCode) {
@@ -119,7 +119,8 @@ const firstName = (n?: string) => (n || "").trim().split(/\s+/)[0].slice(0, 30);
 function awaitAccess() {
   const u = state.user, b = conn?.backend;
   if (!u || !b) return;
-  b.set("requests/" + u.uid, { name: firstName(u.name), at: new Date().toISOString() }).then(() => (state.requestSent = true), () => {});
+  state.request = "sending";
+  b.set("requests/" + u.uid, { name: firstName(u.name), at: new Date().toISOString() }).then(() => (state.request = "sent"), () => (state.request = "failed"));
   waitUnsub = b.watchDoc("members/" + u.uid, d => {
     if (!d || state.auth !== "denied") return;
     waitUnsub?.(); waitUnsub = null;

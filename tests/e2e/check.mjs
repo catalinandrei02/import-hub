@@ -216,6 +216,17 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   report.checks.viewsChip = await p.$eval('[data-act="details"][data-id="s1"]', b => b.closest(".car").querySelector(".chip.views")?.textContent).catch(() => null);
   await p.close(); }
 
+// 4d. Not a member yet: the login screen sends a request by itself (no code to copy) and opens once approved
+{ const p = await open(MOCK + "?deny", "cars", 390, "dark"); await sleep(500);
+  report.checks.denyGate = await p.evaluate(() => [document.querySelector(".gate")?.dataset.mode, document.querySelector('[data-req="sent"]')?.textContent.trim().slice(0, 40), !!document.querySelector(".gate-code")].join(" | "));
+  report.checks.denyRequest = await p.evaluate(() => JSON.stringify(window.__mock.store.get("requests/mock-user")?.name));
+  await p.evaluate(() => { window.__mock.store.set("members/mock-user", { name: "Test", role: "member" }); window.__mock.emit(); });
+  await p.waitForSelector(".car", { timeout: 5000 }).catch(() => {});
+  report.checks.denyOpensOnApproval = await p.evaluate(() => !document.querySelector(".gate") && document.querySelectorAll(".car").length);
+  await p.click(".ubtn"); await sleep(150);
+  report.checks.memberMenu = await p.evaluate(() => [...document.querySelectorAll(".upop .uitem")].map(e => e.textContent.trim()).join(",") + " / " + document.querySelector('[data-role="me"]').textContent);
+  await p.close(); }
+
 // 4c. Admin page (avatar menu): approve a request, change a role, remove a member (two presses), add by code
 { const p = await open(MOCK, "cars", 1280, "light");
   const store = () => p.evaluate(() => Object.fromEntries(window.__mock.store));

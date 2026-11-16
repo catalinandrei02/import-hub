@@ -42,7 +42,7 @@ Layout of the code:
 Backend: **Firebase Firestore** with the same collection/doc shapes as §4. Access: `firestore.rules`. Only signed-in Google accounts whose uid has a document in `members/{uid}` can read or write. Admins add members from the Admin page (access requests or add by code); the very first admin (the owner) is created once in the Firebase console. Never put anyone's email address in the repo, the rules or the db. `config/scan` is not writable from the site.
 
 Rules that still apply:
-- **Login screen** (`LoginGate.vue`, owner's request): the site is shown only when `state.auth === "ok"` (signed in and a member). Everyone else gets a full-page screen: sign in with Google / checking / no access (with the uid to send the owner, "use another account", sign out) / not connected. The real protection stays in `firestore.rules`; the static files on Pages are public anyway.
+- **Login screen** (`LoginGate.vue`, owner's request): the site is shown only when `state.auth === "ok"` (signed in and a member). Everyone else gets a full-page screen: sign in with Google / checking / no access (a request is sent to the admins automatically and the page opens by itself on approval; the uid is shown only if the request couldn't be sent; "use another account", sign out) / not connected. The real protection stays in `firestore.rules`; the static files on Pages are public anyway.
 - Signed in but data still loading or stale → render everything, disable save buttons, show the banner (loading / stale).
 - The Cars list opens on "All" (Toate) every time.
 - **Never hardcode seed data in the app.** Seed Firestore from `PROJECT_BRIEF.md` §8 (console import or a one-off script with a service account).

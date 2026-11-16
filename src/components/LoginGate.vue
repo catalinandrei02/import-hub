@@ -31,11 +31,12 @@ async function other() { await signOut(); await signInWithHelp(); }
           <p v-else-if="mode === 'none'" class="lead">{{ t.gate.none }}</p>
           <button v-else-if="mode === 'signedOut'" class="cta gate-btn" type="button" data-act="sign-in" @click="signInWithHelp">{{ t.auth.signIn }}</button>
           <template v-else>
-            <p v-if="state.requestSent" class="lead gate-sent">{{ t.gate.sent }}</p>
-            <p class="lead">{{ t.auth.noAccess }}</p>
-            <p><code class="gate-code">{{ state.user?.uid }}</code></p>
+            <!-- The request goes to the admins on its own; the code is only a fallback if it couldn't be sent. -->
+            <p v-if="state.request === 'failed'" class="lead">{{ t.auth.noAccess }}</p>
+            <p v-else class="lead gate-sent" data-req="sent">{{ state.request === "sent" ? t.gate.sent : t.gate.sending }}</p>
+            <p v-if="state.request === 'failed'"><code class="gate-code">{{ state.user?.uid }}</code></p>
             <div class="gate-row">
-              <button class="cta gate-btn" type="button" @click="copyText(state.user?.uid || '', t.c.copied)">{{ t.auth.copyCode }}</button>
+              <button v-if="state.request === 'failed'" class="cta gate-btn" type="button" @click="copyText(state.user?.uid || '', t.c.copied)">{{ t.auth.copyCode }}</button>
               <button class="btn gate-ghost" type="button" @click="other">{{ t.gate.other }}</button>
               <button class="btn gate-ghost" type="button" @click="signOut">{{ t.auth.signOut }}</button>
             </div>

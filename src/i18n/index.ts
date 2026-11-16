@@ -23,7 +23,7 @@ const V3 = {
     gate: {
       lead: "Site-ul privat al familiei pentru mașinile aduse din Québec în România. Intră cu contul Google ca să continui.",
       checking: "Se verifică contul…", none: "Site-ul nu e încă legat de baza de date, așa că nu se poate intra.", other: "Intră cu alt cont",
-      private: "Doar membrii familiei au acces.", sent: "Am trimis automat o cerere proprietarului. Pagina se deschide singură după ce te aprobă.",
+      private: "Doar membrii familiei au acces.", sent: "Am trimis o cerere proprietarului. Pagina se deschide singură după ce te aprobă, nu trebuie să faci nimic.", sending: "Se trimite cererea de acces…",
     },
     auth: {
       signIn: "Intră cu Google", signOut: "Ieși din cont", account: "Contul tău", copyCode: "Copiază codul",
@@ -89,7 +89,7 @@ const V3 = {
     gate: {
       lead: "The family's private site for cars brought from Québec to Romania. Sign in with your Google account to continue.",
       checking: "Checking your account…", none: "The site isn't connected to its database yet, so nobody can sign in.", other: "Use another account",
-      private: "Only family members have access.", sent: "A request was sent to the owner automatically. This page opens by itself once you're approved.",
+      private: "Only family members have access.", sent: "A request was sent to the owner. This page opens by itself once you're approved; there's nothing else to do.", sending: "Sending your access request…",
     },
     auth: {
       signIn: "Sign in with Google", signOut: "Sign out", account: "Your account", copyCode: "Copy code",
@@ -155,7 +155,7 @@ const V3 = {
     gate: {
       lead: "Le site privé de la famille pour les véhicules amenés du Québec en Roumanie. Connectez-vous avec votre compte Google pour continuer.",
       checking: "Vérification du compte…", none: "Le site n'est pas encore relié à sa base de données ; personne ne peut se connecter.", other: "Utiliser un autre compte",
-      private: "Seuls les membres de la famille y ont accès.", sent: "Une demande a été envoyée automatiquement au propriétaire. Cette page s'ouvrira d'elle-même une fois approuvée.",
+      private: "Seuls les membres de la famille y ont accès.", sent: "Une demande a été envoyée au propriétaire. Cette page s'ouvrira d'elle-même une fois approuvée ; vous n'avez rien d'autre à faire.", sending: "Envoi de la demande d'accès…",
     },
     auth: {
       signIn: "Se connecter avec Google", signOut: "Se déconnecter", account: "Votre compte", copyCode: "Copier le code",

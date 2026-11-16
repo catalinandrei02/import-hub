@@ -21,17 +21,21 @@ export function connectMock(): Connection {
   let n = 0;
   const emit = () => setTimeout(() => subs.forEach(f => f()), 5);
   const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
-  (window as any).__mock = { store, writes: [] as string[][] };
+  // "?deny" in the address: start as someone who isn't a member yet (until members/mock-user appears).
+  const urlDeny = new URLSearchParams(location.search).has("deny");
+  if (urlDeny) store.delete("members/mock-user");
+  const denied = (p: string) => urlDeny && !store.has("members/mock-user") && !p.startsWith("members/");
+  (window as any).__mock = { store, writes: [] as string[][], emit: () => emit() };
   const log = (op: string, p: string) => (window as any).__mock.writes.push([op, p]);
   return {
     backend: {
-      watchCollection(p, cb) {
+      watchCollection(p, cb, err) {
         const depth = p.split("/").length + 1;
-        const f = () => cb([...store.keys()].filter(k => k.startsWith(p + "/") && k.split("/").length === depth)
+        const f = () => denied(p) ? err("permission-denied") : cb([...store.keys()].filter(k => k.startsWith(p + "/") && k.split("/").length === depth)
           .map(k => ({ id: k.split("/").pop()!, data: clone(store.get(k)!) }) as DocSnap), false);
         subs.add(f); setTimeout(f, 30); return () => subs.delete(f);
       },
-      watchDoc(p, cb) { const f = () => cb(store.has(p) ? clone(store.get(p)!) : null, false); subs.add(f); setTimeout(f, 30); return () => subs.delete(f); },
+      watchDoc(p, cb, err) { const f = () => denied(p) ? err("permission-denied") : cb(store.has(p) ? clone(store.get(p)!) : null, false); subs.add(f); setTimeout(f, 30); return () => subs.delete(f); },
       async set(p, d) { log("set", p); store.set(p, clone(d)); emit(); },
       async update(p, d) { log("update", p); if (!store.has(p)) throw new Error("not found"); store.set(p, { ...store.get(p), ...clone(d) }); emit(); },
       async remove(p) { log("delete", p); store.delete(p); emit(); },
