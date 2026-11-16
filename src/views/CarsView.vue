@@ -2,7 +2,7 @@
 import AIcon from "../components/AIcon.vue";
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { MAX_PHOTOS, findSaved, parseImport } from "../lib/importer";
+import { MAX_PHOTOS, findSaved, mergeExtras, parseImport } from "../lib/importer";
 import { canWrite, queue, state } from "../data/store";
 import { carLanded } from "../lib/costs";
 import { decodeVin } from "../lib/vin";
@@ -55,9 +55,10 @@ function takeImport() {
   const photos = [...have, ...(car.photos || []).filter(u => !have.includes(u))].slice(0, MAX_PHOTOS);
   const added = photos.length - have.length;
   ui.selCar = old._id;
-  if (car.price && old.price !== car.price) { ui.dialog = { kind: "car", car: { ...old, photos, price: car.price }, imported: true }; return; }
-  if (!added || !canWrite.value) { toast(t.value.imp.same); return; }
-  queue("cars/" + old._id, b => b.update("cars/" + old._id, { photos, updatedAt: new Date().toISOString() }))
+  const more = mergeExtras(old, car); // equipment, Carfax links, history the car didn't have yet
+  if (car.price && old.price !== car.price) { ui.dialog = { kind: "car", car: { ...old, ...more, photos, price: car.price }, imported: true }; return; }
+  if ((!added && !Object.keys(more).length) || !canWrite.value) { toast(t.value.imp.same); return; }
+  queue("cars/" + old._id, b => b.update("cars/" + old._id, { ...more, photos, updatedAt: new Date().toISOString() }))
     .then(() => toast(fill(t.value.imp.added, { n: added })), () => toast(t.value.c.error));
 }
 watch(() => [state.auth, state.carsLoaded], takeImport);

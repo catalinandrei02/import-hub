@@ -136,3 +136,17 @@ describe("auto-search filters", () => {
     expect([c.title, c.year, c.trim, c.price, c.status, c.addedBy, c.acc, c.cam, (c.priceHistory as any[]).length]).toEqual(["Audi Q5", 2022, "Technik", 27500, "watching", "claude", "", "", 1]);
   });
 });
+
+import { extras, mergeExtras } from "../../src/lib/importer";
+describe("equipment, Carfax and history from a listing", () => {
+  it("reads ACC / 360 / accident only as yes, keeps only real Carfax report links", () => {
+    const x = extras({ eq: ["Régulateur de vitesse adaptatif", "Caméra 360°", "Sièges chauffants"], cf: ["https://vhr.carfax.ca/?id=1", "https://evil.test/carfax"], h: { damaged: true } });
+    expect([x.equipment!.length, x.acc, x.cam, x.carfax!.length, x.flags]).toEqual([3, "yes", "yes", 1, ["accident"]]);
+    expect(extras({ eq: ["Heated seats"] }).acc).toBeUndefined();
+  });
+  it("never overwrites what the family set", () => {
+    const upd = mergeExtras({ acc: "no", equipment: ["A"], carfax: [{ id: "1", kind: "link", url: "https://vhr.carfax.ca/?id=1" }] }, extras({ eq: ["Adaptive Cruise Control"], cf: ["https://vhr.carfax.ca/?id=1", "https://vhr.carfax.ca/?id=2"] }));
+    expect(upd.acc).toBeUndefined(); expect(upd.equipment).toBeUndefined();
+    expect((upd.carfax as any[]).length).toBe(2);
+  });
+});

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Import Hub",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Reads car listings and searches for the family's Import Hub site, in this Chrome.",
   "permissions": ["scripting"],
   "host_permissions": ["<all_urls>"],

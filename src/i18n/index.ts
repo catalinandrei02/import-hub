@@ -8,6 +8,11 @@ const V3 = {
   ro: {
     brand: { line1: "pentru mașini", line2: "din Québec în România" },
     langL: "Limba",
+    equip: {
+      h: "Dotări", none: "Lista de dotări apare după ce anunțul e citit (din link, cu extensia, sau cu butonul ＋ Import Hub).",
+      more: "Arată toate cele {n}", less: "Arată mai puține", hist: "Istoric {s}", damaged: "Daune raportate", accidents: "Mai multe accidente raportate",
+      scrapped: "Declarată casată", imported: "Importată", exported: "Exportată", clean: "Fără daune sau accidente raportate",
+    },
     prices: {
       h: "Verificarea zilnică", running: "Verific prețurile din anunțuri… {d} din {n}",
       searching: "Caut mașini noi pe CarGurus…", adding: "Adaug mașinile noi găsite… {d} din {n}", search: "Căutare CarGurus: {d} · rezultate: {t} · mașini noi: {n}",
@@ -89,6 +94,11 @@ const V3 = {
   en: {
     brand: { line1: "for cars", line2: "from Québec to Romania" },
     langL: "Language",
+    equip: {
+      h: "Equipment", none: "The equipment list appears once the listing is read (from the link, with the extension, or the ＋ Import Hub bookmark).",
+      more: "Show all {n}", less: "Show fewer", hist: "{s} history", damaged: "Damage reported", accidents: "Multiple accidents reported",
+      scrapped: "Reported scrapped", imported: "Imported", exported: "Exported", clean: "No damage or accidents reported",
+    },
     prices: {
       h: "Daily check", running: "Checking prices on the listings… {d} of {n}",
       searching: "Searching CarGurus for new cars…", adding: "Adding the new cars found… {d} of {n}", search: "CarGurus search: {d} · results: {t} · new cars: {n}",
@@ -170,6 +180,11 @@ const V3 = {
   fr: {
     brand: { line1: "pour les véhicules", line2: "du Québec vers la Roumanie" },
     langL: "Langue",
+    equip: {
+      h: "Équipement", none: "La liste d'équipement apparaît une fois l'annonce lue (depuis le lien, avec l'extension ou le favori ＋ Import Hub).",
+      more: "Afficher les {n}", less: "Afficher moins", hist: "Historique {s}", damaged: "Dommages signalés", accidents: "Plusieurs accidents signalés",
+      scrapped: "Déclaré à la casse", imported: "Importé", exported: "Exporté", clean: "Aucun dommage ni accident signalé",
+    },
     prices: {
       h: "Vérification quotidienne", running: "Vérification des prix dans les annonces… {d} sur {n}",
       searching: "Recherche de nouveaux véhicules sur CarGurus…", adding: "Ajout des nouveaux véhicules trouvés… {d} sur {n}", search: "Recherche CarGurus : {d} · résultats : {t} · nouveaux véhicules : {n}",

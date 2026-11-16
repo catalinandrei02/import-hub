@@ -1,7 +1,11 @@
 // Reads a car listing page: details and photo links. Used by the "Add to Import Hub" bookmark and by the Chrome
 // extension (extension/reader.js is generated from this file by `npm run build:ext`). No imports on purpose.
-/** tr version text (trim hint), u link, t title, p price, k km, y year, v VIN, s seller, l city, st seller type ("dealer"|"private"|""), i photo links. */
-export interface ListingData { u: string; t: string; p: string; k: string; y: string; v: string; s: string; l: string; st?: string; tr?: string; i: string[] }
+/** eq equipment, cf Carfax links, h history (CarGurus), tr version text (trim hint), u link, t title, p price, k km, y year, v VIN, s seller, l city, st seller type ("dealer"|"private"|""), i photo links. */
+export interface ListingData {
+  u: string; t: string; p: string; k: string; y: string; v: string; s: string; l: string; st?: string; tr?: string; i: string[];
+  /** equipment ("dotări"), Carfax report links, CarGurus vehicle history flags */
+  eq?: string[]; cf?: string[]; h?: { damaged?: boolean; accidents?: boolean; scrapped?: boolean; imported?: boolean; exported?: boolean };
+}
 
 /**
  * Self-contained on purpose: its source text becomes the bookmark, so it must not use anything from outside the function.
@@ -69,10 +73,11 @@ export function readListing(base?: string): ListingData | void {
   }
   // Sites that name sizes in the link (…-152x114.jpg / …-1024x768.jpg) have every size of every photo: use the largest
   // size seen on that host for all its photos, so thumbnails don't end up as blurry main photos.
-  const dim = /-(\d{2,4})x(\d{2,4})(\.(?:jpe?g|webp|png))/i;
-  const top: Record<string, string> = {};
-  found.forEach(f => { const m = f.u.match(dim), h = f.u.split("/")[2]; if (m && (!top[h] || +m[1] > +(top[h].match(/\d+/) || [0])[0])) top[h] = "-" + m[1] + "x" + m[2]; });
-  found.forEach(f => { const m = f.u.match(dim), h = f.u.split("/")[2]; if (m && top[h]) f.u = f.u.replace(dim, top[h] + m[3]); });
+  // Sizes as "-1024x768.jpg" (CarGurus) or as a path part "/1120x630/123.JPG" (HGregoire) both count.
+  const dim = /([-/])(\d{2,4})x(\d{2,4})(\.(?:jpe?g|webp|png)\b|\/)/i;
+  const top: Record<string, [number, number]> = {};
+  found.forEach(f => { const m = f.u.match(dim), h = f.u.split("/")[2]; if (m && (!top[h] || +m[2] > top[h][0])) top[h] = [+m[2], +m[3]]; });
+  found.forEach(f => { const m = f.u.match(dim), h = f.u.split("/")[2]; if (m && top[h]) f.u = f.u.replace(dim, m[1] + top[h][0] + "x" + top[h][1] + m[4]); });
   const imgs = found.sort((a, b) => a.o - b.o).map(f => f.u);
   const vinRe = /\b([A-HJ-NPR-Z0-9]{17})\b/;
   const near = text.match(/(?:VIN|NIV|Vehicle Identification)[^A-Z0-9]{0,12}([A-HJ-NPR-Z0-9]{17})/i);
@@ -96,7 +101,10 @@ export function readListing(base?: string): ListingData | void {
       const L = rd.data.listing, lf = (rd.leadForm && rd.leadForm.listing) || {}, sl = rd.data.seller || {};
       Object.assign(site, { t: lf.yearMakeModelTrim || rd.listingTitle, p: lf.price, k: (L.mileage && L.mileage.value) || lf.mileage, v: L.vin && L.vin.value,
         s: sl.name, l: (sl.address && sl.address.city) || lf.city, st: /priv/i.test(String(sl.sellerType || "")) ? "private" : sl.name ? "dealer" : "",
-        i: rd.listingImages.map((x: any) => x && x.url).filter(Boolean) });
+        i: rd.listingImages.map((x: any) => x && x.url).filter(Boolean),
+        eq: Array.isArray(L.options) ? L.options.map((o: any) => (o && typeof o === "object" ? o.label : o)).filter(Boolean) : undefined });
+      const vh = L.vehicleHistory;
+      if (vh && typeof vh === "object") site.h = { damaged: !!vh.damaged, accidents: !!vh.hasMultipleAccident, scrapped: !!vh.scrapped, imported: !!vh.imported, exported: !!vh.exported };
       site.y = (String(site.t || "").match(/\b(19|20)\d{2}\b/) || [""])[0];
     }
   } catch { /* page changed: fall back to the generic reading */ }
@@ -110,13 +118,39 @@ export function readListing(base?: string): ListingData | void {
         st: sl.isDealer === false ? "private" : "dealer", i: L.images.map((u: any) => String(u).replace(/\d{3,4}x\d{3,4}(\.\w+)$/, "1920x1440$1")) });
     }
   } catch { /* fall back */ }
+  // Equipment ("dotări"): CarGurus options above, else the lists under equipment-like headings on dealer sites
+  // (checked on HGregoire: h4 "Confort" / "Sécurité" / "Divertissement" … each followed by a <ul>).
+  const eq: string[] = [];
+  const addEq = (x: any) => { const s = String(x || "").replace(/\s+/g, " ").trim(); if (s && s.length <= 80 && !eq.some(e => e.toLowerCase() === s.toLowerCase())) eq.push(s); };
+  if (site.eq && site.eq.length) site.eq.forEach(addEq);
+  else {
+    const EQH = /[ée]quipement|equipment|options?\b|caract[ée]ristiques|features|confort|comfort|s[ée]curit[ée]|safety|divertissement|entertainment|technolog|ext[ée]rieur|int[ée]rieur|exterior|interior|\bextra\b|toit|roof|commodit|convenience|audio/i;
+    Array.from(doc.querySelectorAll("h2,h3,h4,h5,h6,dt,strong,[class*=title],[class*=heading]")).forEach(hd => {
+      const txt = (hd.textContent || "").trim();
+      if (!txt || txt.length > 40 || !EQH.test(txt)) return;
+      let box: Element | null = hd.parentElement;
+      for (let i = 0; i < 3 && box && !box.querySelector("li"); i++) box = box.parentElement;
+      if (!box) return;
+      const lis = Array.from(box.querySelectorAll("li"));
+      if (lis.length > 150) return; // that's a whole page, not one list
+      lis.forEach(li => { if (!li.querySelector("a[href], button, input")) addEq(li.textContent); });
+    });
+  }
+  // Carfax report links anywhere on the page (dealer sites often have one; CarGurus doesn't).
+  const cf: string[] = [];
+  Array.from(doc.querySelectorAll("a[href], iframe[src]")).forEach((a: any) => {
+    const u = String(a.href || a.src || "");
+    try { const x = new URL(u); if (/(^|\.)carfax\.(ca|com)$/i.test(x.hostname) && (x.pathname.length > 1 || x.search) && !/\.(png|jpe?g|svg|gif)$/i.test(x.pathname) && !cf.includes(u)) cf.push(u); } catch { /* not a URL */ }
+  });
+  // Price written on the page ("27 992 $", "$27,992") when there's no structured price (HGregoire).
+  const priceEl = Array.from(doc.querySelectorAll("h1,h2,h3,h4,strong,[class*=price]")).map(e => (e.textContent || "").trim()).find(x => /^(\$\s?)?\d{1,3}([\s\u202f\u00a0.,]\d{3})+(\s?\$)?$/.test(x));
   const pickS = (a: any, b: any) => String(a != null && a !== "" ? a : b != null ? b : "");
   const svin = String(site.v || "").toUpperCase();
   const data = {
-    u: location.href.split("#")[0], t: pickS(site.t, title).slice(0, 120), p: pickS(site.p, offer.price || v.price || meta("product:price:amount") || ""),
+    u: location.href.split("#")[0], t: pickS(site.t, title).slice(0, 120), p: pickS(site.p, offer.price || v.price || meta("product:price:amount") || priceEl || ""),
     k: pickS(site.k, odo.value || (kmText ? kmText[1] : "")), y: pickS(site.y, year), v: svin.length === 17 ? svin : vin.length === 17 ? vin : "",
-    s: pickS(site.s, seller.name || "").slice(0, 80), l: pickS(site.l, addr).slice(0, 60), st: String(site.st || ""), tr: String(site.tr || "").slice(0, 80),
-    i: (site.i && site.i.length ? site.i : imgs).slice(0, 40),
+    s: pickS(site.s, seller.name || meta("og:site_name") || "").slice(0, 80), l: pickS(site.l, addr).slice(0, 60), st: String(site.st || ""), tr: String(site.tr || "").slice(0, 80),
+    i: (site.i && site.i.length ? site.i : imgs).slice(0, 40), eq: eq.slice(0, 150), cf: cf.slice(0, 5), h: site.h,
   };
   if (!base) return data;
   window.open(base + "#/cars?add=" + encodeURIComponent(JSON.stringify(data)), "_blank");

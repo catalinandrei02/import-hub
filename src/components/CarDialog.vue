@@ -39,6 +39,7 @@ function onVin() {
 }
 // "Just give it the link": the Chrome extension reads the listing in the user's Chrome and fills the form.
 const isLink = (u: string) => /^https?:\/\/\S+\.\S+/i.test(u.trim());
+const extra = ref<Partial<Car>>({}); // equipment, Carfax links, history read from the link (no form fields for them)
 const fillState = ref<"" | "busy" | "done" | "fail" | "noext">("");
 const dup = ref<Car | undefined>(isNew ? findSaved(state.cars, { url: old.url }) : undefined);
 const base = import.meta.env.BASE_URL;
@@ -55,6 +56,10 @@ async function fillFromLink() {
   put("title", c.title); put("vin", c.vin); put("year", c.year); put("trim", c.trim); put("price", c.price); put("km", c.km); put("seller", c.seller); put("location", c.location);
   if (c.photos?.length) f.photos = c.photos.join("\n");
   if (c.sellerType) { f.sellerType = c.sellerType; onSellerType(); }
+  if (c.acc === "yes") f.acc = "yes";
+  if (c.cam === "yes") f.cam = "yes";
+  if (c.flags?.length) f.flags = [...new Set([...f.flags, ...c.flags])];
+  extra.value = { equipment: c.equipment, carfax: c.carfax, history: c.history };
   onVin();
   dup.value = findSaved(state.cars, { vin: c.vin, url });
   fillState.value = "done";
@@ -81,6 +86,7 @@ async function save() {
   try {
     if (isNew) {
       Object.assign(data, { steps: {}, docs: {}, addedBy: "manual", addedAt: now });
+      for (const [k, v] of Object.entries(extra.value)) if (v != null && data[k] == null) data[k] = v;
       ui.selCar = await addDoc("cars", data);
     } else await queue("cars/" + old._id, b => b.set("cars/" + old._id, data));
     toast(t.value.costs.saved); ui.dialog = null;

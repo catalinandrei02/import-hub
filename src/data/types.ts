@@ -22,6 +22,10 @@ export interface Car {
   photos?: string[];
   /** v3: Carfax reports, as links or PDFs (PDFs live in files/{fileId}, split into chunks). */
   carfax?: CarfaxItem[];
+  /** v3: equipment list from the listing (CarGurus options or the dealer site's lists), as written there. */
+  equipment?: string[];
+  /** v3: CarGurus vehicle history flags (source "CarGurus"). */
+  history?: { damaged?: boolean; accidents?: boolean; scrapped?: boolean; imported?: boolean; exported?: boolean; source?: string };
   /** v3: date the daily price check first found the listing gone (no price on the page); cleared when it's back. */
   gone?: string;
   [k: string]: unknown;

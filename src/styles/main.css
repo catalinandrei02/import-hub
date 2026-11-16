@@ -627,3 +627,9 @@ dialog { box-shadow: none }
 .pb-bar { height: 4px; background: var(--soft) } .pb-bar span { display: block; height: 100%; background: var(--ink); transition: width .3s }
 .pb-list b.down { color: var(--ok) } .pb-list b.up { color: var(--err) } .pb-list b.bad { color: var(--err) }
 .pb-list b.new { color: var(--ink) } .pb-warn { color: var(--warn) !important }
+
+/* Equipment ("dotări") */
+.eqlist { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 4px 16px; font-size: .875rem }
+.eqlist li { padding-block: 4px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere }
+.eqlist li.key { font-weight: 600 }
+.equip .link { justify-self: start }

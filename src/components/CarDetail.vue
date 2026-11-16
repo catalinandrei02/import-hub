@@ -18,8 +18,9 @@ import ProgressRing from "./ProgressRing.vue";
 import VinInfo from "./VinInfo.vue";
 import PhotoShow from "./PhotoShow.vue";
 import CarfaxSection from "./CarfaxSection.vue";
+import EquipmentSection from "./EquipmentSection.vue";
 import { hasExtension, readWithExtension } from "../lib/extension";
-import { parseImport } from "../lib/importer";
+import { mergeExtras, parseImport } from "../lib/importer";
 
 const car = computed(() => state.cars.find(c => c._id === ui.selCar) || null);
 const closeBtn = ref<HTMLButtonElement | null>(null);
@@ -76,9 +77,10 @@ async function fetchPhotos() {
   tried.add(c._id); fetchingId.value = c._id;
   try {
     const d = await readWithExtension(url);
-    const photos = (d && parseImport(JSON.stringify(d))?.photos) || [];
+    const p = d ? parseImport(JSON.stringify(d)) : null;
+    const photos = p?.photos || [];
     if (!photos.length) { toast(t.value.show.failed); return; }
-    await queue("cars/" + c._id, b => b.update("cars/" + c._id, { photos, updatedAt: new Date().toISOString() }));
+    await queue("cars/" + c._id, b => b.update("cars/" + c._id, { ...mergeExtras(c, p!), photos, updatedAt: new Date().toISOString() }));
     toast(fill(t.value.show.got, { n: photos.length }));
   } catch { toast(t.value.c.error); } finally { fetchingId.value = ""; }
 }
@@ -110,6 +112,7 @@ watch(() => [car.value?._id, canFetch.value], () => { const c = car.value; if (c
       <PhotoShow v-if="!wide" :photos="car.photos || []" :name="carName(car)" :wide="false" :fetching="fetchingId === car._id" :has-ext="hasExtension" :has-url="!!listing" :can-fetch="canFetch" @refresh="fetchPhotos" />
       <CostPanels v-if="car.price" :price="car.price" :gst="carGst(car)" :costs="state.costs" :cap="t.cars.landedCap" :extra="carGst(car) ? t.cars.withGst : t.cars.noGst" />
       <CarfaxSection :car="car" />
+      <EquipmentSection :car="car" />
       <section class="glass pad" style="display:grid;gap:12px">
         <h3 class="label">{{ t.cars.progress }}</h3>
         <div class="ringrow"><ProgressRing :n="done" :total="nSteps" />

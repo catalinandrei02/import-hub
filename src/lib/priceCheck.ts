@@ -9,7 +9,7 @@ import { reactive } from "vue";
 import { addDoc, canWrite, queue, state } from "../data/store";
 import type { Car, PriceRun, SearchSettings } from "../data/types";
 import { extVersion, hasExtension, readWithExtension, searchWithExtension } from "./extension";
-import { findSaved, parseImport, MAX_PHOTOS } from "./importer";
+import { findSaved, mergeExtras, parseImport, MAX_PHOTOS, ACC_RE, CAM_RE } from "./importer";
 import type { SearchHit } from "./listingReader";
 import { carName, safeUrl } from "./cars";
 import { decodeVin } from "./vin";
@@ -39,7 +39,6 @@ export function isSearchDue(p: PriceRun | null, s: SearchSettings, now = Date.no
   return !p?.searchRun || now - Date.parse(p.searchRun) > days * 86400_000 - 4 * 3600_000;
 }
 const yes = (o: string[], re: RegExp) => o.some(x => re.test(x));
-export const ACC_RE = /adaptive cruise/i, CAM_RE = /360|surround[- ]?view|top[- ]?view|bird'?s[- ]?eye|area view/i;
 
 /** Why a search result is skipped ("" = keep). Pure, unit-tested. */
 export function skipReason(h: SearchHit, s: SearchSettings): string {
@@ -74,7 +73,7 @@ export function hitToCar(h: SearchHit, photos: string[], now: string): Omit<Car,
     priceHistory: h.p ? [{ date: now.slice(0, 10), price: h.p }] : [],
     seller: h.s, sellerType: h.st === "private" ? "private" : "dealer", location: h.l, url: detailUrl(h),
     status: "watching", acc: yes(h.o, ACC_RE) ? "yes" : "", cam: yes(h.o, CAM_RE) ? "yes" : "", flags: [], notes: "",
-    steps: {}, docs: {}, photos: (photos.length ? photos : h.i ? [h.i] : []).slice(0, MAX_PHOTOS),
+    equipment: h.o.slice(0, 150), steps: {}, docs: {}, photos: (photos.length ? photos : h.i ? [h.i] : []).slice(0, MAX_PHOTOS),
     addedBy: "claude", addedAt: now, updatedAt: now,
   };
 }
@@ -105,6 +104,7 @@ export async function runDaily(opts: { search: boolean; prices: boolean }): Prom
           const p = d ? parseImport(JSON.stringify(d)) : null;
           const car = hitToCar(h, p?.photos || [], new Date().toISOString());
           if (!car.location && p?.location) car.location = p.location;
+          if (p) Object.assign(car, mergeExtras(car, p)); // the details page's equipment, Carfax links, history
           const id = await addDoc("cars", car);
           res.found!.push({ id, title: [car.year, car.title, car.trim].filter(Boolean).join(" "), price: (car.price as number | null | undefined) ?? null });
           run.done++;
@@ -134,6 +134,7 @@ export async function runDaily(opts: { search: boolean; prices: boolean }): Prom
             res.changes!.push({ id: c._id, title: carName(c), from: c.price ?? null, to: p.price });
           }
           if (!c.photos?.length && p.photos?.length) upd.photos = p.photos.slice(0, MAX_PHOTOS);
+          Object.assign(upd, mergeExtras(c, p)); // equipment, Carfax links, history if new
         }
         if (Object.keys(upd).length) await queue("cars/" + c._id, b => b.update("cars/" + c._id, { ...upd, updatedAt: new Date().toISOString() }));
       }

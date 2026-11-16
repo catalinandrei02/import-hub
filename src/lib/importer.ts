@@ -30,6 +30,10 @@ export function cleanNum(x: unknown): number | null {
 /** "PROGRESSIV QUATTRO 19 PCS" → "Progressiv" (Audi Canada trim names), when there is no VIN to decode. */
 const trimFrom = (s: string) => { const m = s.match(/\b(progressiv|technik|komfort)\b/i); return m ? m[1][0].toUpperCase() + m[1].slice(1).toLowerCase() : ""; };
 
+/** Adaptive cruise control / 360° camera in an equipment or options list (EN + FR). */
+export const ACC_RE = /adaptive cruise|r[ée]gulateur (de vitesse )?adaptatif|cruise control adaptatif|acc\b.*(stop|go)/i;
+export const CAM_RE = /360|surround[- ]?view|top[- ]?view|bird'?s[- ]?eye|area view|vision p[ée]riph[ée]rique|cam[ée]ra (panoramique|p[ée]rim[ée]trique)/i;
+
 /** Turns the bookmark's payload into a prefilled car (not saved yet). */
 export function parseImport(raw: string): Partial<Car> | null {
   let d: Partial<ListingData>;
@@ -47,5 +51,38 @@ export function parseImport(raw: string): Partial<Car> | null {
     trim: dv.err || dv.trim === "?" ? trimFrom(str(d.tr) + " " + str(d.t)) : dv.trim, price: cleanNum(d.p), km: cleanNum(d.k),
     url: /^https?:\/\//i.test(str(d.u, 600)) ? str(d.u, 600) : "", seller: str(d.s, 80), location: str(d.l, 60), photos,
     ...(d.st === "private" || d.st === "dealer" ? { sellerType: d.st } : {}),
+    ...extras(d),
   };
+}
+
+/** Equipment, Carfax links, CarGurus history and what they tell us (ACC / 360° / accident flag). Never invents: only "yes". */
+export function extras(d: Partial<ListingData>): Partial<Car> {
+  const out: Partial<Car> = {};
+  const eq = (Array.isArray(d.eq) ? d.eq : []).map(x => String(x).slice(0, 80).trim()).filter(Boolean).slice(0, 150);
+  if (eq.length) {
+    out.equipment = eq;
+    if (eq.some(x => ACC_RE.test(x))) out.acc = "yes";
+    if (eq.some(x => CAM_RE.test(x))) out.cam = "yes";
+  }
+  const cf = (Array.isArray(d.cf) ? d.cf : []).map(u => String(u).slice(0, 600)).filter(u => /^https:\/\/([\w-]+\.)*carfax\.(ca|com)\//i.test(u)).slice(0, 5);
+  if (cf.length) out.carfax = cf.map((url, i) => ({ id: "auto" + i + Date.now().toString(36), kind: "link" as const, url, addedAt: new Date().toISOString(), addedBy: "auto" }));
+  if (d.h && typeof d.h === "object") {
+    out.history = { damaged: !!d.h.damaged, accidents: !!d.h.accidents, scrapped: !!d.h.scrapped, imported: !!d.h.imported, exported: !!d.h.exported, source: "CarGurus" };
+    if (d.h.damaged || d.h.accidents) out.flags = ["accident"];
+  }
+  return out;
+}
+
+/** What a re-read listing adds to a saved car without overwriting anything the family set. */
+export function mergeExtras(car: Partial<Car>, x: Partial<Car>): Record<string, unknown> {
+  const upd: Record<string, unknown> = {};
+  if (x.equipment?.length && !car.equipment?.length) upd.equipment = x.equipment;
+  if (x.acc === "yes" && !car.acc) upd.acc = "yes";
+  if (x.cam === "yes" && !car.cam) upd.cam = "yes";
+  const have = new Set((car.carfax || []).map(c => c.url));
+  const newCf = (x.carfax || []).filter(c => !have.has(c.url));
+  if (newCf.length) upd.carfax = [...(car.carfax || []), ...newCf];
+  if (x.history && JSON.stringify(x.history) !== JSON.stringify(car.history)) upd.history = x.history;
+  if (x.flags?.includes("accident") && !(car.flags || []).includes("accident")) upd.flags = [...(car.flags || []), "accident"];
+  return upd;
 }

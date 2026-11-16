@@ -34,7 +34,8 @@ const FAKE_CG = `<!doctype html><html><head><title>Used 2021 Audi Q5 for sale in
 // Shaped like the real pages (checked Nov 2026): CarGurus keeps everything in window.__remixContext (no JSON-LD),
 // AutoTrader.ca in __NEXT_DATA__ with photos at 1280 px that also exist at 1920 px. Both show a misleading "100 km".
 const remix = { state: { loaderData: { "routes/($intl).details.$listingId": {
-  data: { listing: { vin: { value: "WA1EAAFYXN2102045" }, mileage: { value: 61250 } }, seller: { name: "Gurus Audi", sellerType: "DEALER", address: { city: "Brossard" } } },
+  data: { listing: { vin: { value: "WA1EAAFYXN2102045" }, mileage: { value: 61250 }, vehicleHistory: { damaged: true, hasMultipleAccident: false },
+    options: [{ label: "Adaptive Cruise Control", category: "OPTIONS" }, { label: "Heated Seats", category: "OPTIONS" }, { label: "Navigation System", category: "OPTIONS" }] }, seller: { name: "Gurus Audi", sellerType: "DEALER", address: { city: "Brossard" } } },
   leadForm: { listing: { price: 33995, yearMakeModelTrim: "2022 Audi Q5 Progressiv 45 TFSI quattro", city: "Brossard" } },
   listingImages: Array.from({ length: 32 }, (_, k) => ({ url: `http://localhost:4181/fake/2022_audi_q5-pic-${k + 1}-1024x768.jpeg`, width: 960, height: 721 })),
 } } } };
@@ -64,15 +65,30 @@ const srp = { state: { loaderData: { "routes/($intl).Cars.$seoPath": { search: {
 ] } } } } };
 const FAKE_SRP = `<!doctype html><html><head><title>Used Audi Q5 for Sale - CarGurus.ca</title></head><body>
 <script>window.__remixContext = ${JSON.stringify(srp)};</script></body></html>`;
+// Shaped like HGregoire (checked Nov 2026): no usable JSON-LD, equipment as <h4> + <ul> groups, price only as text,
+// "Kilométrage" label, photos with the size in the path (/by-size/<car>/1120x630/<n>.JPG, 448x252 in the carousel).
+const ph = (n, sz) => `http://localhost:4181/fake/photos/by-size/820640/${sz}/${n}.JPG`;
+const FAKE_DEALER = `<!doctype html><html lang="fr"><head><title>Audi Q5 2023 Progressiv AWD usagée à vendre chez Example Dealer</title>
+<meta property="og:site_name" content="Example Dealer"><meta property="og:image" content="${ph(1, "1120x630")}">
+<script type="application/ld+json">{ broken json </script></head><body>
+<nav><h4>Options de financement</h4><ul><li><a href="/fin">Financement</a></li><li><a href="/loc">Location</a></li></ul></nav>
+<h1>2023 Audi Q5 PROGRESSIV</h1><h2>27 992 $</h2>
+<div class="gallery"><div><img src="${ph(1, "1120x630")}"></div>${[2, 3, 4, 5, 6].map(n => `<div><img data-src="${ph(n, "448x252")}"></div>`).join("")}</div>
+<div class="info"><h4>Informations sur le véhicule</h4><dl><dt>Kilométrage</dt><dd>96 038km</dd></dl><p>NIV : WA1EAAFY4P2000123</p></div>
+<div class="vdp-info-inline"><h4>Confort</h4><ul><li>Air climatisé</li><li>Sièges chauffants</li><li>Régulateur de vitesse adaptatif</li></ul></div>
+<div class="vdp-info-inline"><h4>Sécurité</h4><ul><li>Freins ABS</li><li>Caméra 360°</li></ul></div>
+<p><a href="https://vhr.carfax.ca/?id=EXAMPLE123">Rapport Carfax</a> <a href="https://www.carfax.ca/">Carfax</a></p>
+</body></html>`;
 function serve(dir, port) {
   return new Promise(r => {
     const s = http.createServer((req, res) => {
-      if (req.url.startsWith("/fake-cgr")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_CGR); }
-      if (req.url.startsWith("/fake-srp")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_SRP); }
+      if (req.url.startsWith("/fake-cgr")) { res.writeHead(200, { "content-type": "text/html; charset=utf-8" }); return res.end(FAKE_CGR); }
+      if (req.url.startsWith("/fake-dealer")) { res.writeHead(200, { "content-type": "text/html; charset=utf-8" }); return res.end(FAKE_DEALER); }
+      if (req.url.startsWith("/fake-srp")) { res.writeHead(200, { "content-type": "text/html; charset=utf-8" }); return res.end(FAKE_SRP); }
       if (req.url.startsWith("/fake-gone")) { res.writeHead(200, { "content-type": "text/html" }); return res.end("<!doctype html><title>Listing not found - CarGurus</title><p>This listing is no longer available.</p>"); }
-      if (req.url.startsWith("/fake-at")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_AT); }
-      if (req.url.startsWith("/fake-cg")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_CG); }
-      if (req.url.startsWith("/fake-listing")) { res.writeHead(200, { "content-type": "text/html" }); return res.end(FAKE_LISTING); }
+      if (req.url.startsWith("/fake-at")) { res.writeHead(200, { "content-type": "text/html; charset=utf-8" }); return res.end(FAKE_AT); }
+      if (req.url.startsWith("/fake-cg")) { res.writeHead(200, { "content-type": "text/html; charset=utf-8" }); return res.end(FAKE_CG); }
+      if (req.url.startsWith("/fake-listing")) { res.writeHead(200, { "content-type": "text/html; charset=utf-8" }); return res.end(FAKE_LISTING); }
       if (req.url.startsWith("/fake/")) { res.writeHead(200, { "content-type": "image/svg+xml" }); return res.end('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="#8a8a8a"/></svg>'); }
       let f = path.join(dir, decodeURIComponent(req.url.split("?")[0]));
       if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, "index.html");
@@ -374,6 +390,13 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   await p.click('[data-act="open-dup"]'); await sleep(300);
   report.checks.dupOpens = await p.evaluate(() => !!document.querySelector("#side") && !document.querySelector("#car-form"));
   // Real-site shapes: CarGurus (Remix) and AutoTrader.ca (Next.js), each through the link box.
+  // A dealer site (HGregoire shape) through the link box, saved: equipment, ACC/360, Carfax link, big photos, price, km.
+  await p.keyboard.press("Escape"); await sleep(300);
+  await setVal(p, "#hero-vin", MOCK + "fake-dealer.html"); await p.click(".pillform .cta");
+  await p.waitForFunction(() => document.getElementById("d-price")?.value, { timeout: 45000 }).catch(() => {});
+  report.checks.fill_dealer = await p.evaluate(() => ["d-vin", "d-year", "d-trim", "d-price", "d-km", "d-seller"].map(id => document.getElementById(id)?.value).join(" | "));
+  await p.click('#car-form [type=submit]'); await sleep(500);
+  report.checks.dealerSaved = await p.evaluate(() => { const c = [...window.__mock.store].map(([, v]) => v).find(v => v.vin === "WA1EAAFY4P2000123"); return c ? JSON.stringify({ eq: c.equipment?.length, acc: c.acc, cam: c.cam, carfax: (c.carfax || []).map(x => x.url.split("?")[0]), photos: c.photos.length, sizes: [...new Set(c.photos.map(u => u.split("/").slice(-2, -1)[0]))] }) : null; });
   for (const [name, page] of [["cargurus", "fake-cgr.html"], ["autotrader", "fake-at.html"]]) {
     await p.keyboard.press("Escape"); await sleep(300);
     await setVal(p, "#hero-vin", MOCK + page); await p.click(".pillform .cta");
