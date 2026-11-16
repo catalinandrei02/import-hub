@@ -1,6 +1,7 @@
-/* Import Hub: automotive design language after audi.ca (no Audi logo, wordmark or font).
-   Layout: white header bar with underlined active link · full-width black hero band per section · content on white / light grey
-   with square, flat cards · black footer. Type: Archivo, extended width for headings. Dark mode = black pages, grey surfaces. */
+/* Import Hub: automotive design language after audi.ca, following the layout principles Audi publishes openly
+   (straight right-angled blocks bled to the edge, asymmetric splits, full-tone colour blocks for emphasis, rectangular tiles
+   separated by narrow gaps, no frames, overlaps or transparency). No Audi logo, wordmark, font, icons, code or photos.
+   Layout: white header bar · hero split into a black text block and a car tile · content as tiles · black footer. */
 :root {
   --bg: #ffffff; --surface: #f2f2f2; --surface-2: #e5e5e5; --card: #ffffff;
   --ink: #000000; --ink-2: #4c4c4c; --ink-3: #737373; --line: #d9d9d9; --line-2: #b3b3b3;
@@ -430,3 +431,40 @@ dialog::backdrop { background: var(--scrim) }
   .stackbar i { transition: flex-grow .25s var(--ease) }
   .ring .val { transition: stroke-dashoffset .3s var(--ease) }
 }
+
+/* ===== Tile layer (layout principles) ===== */
+:root { --tile: 4px }
+/* Hero: asymmetric split, bled to the edges */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr); background-image: none; gap: var(--tile); background: var(--bg) }
+.hero-in { background: var(--hero); padding-block: clamp(40px, 8vh, 96px) clamp(36px, 6vh, 72px);
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px)); padding-right: max(var(--gutter), env(safe-area-inset-right, 0px)); align-content: end }
+.hero-art { display: grid; place-items: center; background: linear-gradient(180deg, var(--surface-2), var(--surface)); min-height: 220px }
+.hero-art .carart { width: min(86%, 760px) }
+@media (min-width: 62rem) {
+  .hero { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); min-height: clamp(420px, 58vh, 620px) }
+  .hero-in { padding-left: max(var(--gutter), env(safe-area-inset-left, 0px), calc((100vw - 92rem) / 2 + var(--gutter))) }
+  .hero-art { min-height: 100% }
+}
+/* Tiles: narrow gaps, no frames or shadows */
+.glass, .car, .empty, .banner, dialog, .upop, .cmp, .costhero, .break { border: 0; box-shadow: none }
+.glass { background: var(--surface) }
+.glass.tint { background: var(--panel) }
+.glass.deep { background: var(--surface-2) }
+.car { background: var(--surface) }
+.car:hover { background: var(--surface-2) }
+.car.sel { box-shadow: inset 0 -4px 0 var(--ink) }
+.cimg { aspect-ratio: 16 / 9; background: var(--surface-2) }
+.cars, .cols { gap: var(--tile) }
+.side { gap: var(--tile) }
+.content { gap: var(--tile) clamp(16px, 2vw, 24px) }
+.main { gap: clamp(20px, 3vw, 32px) }
+.inp { background: var(--card) }
+.empty, .banner { background: var(--surface) }
+.banner { box-shadow: inset 4px 0 0 var(--ink) }
+.banner.warn { box-shadow: inset 4px 0 0 var(--red) }
+.seg { box-shadow: none; background: var(--surface) }
+.drawer { border-left: 0 }
+.upop { box-shadow: 0 0 0 1px var(--line) }
+dialog { box-shadow: none }
+.foot { border-top: 0 }
+.chip { background: var(--surface-2) }
