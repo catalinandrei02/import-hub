@@ -557,3 +557,17 @@ dialog { box-shadow: none }
 .gate-art { position: relative; min-height: 260px; overflow: hidden; background: #111 }
 .gate-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 22% 62% }
 .gate .gate-btn:focus-visible, .gate .gate-ghost:focus-visible, .gate select:focus-visible { outline: 2px solid #fff; outline-offset: 3px }
+
+/* Hero photo filling the whole band behind the text (owner's request). Phones: text on black, photo along the bottom.
+   Wide screens: photo across the right three quarters, fading into the black text side. */
+.hero.full { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; position: relative; isolation: isolate; background: #000 }
+.hero.full .hero-art { position: absolute; inset: 0; z-index: -1; min-height: 0; padding: 0; background: #000 }
+.hero.full .hero-art img { inset: auto 0 0 0; width: 100%; height: auto; object-fit: initial }
+.hero.full .hero-in { padding-bottom: calc(52.6vw * .8); background: linear-gradient(180deg, #000 calc(100% - 52.6vw), rgba(0,0,0,.55) calc(100% - 52.6vw * .78), rgba(0,0,0,0) calc(100% - 52.6vw * .55)) }
+@media (min-width: 62rem) {
+  .hero.full { min-height: clamp(460px, 64vh, 700px) }
+  .hero.full .hero-art { left: auto; width: 74% }
+  .hero.full .hero-art img { inset: 0; height: 100%; object-fit: cover }
+  .hero.full .hero-art img.stock { object-position: 55% 62% }
+  .hero.full .hero-in { padding-bottom: clamp(36px, 6vh, 72px); background: linear-gradient(90deg, #000 0%, #000 26%, rgba(0,0,0,.82) 38%, rgba(0,0,0,0) 58%) }
+}

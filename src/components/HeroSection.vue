@@ -1,5 +1,6 @@
 <script setup lang="ts">
-// Hero as an asymmetric split: a solid text block and a full-bleed photo tile (public/hero.jpg, or a `photo` if given;
+// Hero: the photo fills the whole band behind the text (owner's request), with a black fade under the text;
+// falls back to the asymmetric split with our car drawing. Photo: (public/hero.jpg, or a `photo` if given;
 // our own car drawing if the image can't load).
 import { ref, watch } from "vue";
 import CarArt from "./CarArt.vue";
@@ -10,7 +11,7 @@ watch(() => props.photo, () => (broken.value = false));
 </script>
 
 <template>
-  <section class="hero" aria-labelledby="hero-h">
+  <section class="hero" :class="{ full: !broken }" aria-labelledby="hero-h">
     <div class="hero-in">
       <p v-if="$slots.proof" class="proof"><slot name="proof" /></p>
       <h1 id="hero-h">{{ title }}</h1>
