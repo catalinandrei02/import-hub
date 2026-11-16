@@ -1,5 +1,6 @@
 <script setup lang="ts">
-// Page hero: the photo edge to edge (public/hero.jpg, or `photo`), the title bottom-left over a navy fade, so the car
+// Page hero: the photo as a tile in the same column as the page content (public/hero.jpg, or `photo`), the title
+// bottom-left over a dark fade, so the car
 // stays clear. Anything in the default slot (add a car, price, search…) goes in a bar right under the photo,
 // introduced by `barTitle` / `barNote`. Our car drawing replaces the photo if it can't load.
 import { ref, watch } from "vue";
@@ -11,6 +12,7 @@ watch(() => props.photo, () => (broken.value = false));
 </script>
 
 <template>
+  <div class="h2-wrap">
   <section class="hero2" :class="{ nophoto: broken, small }" aria-labelledby="hero-h">
     <div class="h2-media" aria-hidden="true">
       <img v-if="photo && !broken" :src="photo" alt="" referrerpolicy="no-referrer" @error="broken = true">
@@ -28,5 +30,6 @@ watch(() => props.photo, () => (broken.value = false));
       <div v-if="barTitle" class="h2-bar-t"><h2>{{ barTitle }}</h2><p v-if="barNote">{{ barNote }}</p></div>
       <div class="h2-bar-c"><slot /></div>
     </div>
+  </div>
   </div>
 </template>
