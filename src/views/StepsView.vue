@@ -27,8 +27,7 @@ const next = computed(() => { const i = steps.value.findIndex((_, k) => !car.val
 
 <template>
   <HeroSection :title="t.proc.h" :lead="t.proc.lead">
-    <template #proof><span class="dot" aria-hidden="true"></span>
-      <span v-if="car"><b>{{ done }}</b> {{ fill(t.proc.of, { n: steps.length }) }} · {{ carLabel(car) }}</span><span v-else>{{ t.proc.pickHint }}</span></template>
+    <template #proof><span v-if="car"><b>{{ done }}</b> {{ fill(t.proc.of, { n: steps.length }) }} · {{ carLabel(car) }}</span><span v-else>{{ t.proc.pickHint }}</span></template>
   </HeroSection>
   <div class="content">
     <div class="main">

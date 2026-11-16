@@ -10,6 +10,7 @@ import { STEPS } from "../i18n/content";
 import { fill, lang, t } from "../i18n";
 import { toast, ui } from "../ui";
 import SparkLine from "./SparkLine.vue";
+import CarArt from "./CarArt.vue";
 
 const props = defineProps<{ car: Car }>();
 const c = computed(() => props.car);
@@ -29,38 +30,42 @@ function open() { ui.selCar = c.value._id; ui.detail = true; }
 </script>
 
 <template>
-  <article class="car glass" :class="{ sel: ui.detail && ui.selCar === car._id, dropped: car.status === 'dropped' }">
-    <div class="ct">
-      <span class="src"><i class="sdot" :class="statusClass(car.status)"></i>
-        <span><small>{{ (t.st as any)[car.status || ''] || car.status }}</small><span>{{ car.sellerType === 'private' ? t.f.private : t.f.dealer }}<template v-if="car.addedBy === 'claude'"> · {{ t.cars.byClaude }}</template></span></span>
-      </span>
-      <label class="cmpchk"><input type="checkbox" :data-cmp="car._id" :checked="ui.cmp.includes(car._id)" @change="toggleCmp"> {{ t.cars.compare }}</label>
+  <article class="car" :class="{ sel: ui.detail && ui.selCar === car._id, dropped: car.status === 'dropped' }">
+    <div class="cimg">
+      <CarArt :label="carName(car)" />
+      <span class="badge" :class="statusClass(car.status)">{{ (t.st as any)[car.status || ''] || car.status }}</span>
+      <span v-if="car.addedBy === 'claude'" class="badge auto">{{ t.cars.byClaude }}</span>
     </div>
-    <button class="cbody" type="button" data-act="details" :data-id="car._id" @click="open">
-      <span class="ctt">{{ carName(car) }}<template v-if="carTrim(car)"> · {{ carTrim(car) }}</template></span>
-      <span class="cp">
-        <span>
-          <span class="price">{{ car.price ? fmt(car.price) : "—" }}<span v-if="car.price" class="cur">CAD</span></span>
-          <span v-if="dl" class="delta" :class="dl < 0 ? 'down' : 'up'">{{ dl < 0 ? "▼" : "▲" }} {{ cad(Math.abs(dl)) }} {{ fill(t.cars.dropFrom, { v: cad(first!) }) }}</span>
+    <div class="cin">
+      <button class="cbody" type="button" data-act="details" :data-id="car._id" @click="open">
+        <span class="ctt">{{ carName(car) }}<template v-if="carTrim(car)"> · {{ carTrim(car) }}</template></span>
+        <span class="cs">{{ [car.km ? fmt(car.km) + " km" : "", car.sellerType === 'private' ? t.f.private : t.f.dealer, car.location].filter(Boolean).join(" · ") }}</span>
+        <span class="cp">
+          <span>
+            <span class="lbl">{{ t.cars.price }}</span>
+            <span class="price">{{ car.price ? fmt(car.price) : "—" }}<span v-if="car.price" class="cur">CAD</span></span>
+            <span v-if="dl" class="delta" :class="dl < 0 ? 'down' : 'up'">{{ dl < 0 ? "▼" : "▲" }} {{ cad(Math.abs(dl)) }} {{ fill(t.cars.dropFrom, { v: cad(first!) }) }}</span>
+          </span>
+          <SparkLine :car="car" />
         </span>
-        <SparkLine :car="car" />
-      </span>
-    </button>
-    <div class="chips">
-      <span class="chip" :class="ync(car.acc)">{{ t.cars.acc }}: {{ yn(car.acc) }}</span>
-      <span class="chip" :class="ync(car.cam)">{{ t.cars.cam }}: {{ yn(car.cam) }}</span>
-      <span v-if="car.km" class="chip">{{ fmt(car.km) }} km</span>
-      <span class="chip">{{ t.cars.stepsL }} {{ done }}/{{ STEPS[lang].length }}</span>
-      <span v-for="f in car.flags || []" :key="f" class="chip bad">{{ (t.f.flagList as any)[f] || f }}</span>
-    </div>
-    <div class="cfoot">
-      <span class="ini" :style="{ background: `hsl(${hue} 32% 38%)` }" aria-hidden="true">{{ initials(car.seller) }}</span>
-      <span class="who"><b>{{ car.seller || "—" }}</b><small>{{ car.location || "—" }}</small></span>
-      <span class="rate"><b class="hl">{{ lc ? eur(lc.total) : "—" }}</b><small>{{ t.cars.landed }} · {{ carGst(car) ? t.cars.withGst : t.cars.noGst }}</small></span>
-    </div>
-    <div class="acts">
-      <button class="btn" type="button" data-act="edit-car" :data-id="car._id" @click="ui.dialog = { kind: 'car', car }">{{ t.cars.edit }}</button>
-      <a v-if="safeUrl(car.url)" class="link" :href="safeUrl(car.url)" target="_blank" rel="noopener">{{ t.cars.open }} ↗</a>
+      </button>
+      <div class="chips">
+        <span class="chip" :class="ync(car.acc)">{{ t.cars.acc }}: {{ yn(car.acc) }}</span>
+        <span class="chip" :class="ync(car.cam)">{{ t.cars.cam }}: {{ yn(car.cam) }}</span>
+        <span class="chip">{{ t.cars.stepsL }} {{ done }}/{{ STEPS[lang].length }}</span>
+        <span v-for="f in car.flags || []" :key="f" class="chip bad">{{ (t.f.flagList as any)[f] || f }}</span>
+      </div>
+      <div class="cfoot">
+        <span class="ini" :style="{ background: `hsl(${hue} 8% 32%)` }" aria-hidden="true">{{ initials(car.seller) }}</span>
+        <span class="who"><b>{{ car.seller || "—" }}</b><small>{{ car.location || "—" }}</small></span>
+        <span class="rate"><span class="lbl">{{ t.cars.landed }}</span><b class="hl">{{ lc ? eur(lc.total) : "—" }}</b><small>{{ carGst(car) ? t.cars.withGst : t.cars.noGst }}</small></span>
+      </div>
+      <div class="acts">
+        <button class="btn primary" type="button" @click="open">{{ t.c.details }}</button>
+        <button class="btn" type="button" data-act="edit-car" :data-id="car._id" @click="ui.dialog = { kind: 'car', car }">{{ t.cars.edit }}</button>
+        <a v-if="safeUrl(car.url)" class="link" :href="safeUrl(car.url)" target="_blank" rel="noopener">{{ t.cars.open }} ↗</a>
+        <label class="cmpchk"><input type="checkbox" :data-cmp="car._id" :checked="ui.cmp.includes(car._id)" @change="toggleCmp"> {{ t.cars.compare }}</label>
+      </div>
     </div>
   </article>
 </template>

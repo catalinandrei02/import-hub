@@ -46,7 +46,7 @@ function revert() { for (const k of RATE_KEYS) delete draft[k]; }
 
 <template>
   <HeroSection :title="t.costs.h" :lead="t.costs.lead">
-    <template #proof><span class="dot" aria-hidden="true"></span><span><b>{{ fill(t.chip.rate, { v: fmt(used.cadEur, 3) }) }}</b> · {{ t.c.lastChanged }}: {{ state.costsAt ? fmtDT(state.costsAt) : "—" }}</span></template>
+    <template #proof><span><b>{{ fill(t.chip.rate, { v: fmt(used.cadEur, 3) }) }}</b> · {{ t.c.lastChanged }}: {{ state.costsAt ? fmtDT(state.costsAt) : "—" }}</span></template>
     <form class="pillform" novalidate autocomplete="off" @submit.prevent>
       <label class="sr-only" for="c-price">{{ t.hero.priceL }}</label>
       <input id="c-price" v-model="ui.priceInput" inputmode="decimal" :placeholder="t.hero.priceL"><span class="u">CAD</span>

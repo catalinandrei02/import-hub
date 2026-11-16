@@ -20,8 +20,7 @@ const done = computed(() => countDone(car.value?.docs, keys.value));
 
 <template>
   <HeroSection :title="t.docs.h" :lead="t.docs.lead">
-    <template #proof><span class="dot" aria-hidden="true"></span>
-      <span v-if="car"><b>{{ done }}</b> {{ fill(t.docs.of, { n: keys.length }) }} · {{ carLabel(car) }}</span><span v-else>{{ t.docs.pickHint }}</span></template>
+    <template #proof><span v-if="car"><b>{{ done }}</b> {{ fill(t.docs.of, { n: keys.length }) }} · {{ carLabel(car) }}</span><span v-else>{{ t.docs.pickHint }}</span></template>
   </HeroSection>
   <div class="content">
     <div class="main">

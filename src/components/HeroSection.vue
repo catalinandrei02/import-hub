@@ -4,9 +4,11 @@ defineProps<{ title: string; lead: string }>();
 
 <template>
   <section class="hero" aria-labelledby="hero-h">
-    <div v-if="$slots.proof" class="proof pillglass"><slot name="proof" /></div>
-    <h1 id="hero-h">{{ title }}</h1>
-    <p class="lead">{{ lead }}</p>
-    <slot />
+    <div class="wrap hero-in">
+      <p v-if="$slots.proof" class="proof"><slot name="proof" /></p>
+      <h1 id="hero-h">{{ title }}</h1>
+      <p class="lead">{{ lead }}</p>
+      <slot />
+    </div>
   </section>
 </template>

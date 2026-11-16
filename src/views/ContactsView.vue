@@ -15,8 +15,6 @@ const loading = computed(() => !state.contactsLoaded && (state.data === "loading
 <template>
   <HeroSection :title="t.contacts.h" :lead="t.contacts.lead">
     <template #proof>
-      <span class="stack" aria-hidden="true"><i v-for="c in list.slice(0, 4)" :key="c._id" :style="{ background: `hsl(${hue(c.name)} 30% 40%)` }">{{ initials(c.name) }}</i></span>
-      <span v-if="!list.length" class="dot" aria-hidden="true"></span>
       <span>{{ fill(t.chip.contacts, { n: list.length }) }}</span>
     </template>
     <button class="cta" type="button" data-act="add-contact" :disabled="!canWrite" @click="ui.dialog = { kind: 'contact', contact: null }">+ {{ t.contacts.add }}</button>
@@ -29,7 +27,7 @@ const loading = computed(() => !state.contactsLoaded && (state.data === "loading
       <div v-else class="cols">
         <section v-for="c in list" :key="c._id" class="glass card">
           <div class="cfoot" style="border:0;padding:0">
-            <span class="ini" :style="{ background: `hsl(${hue(c.name)} 30% 40%)` }" aria-hidden="true">{{ initials(c.name) }}</span>
+            <span class="ini" :style="{ background: `hsl(${hue(c.name)} 8% 32%)` }" aria-hidden="true">{{ initials(c.name) }}</span>
             <span class="who"><b>{{ c.name }}</b><small>{{ c.role }}</small></span>
             <button class="link" type="button" data-act="edit-contact" :data-id="c._id" @click="ui.dialog = { kind: 'contact', contact: c }">{{ t.cars.edit }}</button>
           </div>
