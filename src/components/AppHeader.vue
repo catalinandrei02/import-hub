@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import ThemeIcon from "./ThemeIcon.vue";
+import { nextTheme, theme } from "../lib/theme";
 import FlagsLogo from "./FlagsLogo.vue";
 import AIcon from "./AIcon.vue";
 import { useRoute } from "vue-router";
 import { SECTIONS } from "../router";
-import { lang, t } from "../i18n";
+import { fill, lang, t } from "../i18n";
 import { canWrite, state } from "../data/store";
 import { signInWithHelp } from "../lib/signin";
 import { ui } from "../ui";
@@ -28,6 +30,7 @@ const doSignIn = signInWithHelp;
         </div>
       </nav>
       <div class="hright">
+        <button class="themebtn hide-sm" type="button" data-act="theme" :aria-label="fill(t.theme.next, { m: t.theme[theme] })" :title="fill(t.theme.next, { m: t.theme[theme] })" @click="theme = nextTheme(theme)"><ThemeIcon :mode="theme" /></button>
         <label class="lang">
           <span class="sr-only">{{ t.langL }}</span>
           <select id="lang" v-model="lang"><option value="ro">RO</option><option value="en">EN</option><option value="fr">FR</option></select>

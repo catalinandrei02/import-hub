@@ -40,6 +40,7 @@ const V3 = {
       h: "Vizualizări", one: "{n} vizualizare", few: "{n} vizualizări", many: "{n} de vizualizări",
       how: "Se numără de fiecare dată când cineva din familie deschide mașina.", none: "Încă n-a deschis-o nimeni.", you: "tu", last: "ultima dată",
     },
+    theme: { label: "Temă", auto: "Automat", light: "Zi", dark: "Noapte", next: "Temă: {m}. Apasă ca s-o schimbi." },
     gate: {
       lead: "Site-ul privat al familiei pentru mașinile aduse din Québec în România. Intră cu Google sau cu email ca să continui.",
       checking: "Se verifică contul…", none: "Site-ul nu e încă legat de baza de date, așa că nu se poate intra.", other: "Intră cu alt cont",
@@ -132,6 +133,7 @@ const V3 = {
       h: "Views", one: "{n} view", few: "{n} views", many: "{n} views",
       how: "Counted each time someone in the family opens this car.", none: "Nobody has opened it yet.", you: "you", last: "last",
     },
+    theme: { label: "Theme", auto: "Automatic", light: "Day", dark: "Night", next: "Theme: {m}. Press to change it." },
     gate: {
       lead: "The family's private site for cars brought from Québec to Romania. Sign in with Google or with email to continue.",
       checking: "Checking your account…", none: "The site isn't connected to its database yet, so nobody can sign in.", other: "Use another account",
@@ -224,6 +226,7 @@ const V3 = {
       h: "Consultations", one: "{n} consultation", few: "{n} consultations", many: "{n} consultations",
       how: "Comptées chaque fois qu'un membre de la famille ouvre ce véhicule.", none: "Personne ne l'a encore ouvert.", you: "vous", last: "dernière fois",
     },
+    theme: { label: "Thème", auto: "Automatique", light: "Jour", dark: "Nuit", next: "Thème : {m}. Appuyez pour le changer." },
     gate: {
       lead: "Le site privé de la famille pour les véhicules amenés du Québec en Roumanie. Connectez-vous avec Google ou par courriel pour continuer.",
       checking: "Vérification du compte…", none: "Le site n'est pas encore relié à sa base de données ; personne ne peut se connecter.", other: "Utiliser un autre compte",

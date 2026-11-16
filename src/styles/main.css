@@ -647,3 +647,13 @@ dialog { box-shadow: none }
 .gate-form input:focus-visible { outline: 2px solid #fff; outline-offset: 2px }
 .gate-form small, .gate-note { color: #9a9a9a; font-size: .8125rem; margin: 0 }
 .gate-msg { margin: 0; color: #ff8a9b; font-size: .875rem } .gate-msg.ok { color: #9fe0b0 }
+
+/* Day / night switch */
+.themebtn { all: unset; box-sizing: border-box; cursor: pointer; display: grid; place-items: center; width: 44px; height: 44px; color: var(--ink) }
+.themebtn:hover { background: var(--soft) } .themebtn:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px }
+@media (max-width: 40rem) { .themebtn.hide-sm { display: none } }
+.utheme { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 16px; font-size: .9375rem; color: var(--ink) }
+.utheme .seg { display: flex; gap: 2px; background: var(--soft); padding: 2px }
+.utheme .seg button { all: unset; cursor: pointer; display: grid; place-items: center; width: 36px; height: 32px; color: var(--ink-2) }
+.utheme .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg) }
+.utheme .seg button:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px }

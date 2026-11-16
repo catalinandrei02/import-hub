@@ -305,6 +305,26 @@ for (const [w, scheme] of [[390, "dark"], [1440, "light"]]) {
   report.checks.emailNotStored = await p.evaluate(() => !JSON.stringify([...window.__mock.store]).includes("example.test"));
   await p.close(); }
 
+// 4g. Day / night switch: header button cycles Automatic → Day → Night, the menu picks directly, the choice is
+// remembered (applied before the page draws), and a forced theme wins over the device setting.
+{ const p = await open(MOCK, "cars", 1280, "light");
+  const look = () => p.evaluate(() => (document.documentElement.dataset.theme || "auto") + " " + getComputedStyle(document.body).backgroundColor);
+  const seq = [await look()];
+  await p.click('[data-act="theme"]'); await sleep(100); seq.push(await look());
+  await p.click('[data-act="theme"]'); await sleep(100); seq.push(await look());
+  report.checks.themeCycle = seq.join(" → ");
+  report.checks.themeStored = await p.evaluate(() => localStorage.getItem("hub-theme"));
+  const q = await browser.newPage(); await q.setViewport({ width: 390, height: 844 }); await q.emulateMediaFeatures([{ name: "prefers-color-scheme", value: "light" }]);
+  await q.goto(MOCK + "#/cars", { waitUntil: "domcontentloaded" });
+  report.checks.themeEarly = await q.evaluate(() => document.documentElement.dataset.theme || "auto");
+  await q.waitForSelector(".ubtn"); await sleep(300);
+  for (const r of ["cars", "costs", "steps", "documents", "contacts", "search"]) { await go(q, r); const o = await q.evaluate(() => document.documentElement.scrollWidth <= innerWidth); if (!o) report.overflow.push("night 390 " + r); }
+  await go(q, "cars"); await q.screenshot({ path: path.join(OUT, "night-forced-390.png") });
+  await q.click(".ubtn"); await sleep(150); await q.click('[data-theme-pick="auto"]'); await sleep(100);
+  report.checks.themeMenu = await q.evaluate(() => (document.documentElement.dataset.theme || "auto") + " stored=" + localStorage.getItem("hub-theme"));
+  await q.screenshot({ path: path.join(OUT, "theme-menu-390.png") });
+  await q.close(); await p.close(); }
+
 // 4c. Admin page (avatar menu): approve a request, change a role, remove a member (two presses), add by code
 { const p = await open(MOCK, "cars", 1280, "light");
   const store = () => p.evaluate(() => Object.fromEntries(window.__mock.store));
