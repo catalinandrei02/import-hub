@@ -1,0 +1,521 @@
+<title>Import Hub Canada–România</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Layout: a shipping-manifest workbench. Sticky header with language + tabs; one panel per tab; cars as manifest cards. */
+:root{
+  --bg:#eef1f3; --surface:#ffffff; --sunken:#e3e8eb; --line:#cfd7dc; --ink:#13202a; --ink-2:#4a5a66;
+  --accent:#587246; --accent-ink:#3d5430; --accent-soft:#e2ead9; --on-accent:#ffffff;
+  --warn:#a35a00; --warn-soft:#fbecd6; --bad:#a3271b; --bad-soft:#f8dfdb; --ok:#2e6b3a; --ok-soft:#dcefdf; --info:#245a8a; --info-soft:#dbe8f5;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif; --body:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f161b; --surface:#172129; --sunken:#1e2a33; --line:#2c3a45; --ink:#e7edf1; --ink-2:#9fb0bc;
+  --accent:#8fb173; --accent-ink:#a9c98e; --accent-soft:#25331d; --on-accent:#0f161b;
+  --warn:#f0b35c; --warn-soft:#3a2a12; --bad:#f08a7e; --bad-soft:#3d1c18; --ok:#86cf95; --ok-soft:#183322; --info:#8cc0ee; --info-soft:#16293b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f161b; --surface:#172129; --sunken:#1e2a33; --line:#2c3a45; --ink:#e7edf1; --ink-2:#9fb0bc;
+  --accent:#8fb173; --accent-ink:#a9c98e; --accent-soft:#25331d; --on-accent:#0f161b;
+  --warn:#f0b35c; --warn-soft:#3a2a12; --bad:#f08a7e; --bad-soft:#3d1c18; --ok:#86cf95; --ok-soft:#183322; --info:#8cc0ee; --info-soft:#16293b; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px 8px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand h1{margin:0;font-family:var(--display);font-weight:800;font-size:1.35rem;letter-spacing:-.01em}
+.brand span{font-family:var(--mono);font-size:.75rem;color:var(--ink-2)}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{all:unset;cursor:pointer;padding:5px 11px;font-size:.78rem;font-weight:600;color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.lang button:focus-visible,.tabs button:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+nav.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding-bottom:0}
+nav.tabs::-webkit-scrollbar{display:none}
+.tabs button{all:unset;cursor:pointer;white-space:nowrap;padding:9px 12px 10px;font-weight:600;font-size:.88rem;color:var(--ink-2);border-bottom:3px solid transparent}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+main{padding-block:20px 48px}
+section[role="tabpanel"]{display:grid;gap:18px}
+h2{margin:0;font-family:var(--display);font-weight:700;font-size:1.4rem;text-wrap:balance}
+h3{margin:0;font-family:var(--display);font-weight:700;font-size:1.05rem}
+.lead{margin:0;color:var(--ink-2);max-width:68ch}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.spread{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:7px 12px;font:600 .85rem var(--body);cursor:pointer;text-decoration:none}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.note{font-size:.85rem;color:var(--ink-2)}
+.banner{border-radius:8px;padding:9px 12px;font-size:.88rem;background:var(--info-soft);color:var(--info)}
+.banner.warn{background:var(--warn-soft);color:var(--warn)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--sunken);color:var(--ink-2);white-space:nowrap}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}.chip.warn{background:var(--warn-soft);color:var(--warn)}.chip.bad{background:var(--bad-soft);color:var(--bad)}.chip.info{background:var(--info-soft);color:var(--info)}.chip.acc{background:var(--accent-soft);color:var(--accent-ink)}
+.mono{font-family:var(--mono);font-size:.82rem}
+.num{font-variant-numeric:tabular-nums}
+/* Tracker */
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filters button{all:unset;cursor:pointer;font-size:.8rem;font-weight:600;padding:5px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2)}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cars{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:12px}
+.car{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:10px;align-content:start;min-width:0}
+.car.dropped{opacity:.62}
+.car .head{display:flex;justify-content:space-between;gap:8px;align-items:start}
+.car .title{font-weight:600;font-size:1rem;line-height:1.3;min-width:0}
+.car .sub{font-size:.82rem;color:var(--ink-2)}
+.status{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:6px;white-space:nowrap}
+.figs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);padding-block:8px}
+.figs dt{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2)}
+.figs dd{margin:2px 0 0;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.delta.down{color:var(--ok)}.delta.up{color:var(--bad)}
+.car .notes{font-size:.85rem;color:var(--ink-2);white-space:pre-wrap;overflow-wrap:anywhere}
+.empty{border:1px dashed var(--line);border-radius:var(--r);padding:28px;text-align:center;color:var(--ink-2)}
+/* Forms */
+form.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:12px}
+label.f{display:grid;gap:4px;font-size:.78rem;font-weight:600;color:var(--ink-2);min-width:0}
+label.f.wide{grid-column:1/-1}
+input,select,textarea{font:inherit;font-size:.92rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:7px 9px;width:100%;min-width:0}
+textarea{min-height:70px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+.check{display:flex;gap:8px;align-items:center;font-size:.88rem;font-weight:500;color:var(--ink)}
+.check input{width:auto}
+dialog{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:0;width:min(760px,calc(100vw - 32px));max-height:calc(100dvh - 32px)}
+dialog::backdrop{background:rgba(10,16,20,.45)}
+.dlg{padding:18px;display:grid;gap:14px}
+.vin-out{font-size:.85rem}
+/* Costs */
+.costs{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:760px){.costs{grid-template-columns:minmax(0,1fr)}}
+.total{font-family:var(--display);font-weight:800;font-size:2.4rem;line-height:1;font-variant-numeric:tabular-nums}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.scroll{overflow-x:auto}
+/* Steps */
+ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:0;counter-reset:s}
+ol.steps li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+ol.steps li .n{counter-increment:s;font-family:var(--mono);font-size:.8rem;color:var(--ink-2);padding-top:2px}
+ol.steps li .n::before{content:counter(s,decimal-leading-zero)}
+.phase{font-family:var(--display);font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);padding-top:14px}
+.step-t{font-weight:600}
+.step-d{font-size:.88rem;color:var(--ink-2)}
+.step-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.stepbox{display:flex;gap:10px;align-items:flex-start}
+.stepbox input{width:18px;height:18px;margin-top:2px;flex:none;accent-color:var(--accent)}
+.progress{height:8px;border-radius:999px;background:var(--sunken);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);width:0}
+/* Docs / lessons */
+.cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:12px}
+.cols ul{margin:8px 0 0;padding-left:18px;display:grid;gap:4px;font-size:.9rem}
+.lesson{border-left:3px solid var(--warn);padding:2px 0 2px 12px}
+.lesson.good{border-left-color:var(--ok)}
+.lesson p{margin:2px 0 0;font-size:.88rem;color:var(--ink-2)}
+.contact{display:grid;gap:4px;min-width:0}
+.contact .who{font-weight:600}
+.contact .line{font-size:.85rem;overflow-wrap:anywhere}
+/* Templates */
+.tpl{display:grid;gap:10px}
+.tpl pre{margin:0;white-space:pre-wrap;font-family:var(--body);font-size:.88rem;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-wrap:anywhere}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{all:unset;cursor:pointer;padding:4px 10px;font-size:.78rem;font-weight:600;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent-ink)}
+a{color:var(--accent-ink)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:8px;font-size:.88rem;z-index:20}
+@media (prefers-reduced-motion:no-preference){.btn,.filters button{transition:background-color .15s,color .15s}}
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand"><h1>Import Hub</h1><span>CA → NL → RO</span></div>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="ro">RO</button>
+        <button type="button" data-lang="en">EN</button>
+        <button type="button" data-lang="fr">FR</button>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" id="tabs"></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main"></main>
+<dialog id="dlg"></dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- i18n ---------- */
+var T={
+ro:{
+ tabs:{cars:"Mașini",costs:"Costuri",process:"Pași",docs:"Documente",contacts:"Contacte",lessons:"Lecții",tpl:"Mesaje",search:"Căutare automată"},
+ dbOff:"Datele comune nu sunt disponibile în această vizualizare. Pagina merge, dar modificările nu se salvează.",
+ loading:"Se încarcă datele…", stale:"Datele nu au răspuns încă. Ce vezi poate fi vechi.",
+ cars:{h:"Mașinile urmărite",lead:"Toate mașinile pe care le urmăriți, cu prețul, istoricul de preț și costul estimat ajunsă în România.",add:"Adaugă mașină",all:"Active",dropped:"Renunțate",allAll:"Toate",empty:"Nicio mașină încă. Apasă „Adaugă mașină” sau lasă căutarea automată să le găsească.",price:"Preț",km:"Km",landed:"În RO",since:"de la",edit:"Editează",open:"Anunț",steps:"pași",byClaude:"găsită automat",acc:"ACC",cam:"Cam 360°",unknown:"?",yes:"da",no:"nu"},
+ st:{watching:"Urmărită",contacted:"Contactat",offer:"Ofertă trimisă",inspection:"Inspecție",bought:"Cumpărată",shipped:"Pe drum",arrived:"Ajunsă",dropped:"Renunțat"},
+ f:{title:"Model / titlu",year:"An",trim:"Echipare",vin:"VIN",km:"Kilometri",price:"Preț (CAD)",seller:"Vânzător",sellerType:"Tip vânzător",dealer:"Dealer",private:"Privat",location:"Localitate",url:"Link anunț",status:"Status",acc:"ACC",cam:"Cameră 360°",flags:"Semnale de alarmă",flagList:{accident:"Accident",lease:"Fost leasing",recall:"Rechemări deschise",service:"Goluri în service",rust:"Rugină",noexport:"Dealerul refuză exportul"},notes:"Note",save:"Salvează",cancel:"Anulează",del:"Șterge",delConfirm:"Apasă din nou ca să ștergi definitiv",vinCheck:"Verificare VIN"},
+ vin:{model:"Model",trim:"Echipare probabilă",year:"An model",phev:"Plug-in hybrid (55 TFSI e): întreabă Viamar/Marlog de suprataxa pentru baterie",notq5:"Nu pare un Q5 (FY). Decodorul e făcut pentru Q5.",bad:"VIN-ul trebuie să aibă 17 caractere.",hint:"Orientativ, după poziția 4 din VIN: E = Progressiv, F = Technik."},
+ costs:{h:"Cost estimat în România",lead:"Aceeași formulă ca în calculator: vama 10% și TVA 21% se aplică pe CIF (mașină + GST + transport + asigurare). Valorile de mai jos sunt comune pentru toată familia.",price:"Prețul mașinii (CAD)",gst:"GST 5% plătit la dealer",total:"Total în România",breakdown:"Defalcare",car:"Mașina",gstL:"GST 5%",ship:"Transport maritim",ins:"Asigurare",cif:"Valoare CIF",duty:"Taxă vamală",vat:"TVA",marlog:"Marlog (port + vămuire)",road:"Roosendaal → România",rar:"RAR",rates:"Valori comune",cadEur:"Curs CAD → EUR",usdEur:"Curs USD → EUR",shipUsd:"Viamar container (USD)",fuelUsd:"Suprataxă combustibil (USD)",insPct:"Asigurare (% din preț)",dutyPct:"Taxă vamală (%)",vatPct:"TVA (%)",marlogEur:"Marlog (€)",roadEur:"Transport rutier (€)",rarEur:"RAR (€)",saveRates:"Salvează valorile",saved:"Salvat",calc:"Calculatorul complet",perK:"Fiecare 1.000 CAD negociați în minus economisesc"},
+ proc:{h:"Pașii unui import",lead:"Procesul complet, verificat pe Audi Q7 din 2026. Bifează pașii pentru mașina aleasă.",pick:"Mașina",none:"— alege o mașină —",done:"gata",who:"Cine",docs:"Acte"},
+ docs:{h:"Ce acte cere fiecare",lead:"Liste luate din emailurile reale cu Viamar, Marlog și din paginile SAAQ și Revenu Québec."},
+ contacts:{h:"Contacte",lead:"Oamenii cu care ați lucrat. Oricine din familie poate adăuga sau corecta.",add:"Adaugă contact",name:"Nume",role:"Rol / firmă",phone:"Telefon",email:"Email",notes:"Note",copy:"Copiază",copied:"Copiat",empty:"Niciun contact încă."},
+ lessons:{h:"Lecții învățate",lead:"Ce am aflat din Q7 și din căutarea pentru Q5.",links:"Surse oficiale"},
+ tpl:{h:"Mesaje gata de trimis",lead:"Înlocuiește ce e între paranteze drepte. Textele sunt în franceză sau engleză, pentru dealerii din Québec.",copy:"Copiază textul",copied:"Copiat"},
+ search:{h:"Căutare automată",lead:"O sarcină programată pornește zilnic, citește setările de aici și, când e momentul, caută mașini noi. Ce găsește apare în tab-ul Mașini, marcat „găsită automat”, iar prețurile mașinilor urmărite se actualizează.",enabled:"Căutarea e pornită",freq:"Cât de des",f1:"Zilnic",f3:"La 3 zile",f7:"Săptămânal",model:"Model",trims:"Echipări acceptate",yearMin:"An minim",yearMax:"An maxim",maxPrice:"Preț maxim (CAD)",maxKm:"Km maximi",region:"Regiune",center:"Centru",radius:"Rază (km)",must:"Obligatoriu",acc:"ACC",cam:"Cameră 360°",phev:"Plug-in hybrid e un bonus",sellers:"Vânzători",dealer:"Dealeri",private:"Privați",exclude:"Dealeri de exclus (unul pe rând)",extra:"Instrucțiuni în plus pentru căutare",save:"Salvează setările",saved:"Setări salvate",last:"Ultima rulare",next:"Următoarea căutare",never:"încă niciuna",found:"găsite",result:"Rezultat"}
+},
+en:{
+ tabs:{cars:"Cars",costs:"Costs",process:"Steps",docs:"Documents",contacts:"Contacts",lessons:"Lessons",tpl:"Messages",search:"Auto-search"},
+ dbOff:"Shared data isn't available in this view. The page works, but changes won't be saved.",
+ loading:"Loading data…", stale:"The data hasn't answered yet. What you see may be out of date.",
+ cars:{h:"Cars we're watching",lead:"Every car you're following, with price, price history and the estimated cost landed in Romania.",add:"Add car",all:"Active",dropped:"Dropped",allAll:"All",empty:"No cars yet. Use “Add car”, or let the auto-search find them.",price:"Price",km:"Km",landed:"In RO",since:"from",edit:"Edit",open:"Listing",steps:"steps",byClaude:"found automatically",acc:"ACC",cam:"360° cam",unknown:"?",yes:"yes",no:"no"},
+ st:{watching:"Watching",contacted:"Contacted",offer:"Offer sent",inspection:"Inspection",bought:"Bought",shipped:"Shipping",arrived:"Arrived",dropped:"Dropped"},
+ f:{title:"Model / title",year:"Year",trim:"Trim",vin:"VIN",km:"Kilometres",price:"Price (CAD)",seller:"Seller",sellerType:"Seller type",dealer:"Dealer",private:"Private",location:"Location",url:"Listing link",status:"Status",acc:"ACC",cam:"360° camera",flags:"Red flags",flagList:{accident:"Accident",lease:"Ex-lease",recall:"Open recalls",service:"Service gaps",rust:"Rust",noexport:"Dealer refuses export"},notes:"Notes",save:"Save",cancel:"Cancel",del:"Delete",delConfirm:"Press again to delete for good",vinCheck:"VIN check"},
+ vin:{model:"Model",trim:"Likely trim",year:"Model year",phev:"Plug-in hybrid (55 TFSI e): ask Viamar/Marlog about the battery surcharge",notq5:"Doesn't look like a Q5 (FY). The decoder is built for the Q5.",bad:"A VIN has 17 characters.",hint:"Rough guide from VIN position 4: E = Progressiv, F = Technik."},
+ costs:{h:"Estimated cost in Romania",lead:"Same formula as the calculator: 10% duty and 21% VAT apply to the CIF value (car + GST + shipping + insurance). The values below are shared by the whole family.",price:"Car price (CAD)",gst:"GST 5% paid at the dealer",total:"Total in Romania",breakdown:"Breakdown",car:"Car",gstL:"GST 5%",ship:"Ocean freight",ins:"Insurance",cif:"CIF value",duty:"Import duty",vat:"VAT",marlog:"Marlog (port + customs)",road:"Roosendaal → Romania",rar:"RAR",rates:"Shared values",cadEur:"CAD → EUR rate",usdEur:"USD → EUR rate",shipUsd:"Viamar container (USD)",fuelUsd:"Fuel surcharge (USD)",insPct:"Insurance (% of price)",dutyPct:"Import duty (%)",vatPct:"VAT (%)",marlogEur:"Marlog (€)",roadEur:"Road transport (€)",rarEur:"RAR (€)",saveRates:"Save values",saved:"Saved",calc:"Full calculator",perK:"Every 1,000 CAD negotiated off saves"},
+ proc:{h:"Steps of an import",lead:"The full process, proven on the 2026 Audi Q7. Tick the steps for the chosen car.",pick:"Car",none:"— pick a car —",done:"done",who:"Who",docs:"Papers"},
+ docs:{h:"Who needs which papers",lead:"Lists taken from the real emails with Viamar and Marlog and from the SAAQ and Revenu Québec pages."},
+ contacts:{h:"Contacts",lead:"The people you've worked with. Anyone in the family can add or correct them.",add:"Add contact",name:"Name",role:"Role / company",phone:"Phone",email:"Email",notes:"Notes",copy:"Copy",copied:"Copied",empty:"No contacts yet."},
+ lessons:{h:"Lessons learned",lead:"What we learned from the Q7 and from the Q5 search.",links:"Official sources"},
+ tpl:{h:"Ready-to-send messages",lead:"Replace what's in square brackets. Texts are in French or English, for Québec dealers.",copy:"Copy text",copied:"Copied"},
+ search:{h:"Auto-search",lead:"A scheduled task runs daily, reads the settings here and, when a search is due, looks for new cars. What it finds appears in the Cars tab marked “found automatically”, and prices of watched cars get updated.",enabled:"Search is on",freq:"How often",f1:"Daily",f3:"Every 3 days",f7:"Weekly",model:"Model",trims:"Accepted trims",yearMin:"Min year",yearMax:"Max year",maxPrice:"Max price (CAD)",maxKm:"Max km",region:"Region",center:"Centre",radius:"Radius (km)",must:"Must have",acc:"ACC",cam:"360° camera",phev:"Plug-in hybrid is a bonus",sellers:"Sellers",dealer:"Dealers",private:"Private",exclude:"Dealers to skip (one per line)",extra:"Extra instructions for the search",save:"Save settings",saved:"Settings saved",last:"Last run",next:"Next search",never:"none yet",found:"found",result:"Result"}
+},
+fr:{
+ tabs:{cars:"Véhicules",costs:"Coûts",process:"Étapes",docs:"Documents",contacts:"Contacts",lessons:"Leçons",tpl:"Messages",search:"Recherche auto"},
+ dbOff:"Les données partagées ne sont pas disponibles ici. La page fonctionne, mais les changements ne sont pas enregistrés.",
+ loading:"Chargement des données…", stale:"Les données n'ont pas encore répondu. L'affichage peut être périmé.",
+ cars:{h:"Véhicules suivis",lead:"Tous les véhicules suivis, avec le prix, l'historique de prix et le coût estimé une fois en Roumanie.",add:"Ajouter un véhicule",all:"Actifs",dropped:"Abandonnés",allAll:"Tous",empty:"Aucun véhicule pour l'instant. Utilisez « Ajouter un véhicule » ou laissez la recherche auto les trouver.",price:"Prix",km:"Km",landed:"En RO",since:"depuis",edit:"Modifier",open:"Annonce",steps:"étapes",byClaude:"trouvé automatiquement",acc:"ACC",cam:"Caméra 360°",unknown:"?",yes:"oui",no:"non"},
+ st:{watching:"Suivi",contacted:"Contacté",offer:"Offre envoyée",inspection:"Inspection",bought:"Acheté",shipped:"En route",arrived:"Arrivé",dropped:"Abandonné"},
+ f:{title:"Modèle / titre",year:"Année",trim:"Version",vin:"NIV",km:"Kilométrage",price:"Prix ($ CA)",seller:"Vendeur",sellerType:"Type de vendeur",dealer:"Concessionnaire",private:"Particulier",location:"Ville",url:"Lien de l'annonce",status:"Statut",acc:"ACC",cam:"Caméra 360°",flags:"Signaux d'alerte",flagList:{accident:"Accident",lease:"Ancienne location",recall:"Rappels ouverts",service:"Trous d'entretien",rust:"Rouille",noexport:"Refuse l'exportation"},notes:"Notes",save:"Enregistrer",cancel:"Annuler",del:"Supprimer",delConfirm:"Appuyez encore pour supprimer définitivement",vinCheck:"Vérification du NIV"},
+ vin:{model:"Modèle",trim:"Version probable",year:"Année modèle",phev:"Hybride rechargeable (55 TFSI e) : demandez à Viamar/Marlog le supplément batterie",notq5:"Ne ressemble pas à un Q5 (FY). Le décodeur est fait pour le Q5.",bad:"Un NIV compte 17 caractères.",hint:"Indicatif, selon la 4e position du NIV : E = Progressiv, F = Technik."},
+ costs:{h:"Coût estimé en Roumanie",lead:"Même formule que la calculatrice : droits de 10 % et TVA de 21 % sur la valeur CIF (véhicule + TPS + transport + assurance). Les valeurs ci-dessous sont partagées par toute la famille.",price:"Prix du véhicule ($ CA)",gst:"TPS 5 % payée au concessionnaire",total:"Total en Roumanie",breakdown:"Détail",car:"Véhicule",gstL:"TPS 5 %",ship:"Fret maritime",ins:"Assurance",cif:"Valeur CIF",duty:"Droits de douane",vat:"TVA",marlog:"Marlog (port + dédouanement)",road:"Roosendaal → Roumanie",rar:"RAR",rates:"Valeurs partagées",cadEur:"Taux CAD → EUR",usdEur:"Taux USD → EUR",shipUsd:"Conteneur Viamar (USD)",fuelUsd:"Supplément carburant (USD)",insPct:"Assurance (% du prix)",dutyPct:"Droits (%)",vatPct:"TVA (%)",marlogEur:"Marlog (€)",roadEur:"Transport routier (€)",rarEur:"RAR (€)",saveRates:"Enregistrer les valeurs",saved:"Enregistré",calc:"Calculatrice complète",perK:"Chaque 1 000 $ négociés économise"},
+ proc:{h:"Étapes d'une importation",lead:"Le processus complet, éprouvé avec l'Audi Q7 en 2026. Cochez les étapes pour le véhicule choisi.",pick:"Véhicule",none:"— choisir un véhicule —",done:"faites",who:"Qui",docs:"Papiers"},
+ docs:{h:"Qui demande quels papiers",lead:"Listes tirées des vrais courriels avec Viamar et Marlog et des pages de la SAAQ et de Revenu Québec."},
+ contacts:{h:"Contacts",lead:"Les personnes avec qui vous avez travaillé. Tout le monde dans la famille peut en ajouter ou les corriger.",add:"Ajouter un contact",name:"Nom",role:"Rôle / entreprise",phone:"Téléphone",email:"Courriel",notes:"Notes",copy:"Copier",copied:"Copié",empty:"Aucun contact pour l'instant."},
+ lessons:{h:"Leçons apprises",lead:"Ce qu'on a appris avec le Q7 et la recherche du Q5.",links:"Sources officielles"},
+ tpl:{h:"Messages prêts à envoyer",lead:"Remplacez ce qui est entre crochets. Les textes sont en français ou en anglais, pour les concessionnaires du Québec.",copy:"Copier le texte",copied:"Copié"},
+ search:{h:"Recherche automatique",lead:"Une tâche planifiée s'exécute chaque jour, lit les réglages d'ici et, quand c'est le moment, cherche de nouveaux véhicules. Ce qu'elle trouve apparaît dans l'onglet Véhicules, marqué « trouvé automatiquement », et les prix des véhicules suivis sont mis à jour.",enabled:"Recherche activée",freq:"Fréquence",f1:"Chaque jour",f3:"Aux 3 jours",f7:"Chaque semaine",model:"Modèle",trims:"Versions acceptées",yearMin:"Année min.",yearMax:"Année max.",maxPrice:"Prix max. ($ CA)",maxKm:"Km max.",region:"Région",center:"Centre",radius:"Rayon (km)",must:"Obligatoire",acc:"ACC",cam:"Caméra 360°",phev:"Hybride rechargeable en bonus",sellers:"Vendeurs",dealer:"Concessionnaires",private:"Particuliers",exclude:"Concessionnaires à exclure (un par ligne)",extra:"Consignes supplémentaires",save:"Enregistrer les réglages",saved:"Réglages enregistrés",last:"Dernière exécution",next:"Prochaine recherche",never:"aucune",found:"trouvés",result:"Résultat"}
+}};
+
+/* Process steps: per language [phase, title, detail, who, papers] */
+var STEPS={
+ro:[
+["Înainte de cumpărare","Verifică VIN-ul și echiparea","Poziția 4 din VIN: E = Progressiv, F = Technik. Confirmă ACC și camera 360°.","Tu","Anunț, VIN"],
+["Înainte de cumpărare","Carfax și rechemări","Accidente, leasing („Bail”), goluri în service, rechemări deschise (22V753 cuzineți, 21V947 apă la gateway).","Tu","Carfax"],
+["Înainte de cumpărare","RDPRM: fără datorii pe mașină","Căutare după VIN pe rdprm.gouv.qc.ca, câțiva dolari. Obligatoriu la vânzător privat.","Tu / unchiul","Rezultat RDPRM"],
+["Înainte de cumpărare","Inspecție independentă","La un garaj ales de voi. Cere citire de erori cu VCDS/OBDeleven, nu doar OBD generic.","Unchiul","Raport inspecție"],
+["Cumpărare","Negociere și confirmarea exportului","Dealer: confirmă că acceptă export fără QST (formular ATAC cu „EXPORTATION”). Privat: confirmă predarea la transportator.","Tu","Email confirmare"],
+["Cumpărare","Contract pe numele cumpărătorului","Preț real, VIN, km, adrese și telefoane, clauză de predare la transportator. Dacă e pe numele socrului, totul pe numele lui.","Tu","Contract, pașaport"],
+["Cumpărare","Plată prin transfer bancar","Din contul cumpărătorului din contract. Dovada plății trebuie la vama din Olanda.","Cumpărătorul","Confirmare transfer"],
+["Canada","Rezervare la Viamar","Formulare de booking, contract de export, asigurare. Plată în avans.","Tu","Copie certificat, contract"],
+["Canada","Predare la GO Transport","180 Graveline, Saint-Laurent. Sună cu 24 h înainte. Dealerul sau vânzătorul predă direct.","Vânzătorul","Bon de predare"],
+["Canada","Vânzătorul privat anulează înmatricularea","Formularul SAAQ pentru vehicul vândut în afara Québecului, cu copia contractului, după plecare.","Vânzătorul","B/L, contract"],
+["Transport","Încărcare și plecare","Viamar trimite conosamentul (B/L) și factura. Plătește suprataxele apărute.","Viamar","B/L, factură"],
+["Europa","Marlog: vămuire","Trimite B/L, certificat, contract, factura de transport, pașaport și formularul de împuternicire.","Tu","Pachet Marlog"],
+["Europa","Plată Marlog, taxă vamală și TVA","Doar după plată se eliberează mașina. 5 zile gratuite, apoi 15 €/zi.","Cumpărătorul","Factură Marlog"],
+["România","Transport Roosendaal → România","Platformă auto. Șoferul ridică după ce actele sunt gata.","Transportator","Acte vamale"],
+["România","RAR și înmatriculare","Cu certificatul original, contractul și actele de vamă.","Cumpărătorul","Dosar complet"]
+],
+en:[
+["Before buying","Check the VIN and trim","VIN position 4: E = Progressiv, F = Technik. Confirm ACC and the 360° camera.","You","Listing, VIN"],
+["Before buying","Carfax and recalls","Accidents, lease (“Bail”), service gaps, open recalls (22V753 rod bearings, 21V947 gateway water).","You","Carfax"],
+["Before buying","RDPRM: no lien on the car","Search by VIN on rdprm.gouv.qc.ca, a few dollars. A must with a private seller.","You / uncle","RDPRM result"],
+["Before buying","Independent inspection","At a garage you choose. Ask for a VCDS/OBDeleven scan, not just a generic OBD read.","Uncle","Inspection report"],
+["Buying","Negotiate and confirm export","Dealer: confirm export without QST (ATAC form marked “EXPORTATION”). Private: confirm hand-over to the carrier.","You","Confirmation email"],
+["Buying","Contract in the buyer's name","Real price, VIN, km, addresses and phones, hand-over-to-carrier clause. If it's the father-in-law's, everything in his name.","You","Contract, passport"],
+["Buying","Pay by bank transfer","From the account of the buyer named in the contract. Dutch customs needs the proof of payment.","Buyer","Transfer confirmation"],
+["Canada","Book with Viamar","Booking forms, export contract, insurance. Prepaid.","You","Registration copy, contract"],
+["Canada","Drop-off at GO Transport","180 Graveline, Saint-Laurent. Call 24 h ahead. The dealer or seller hands the car over directly.","Seller","Drop-off receipt"],
+["Canada","Private seller cancels the registration","SAAQ form for a vehicle sold outside Québec, with the contract copy, after departure.","Seller","B/L, contract"],
+["Shipping","Loading and departure","Viamar sends the bill of lading (B/L) and invoice. Pay any surcharges that come up.","Viamar","B/L, invoice"],
+["Europe","Marlog: customs clearance","Send B/L, registration, contract, freight invoice, passport and the authorisation form.","You","Marlog pack"],
+["Europe","Pay Marlog, duty and VAT","The car is released only after payment. 5 free days, then €15/day.","Buyer","Marlog invoice"],
+["Romania","Truck Roosendaal → Romania","Car carrier. The driver collects once the papers are ready.","Carrier","Customs papers"],
+["Romania","RAR and registration","With the original registration, the contract and the customs papers.","Buyer","Full file"]
+],
+fr:[
+["Avant l'achat","Vérifier le NIV et la version","4e position du NIV : E = Progressiv, F = Technik. Confirmer l'ACC et la caméra 360°.","Vous","Annonce, NIV"],
+["Avant l'achat","Carfax et rappels","Accidents, location (« Bail »), trous d'entretien, rappels ouverts (22V753 coussinets, 21V947 eau sur le gateway).","Vous","Carfax"],
+["Avant l'achat","RDPRM : aucune dette sur le véhicule","Recherche par NIV sur rdprm.gouv.qc.ca, quelques dollars. Indispensable avec un particulier.","Vous / l'oncle","Résultat RDPRM"],
+["Avant l'achat","Inspection indépendante","Dans un garage de votre choix. Demandez un balayage VCDS/OBDeleven, pas seulement un lecteur OBD générique.","L'oncle","Rapport d'inspection"],
+["Achat","Négocier et confirmer l'exportation","Concessionnaire : exportation sans TVQ (formulaire ATAC « EXPORTATION »). Particulier : remise au transporteur.","Vous","Courriel de confirmation"],
+["Achat","Contrat au nom de l'acheteur","Prix réel, NIV, km, adresses et téléphones, clause de remise au transporteur. Si c'est au nom du beau-père, tout à son nom.","Vous","Contrat, passeport"],
+["Achat","Paiement par virement","Depuis le compte de l'acheteur du contrat. La douane néerlandaise demande la preuve de paiement.","Acheteur","Confirmation de virement"],
+["Canada","Réservation chez Viamar","Formulaires, contrat d'exportation, assurance. Payé d'avance.","Vous","Copie du certificat, contrat"],
+["Canada","Dépôt chez GO Transport","180 Graveline, Saint-Laurent. Appeler 24 h avant. Le concessionnaire ou le vendeur remet le véhicule directement.","Vendeur","Reçu de dépôt"],
+["Canada","Le particulier annule l'immatriculation","Formulaire SAAQ pour véhicule vendu hors Québec, avec copie du contrat, après le départ.","Vendeur","B/L, contrat"],
+["Transport","Chargement et départ","Viamar envoie le connaissement (B/L) et la facture. Payer les suppléments éventuels.","Viamar","B/L, facture"],
+["Europe","Marlog : dédouanement","Envoyer B/L, certificat, contrat, facture de fret, passeport et le formulaire d'autorisation.","Vous","Dossier Marlog"],
+["Europe","Payer Marlog, droits et TVA","Le véhicule n'est libéré qu'après paiement. 5 jours gratuits, puis 15 €/jour.","Acheteur","Facture Marlog"],
+["Roumanie","Camion Roosendaal → Roumanie","Porte-voitures. Le chauffeur récupère quand les papiers sont prêts.","Transporteur","Papiers de douane"],
+["Roumanie","RAR et immatriculation","Avec le certificat original, le contrat et les papiers de douane.","Acheteur","Dossier complet"]
+]};
+
+var DOCS={
+ro:[["Viamar (Canada)",["Copie a certificatului de înmatriculare (ține loc de titlu în Québec)","Copie a contractului sau confirmare de plată integrală, fără leasing sau credit","Datele complete ale expeditorului și destinatarului","Lista obiectelor din mașină, dacă e cazul","Originalele nu sunt necesare"]],
+["Marlog (Olanda)",["Conosamentul (B/L)","Certificatul / titlul mașinii","Contractul de vânzare (bill of sale)","Factura de transport maritim","Copie pașaport și adresa","Formularul lor de împuternicire pentru persoane fizice (art. 5.1 gol)"]],
+["SAAQ (vânzătorul privat)",["Formularul de anulare pentru vehicul vândut în afara Québecului","Copie a contractului de vânzare","Certificatul de înmatriculare"]],
+["Dealer din Québec",["Pașaport sau act de identitate al cumpărătorului (unii cer permisul, cu adresă)","Datele transportatorului (Viamar / GO Transport)","Formular ATAC cu scutire de QST „EXPORTATION”"]],
+["RAR / România",["Certificatul original din Québec","Contractul","Actele vamale de la Marlog","Ce s-a cerut la Q7 e reperul cel mai sigur"]]],
+en:[["Viamar (Canada)",["Copy of the registration certificate (counts as the title in Québec)","Copy of the bill of sale or full-payment letter, no lease or loan","Full shipper and consignee details","Packing list of items inside, if any","Originals are not needed"]],
+["Marlog (Netherlands)",["Bill of lading (B/L)","Car's registration / title","Bill of sale","Ocean freight invoice","Passport copy and address","Their authorisation form for private persons (leave art. 5.1 blank)"]],
+["SAAQ (private seller)",["Cancellation form for a vehicle sold outside Québec","Copy of the bill of sale","Registration certificate"]],
+["Québec dealer",["Buyer's passport or ID (some ask for a licence with address)","Carrier details (Viamar / GO Transport)","ATAC form with QST exemption “EXPORTATION”"]],
+["RAR / Romania",["Original Québec registration","The contract","Customs papers from Marlog","What was asked for the Q7 is the safest guide"]]],
+fr:[["Viamar (Canada)",["Copie du certificat d'immatriculation (tient lieu de titre au Québec)","Copie du contrat ou lettre de paiement complet, sans location ni prêt","Coordonnées complètes de l'expéditeur et du destinataire","Liste des objets dans le véhicule, s'il y a lieu","Les originaux ne sont pas nécessaires"]],
+["Marlog (Pays-Bas)",["Connaissement (B/L)","Certificat / titre du véhicule","Contrat de vente","Facture de fret maritime","Copie du passeport et adresse","Leur formulaire d'autorisation pour particuliers (art. 5.1 vide)"]],
+["SAAQ (vendeur particulier)",["Formulaire d'annulation pour véhicule vendu hors Québec","Copie du contrat de vente","Certificat d'immatriculation"]],
+["Concessionnaire du Québec",["Passeport ou pièce d'identité de l'acheteur (certains demandent le permis avec adresse)","Coordonnées du transporteur (Viamar / GO Transport)","Formulaire ATAC avec exemption de TVQ « EXPORTATION »"]],
+["RAR / Roumanie",["Certificat original du Québec","Le contrat","Papiers de douane de Marlog","Ce qui a été demandé pour le Q7 est le meilleur repère"]]]};
+
+var LESSONS={
+ro:[[0,"Marlog costă 1.030 €, nu 735 €","Oferta nu include scanarea containerului (165 €). Factura Q7: manipulare 540, scanare 165, admin 95, eco 75, vămuire 130, combustibil 25."],
+[0,"Viamar adaugă suprataxe după plecare","La Q7 a venit separat taxa pentru aglomerarea căii ferate CN. Asigurarea e separată și acoperă doar de la încărcare."],
+[0,"Unii dealeri refuză exportul","VW Lauzon Blainville (politica Groupe Lauzon). Honda Blainville a refuzat inițial, apoi a acceptat după ce ai explicat că ești persoană fizică."],
+[1,"Ce a mers la Q7","AED Laval a pus GST, a scutit QST pe formularul ATAC („EXPORTATION”), iar mașina a ajuns la GO Transport. Totul a durat cam 2 luni și jumătate."],
+[0,"Plug-in hybrid = complicații","Viamar cotează pentru „gas powered car”; bateriile cu litiu au restricții. Marlog exclude suprataxele pentru hibrizi."],
+[0,"Verifică echiparea din VIN","Mașina de la Honda era Progressiv (EAAF), nu Technik. „Premium Plus” = Progressiv."],
+[0,"Scanările generice ratează lucruri","Senzor decuplat fără erori la motor = erori șterse recent. Uită-te la „readiness monitors” și cere VCDS/OBDeleven."],
+[1,"Vama calculează pe contract","Marlog a recalculat valoarea la Q7 după ce ai arătat contractul și plata. Plătește din contul cumpărătorului."],
+[0,"Garanția Audi Canada nu e valabilă în România","Certified :plus e onorată doar în Canada și SUA."],
+[1,"Vânzător privat: fără QST","QST se plătește la SAAQ doar la transferul înmatriculării. Vânzătorul anulează apoi înmatricularea cu formularul pentru vehicul vândut în afara Québecului."]],
+en:[[0,"Marlog costs €1,030, not €735","The quote leaves out the container scan (€165). Q7 invoice: handling 540, scan 165, admin 95, eco 75, customs 130, fuel 25."],
+[0,"Viamar adds surcharges after sailing","The Q7 got a separate CN rail congestion charge. Insurance is separate and only covers from loading."],
+[0,"Some dealers refuse export","VW Lauzon Blainville (Groupe Lauzon policy). Honda Blainville first refused, then agreed once you explained you're a private buyer."],
+[1,"What worked for the Q7","AED Laval charged GST, exempted QST on the ATAC form (“EXPORTATION”), and the car reached GO Transport. About two and a half months door to door."],
+[0,"Plug-in hybrid = complications","Viamar quotes for a “gas powered car”; lithium batteries are restricted. Marlog excludes hybrid surcharges."],
+[0,"Check the trim in the VIN","The Honda car was a Progressiv (EAAF), not a Technik. “Premium Plus” = Progressiv."],
+[0,"Generic scans miss things","An unplugged sensor with no engine codes means codes were cleared recently. Check readiness monitors and ask for VCDS/OBDeleven."],
+[1,"Customs uses the contract","Marlog recalculated the Q7's value once you showed the contract and payment. Pay from the buyer's account."],
+[0,"Audi Canada warranty isn't valid in Romania","Certified :plus is honoured only in Canada and the US."],
+[1,"Private seller: no QST","QST is paid to the SAAQ only on a registration transfer. The seller then cancels the registration with the form for a vehicle sold outside Québec."]],
+fr:[[0,"Marlog coûte 1 030 €, pas 735 €","L'offre exclut le balayage du conteneur (165 €). Facture du Q7 : manutention 540, balayage 165, admin 95, éco 75, dédouanement 130, carburant 25."],
+[0,"Viamar ajoute des suppléments après le départ","Le Q7 a reçu un supplément séparé pour congestion ferroviaire CN. L'assurance est à part et couvre seulement à partir du chargement."],
+[0,"Certains concessionnaires refusent l'exportation","VW Lauzon Blainville (politique du Groupe Lauzon). Honda Blainville a d'abord refusé, puis accepté une fois expliqué que vous êtes un particulier."],
+[1,"Ce qui a marché pour le Q7","AED Laval a perçu la TPS, exempté la TVQ sur l'ATAC (« EXPORTATION »), et le véhicule est arrivé chez GO Transport. Environ deux mois et demi au total."],
+[0,"Hybride rechargeable = complications","Viamar cote pour un « gas powered car » ; les batteries au lithium sont restreintes. Marlog exclut les suppléments pour hybrides."],
+[0,"Vérifier la version dans le NIV","Le véhicule de Honda était un Progressiv (EAAF), pas un Technik. « Premium Plus » = Progressiv."],
+[0,"Les lecteurs génériques ratent des choses","Un capteur débranché sans code moteur veut dire des codes effacés récemment. Vérifiez les moniteurs de préparation et demandez VCDS/OBDeleven."],
+[1,"La douane se base sur le contrat","Marlog a recalculé la valeur du Q7 après le contrat et la preuve de paiement. Payez depuis le compte de l'acheteur."],
+[0,"La garantie Audi Canada ne vaut pas en Roumanie","Certified :plus n'est honorée qu'au Canada et aux États-Unis."],
+[1,"Particulier : pas de TVQ","La TVQ se paie à la SAAQ seulement au transfert d'immatriculation. Le vendeur annule ensuite l'immatriculation avec le formulaire pour véhicule vendu hors Québec."]]};
+
+var LINKS=[
+["Revenu Québec – Exports of property (zero-rated)","https://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/special-cases-gsthst-and-qst/exports-outside-canada-and-shipping-outside-quebec/exports-and-shipping-of-property/"],
+["Revenu Québec – Used vehicle from an individual","https://www.revenuquebec.ca/en/citizens/consumption-taxes/gst-and-qst/transport-and-road-vehicles/road-vehicles/purchase-of-a-road-vehicle/purchase-of-a-used-road-vehicle-from-an-individual/"],
+["SAAQ – Annuler l'immatriculation d'un véhicule émigré","https://saaq.gouv.qc.ca/immatriculation/annuler-immatriculation-vehicule-emigre"],
+["SAAQ – Formulaire 4815A (EN)","https://saaq.gouv.qc.ca/blob/saaq/documents/formulaires/cancellation-registration-vehicule-licensed-sold-outside-quebec.pdf"],
+["SAAQ – Transférer un véhicule entre particuliers","https://saaq.gouv.qc.ca/blob/saaq/documents/publications/transferer-vehicule-entre-particulier.pdf"],
+["RDPRM – Registre des droits","https://www.rdprm.gouv.qc.ca/"],
+["CBSA – Memorandum D20-1-1 (exports)","https://www.cbsa-asfc.gc.ca/publications/dm-md/d20/d20-1-1-eng.pdf"],
+["NHTSA – Recall 21V947 (gateway water)","https://vehicleflaws.com/recall/21V947000"]];
+
+/* Templates: label per UI lang, body fr/en */
+var TPL=[
+{id:"first",l:{ro:"Primul contact cu un dealer",en:"First contact with a dealer",fr:"Premier contact avec un concessionnaire"},
+ fr:"Bonjour,\n\nJe suis intéressé par le [MODÈLE] [ANNÉE] (stock [STOCK], NIV [NIV]). Pourriez-vous m'envoyer le rapport Carfax et me confirmer que le véhicule est toujours disponible ?\n\nJ'achète comme particulier, pour ma famille. Le véhicule sera exporté vers l'Europe par une compagnie de transport que j'engage.\n\nMerci,\n[NOM]",
+ en:"Hello,\n\nI'm interested in the [YEAR] [MODEL] (stock [STOCK], VIN [VIN]). Could you send me the Carfax report and confirm the car is still available?\n\nI'm buying as a private individual, for my family. The car will be exported to Europe by a shipping company I hire.\n\nThank you,\n[NAME]"},
+{id:"offer",l:{ro:"Ofertă + explicația exportului",en:"Offer + export explanation",fr:"Offre + explication de l'exportation"},
+ fr:"Bonjour [PRÉNOM],\n\nNous sommes toujours très intéressés par le [MODÈLE] (stock [STOCK]).\n\nNous ne sommes pas des commerçants : c'est une auto pour notre famille en Roumanie. Vous n'auriez qu'à déposer le véhicule à l'entrepôt de la compagnie de transport que nous avons engagée, Viamar Scilla (GO Transport, 180 Graveline, Saint-Laurent). Elle s'occupe de l'exportation et fournit tous les documents.\n\nSelon Revenu Québec, la TPS et la TVQ ne s'appliquent pas quand le vendeur remet le véhicule à un transporteur qui l'expédie hors du Canada :\nhttps://www.revenuquebec.ca/fr/entreprises/taxes/tpstvh-et-tvq/situations-particulieres-liees-a-la-tpstvh-et-a-la-tvq/exportations-hors-du-canada-ou-expeditions-hors-du-quebec/exportation-ou-expedition-de-biens/\n\nNous payons en entier par virement. Notre budget est de [PRIX] $, véhicule livré chez Viamar.\n\nMerci beaucoup,\n[NOM]",
+ en:"Hi [FIRST NAME],\n\nWe're still very interested in the [MODEL] (stock [STOCK]).\n\nWe're not dealers: it's a car for our family in Romania. You would only need to drop the car off at the warehouse of the shipping company we hired, Viamar Scilla (GO Transport, 180 Graveline, Saint-Laurent). They handle the export and provide all the documents.\n\nAccording to Revenu Québec, GST and QST don't apply when the seller hands the car over to a carrier that ships it outside Canada:\nhttps://www.revenuquebec.ca/en/businesses/consumption-taxes/gsthst-and-qst/special-cases-gsthst-and-qst/exports-outside-canada-and-shipping-outside-quebec/exports-and-shipping-of-property/\n\nWe pay in full by bank transfer. Our budget is $[PRICE], with the car delivered to Viamar.\n\nThank you so much,\n[NAME]"},
+{id:"private",l:{ro:"Întrebări pentru vânzător privat",en:"Questions for a private seller",fr:"Questions pour un particulier"},
+ fr:"Bonjour,\n\nVotre [MODÈLE] m'intéresse. Avant de nous voir, quelques questions :\n\n1. Le véhicule est-il à votre nom, sans location ni prêt ?\n2. Avez-vous les factures d'entretien ?\n3. Accepteriez-vous une inspection dans un garage de mon choix ?\n4. Le véhicule sera exporté : seriez-vous d'accord pour le remettre directement à mon transporteur à Saint-Laurent, puis annuler l'immatriculation à la SAAQ ?\n\nMerci,\n[NOM]",
+ en:"Hello,\n\nI'm interested in your [MODEL]. Before we meet, a few questions:\n\n1. Is the car in your name, with no lease or loan?\n2. Do you have the service invoices?\n3. Would you agree to an inspection at a garage of my choice?\n4. The car will be exported: would you hand it over directly to my carrier in Saint-Laurent, then cancel the registration with the SAAQ?\n\nThank you,\n[NAME]"},
+{id:"viamar",l:{ro:"Rezervare la Viamar",en:"Booking with Viamar",fr:"Réservation chez Viamar"},
+ fr:"Hello Bruno,\n\nI'd like to book another shared container from Montreal to Rotterdam for a [YEAR] [MODEL], VIN [VIN] (gas powered).\n\nThe buyer is [BUYER NAME]. The car will be dropped off at GO Transport by [SELLER]. Could you send me the booking forms and the insurance form for a value of [VALUE] CAD?\n\nThank you,\n[NAME]",
+ en:"Hello Bruno,\n\nI'd like to book another shared container from Montreal to Rotterdam for a [YEAR] [MODEL], VIN [VIN] (gas powered).\n\nThe buyer is [BUYER NAME]. The car will be dropped off at GO Transport by [SELLER]. Could you send me the booking forms and the insurance form for a value of [VALUE] CAD?\n\nThank you,\n[NAME]"},
+{id:"marlog",l:{ro:"Documente pentru Marlog",en:"Papers for Marlog",fr:"Documents pour Marlog"},
+ fr:"Hello Martyna,\n\nThe [YEAR] [MODEL], VIN [VIN], is on its way to Rotterdam (booking [BOOKING], container [CONTAINER]). Please find attached: bill of lading, registration, bill of sale, ocean freight invoice, passport and your signed authorisation form.\n\nCould you give me an estimated release date so I can arrange the truck to Romania?\n\nThank you,\n[NAME]",
+ en:"Hello Martyna,\n\nThe [YEAR] [MODEL], VIN [VIN], is on its way to Rotterdam (booking [BOOKING], container [CONTAINER]). Please find attached: bill of lading, registration, bill of sale, ocean freight invoice, passport and your signed authorisation form.\n\nCould you give me an estimated release date so I can arrange the truck to Romania?\n\nThank you,\n[NAME]"},
+{id:"saaq",l:{ro:"Reamintire SAAQ pentru vânzător",en:"SAAQ reminder for the seller",fr:"Rappel SAAQ pour le vendeur"},
+ fr:"Bonjour [PRÉNOM],\n\nLe véhicule est parti vers l'Europe. Voici le connaissement (B/L) et une copie du contrat. Vous pouvez maintenant annuler l'immatriculation avec le formulaire de la SAAQ pour un véhicule vendu hors du Québec :\nhttps://saaq.gouv.qc.ca/immatriculation/annuler-immatriculation-vehicule-emigre\n\nMerci encore,\n[NOM]",
+ en:"Hi [FIRST NAME],\n\nThe car has left for Europe. Here are the bill of lading (B/L) and a copy of the contract. You can now cancel the registration with the SAAQ form for a vehicle sold outside Québec:\nhttps://saaq.gouv.qc.ca/immatriculation/annuler-immatriculation-vehicule-emigre\n\nThanks again,\n[NAME]"}];
+
+var STATUSES=["watching","contacted","offer","inspection","bought","shipped","arrived","dropped"];
+var ST_CLASS={watching:"",contacted:"info",offer:"info",inspection:"warn",bought:"ok",shipped:"ok",arrived:"ok",dropped:"bad"};
+var FLAGS=["accident","lease","recall","service","rust","noexport"];
+var DEF_COSTS={cadEur:0.64,usdEur:0.89,shipUsd:1450,fuelUsd:0,insPct:1.5,dutyPct:10,vatPct:21,marlogEur:1030,roadEur:800,rarEur:800};
+var DEF_SEARCH={enabled:true,frequencyDays:7,model:"Audi Q5",trims:["Technik"],yearMin:2021,yearMax:2024,maxPrice:28000,maxKm:120000,region:"Québec",center:"Laval",radiusKm:100,mustAcc:true,must360:true,phevBonus:true,dealers:true,privates:true,exclude:"VW Lauzon Blainville",extra:""};
+
+/* ---------- state ---------- */
+var lang=read("hub-lang")||"ro"; if(!T[lang])lang="ro";
+var tab=read("hub-tab")||"cars";
+var carFilter=read("hub-filter")||"active";
+var procCar=read("hub-proc")||"";
+var tplLang={};
+var cars=[],contacts=[],costs=Object.assign({},DEF_COSTS),search=Object.assign({},DEF_SEARCH),scan=null;
+var db=null,dbState="loading",staleTimer=null,priceInput="25000",gstOn=true;
+function read(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function write(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function t(){return T[lang]}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+var locale={ro:"ro-RO",en:"en-CA",fr:"fr-CA"};
+function fmt(n,d){return new Intl.NumberFormat(locale[lang],{maximumFractionDigits:d||0}).format(n)}
+function eur(n){return new Intl.NumberFormat(locale[lang],{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(n)}
+function cad(n){return new Intl.NumberFormat(locale[lang],{style:"currency",currency:"CAD",currencyDisplay:"narrowSymbol",maximumFractionDigits:0}).format(n)}
+function toast(msg){var el=document.getElementById("toast");el.textContent=msg;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){el.hidden=true},1800)}
+
+/* ---------- cost model ---------- */
+function landed(price,gst){var c=costs;var car=price*c.cadEur,g=gst?car*0.05:0,ship=(c.shipUsd+c.fuelUsd)*c.usdEur,ins=car*c.insPct/100;var cif=car+g+ship+ins,duty=cif*c.dutyPct/100,vat=(cif+duty)*c.vatPct/100;
+ return{car:car,gst:g,ship:ship,ins:ins,cif:cif,duty:duty,vat:vat,marlog:c.marlogEur,road:c.roadEur,rar:c.rarEur,total:cif+duty+vat+c.marlogEur+c.roadEur+c.rarEur,perK:1000*c.cadEur*(1+(gst?0.05:0)+c.insPct/100)*(1+c.dutyPct/100)*(1+c.vatPct/100)}}
+
+/* ---------- VIN ---------- */
+function decodeVin(v){v=String(v||"").toUpperCase().replace(/[^A-Z0-9]/g,"");if(v.length!==17)return{err:"bad"};
+ var years={L:2020,M:2021,N:2022,P:2023,R:2024,S:2025,T:2026};var isQ5=v.slice(6,8)==="FY";var tr={E:"Progressiv",F:"Technik",A:"Komfort",B:"Komfort"}[v[3]]||"?";
+ return{vin:v,isQ5:isQ5,trim:tr,year:years[v[9]]||"?",phev:v[4]==="2"}}
+function vinHtml(v){var d=decodeVin(v),L=t().vin;if(!v)return"";if(d.err)return'<span class="chip warn">'+esc(L.bad)+"</span>";
+ var out='<div class="chips"><span class="chip acc">'+esc(L.trim)+": "+esc(d.trim)+'</span><span class="chip">'+esc(L.year)+": "+esc(d.year)+"</span>";
+ if(!d.isQ5)out+='<span class="chip warn">'+esc(L.notq5)+"</span>";if(d.phev)out+='<span class="chip warn">'+esc(L.phev)+"</span>";return out+'</div><div class="note" style="margin-top:4px">'+esc(L.hint)+"</div>"}
+
+/* ---------- render ---------- */
+var TABS=["cars","costs","process","docs","contacts","lessons","tpl","search"];
+function render(){
+ document.documentElement.lang=lang;
+ document.querySelectorAll(".lang button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.lang===lang?"true":"false")});
+ var tabs=document.getElementById("tabs");tabs.innerHTML=TABS.map(function(k){return'<button type="button" role="tab" id="tab-'+k+'" aria-selected="'+(k===tab)+'" data-tab="'+k+'">'+esc(t().tabs[k])+"</button>"}).join("");
+ var m=document.getElementById("main");var fn={cars:rCars,costs:rCosts,process:rProc,docs:rDocs,contacts:rContacts,lessons:rLessons,tpl:rTpl,search:rSearch}[tab]||rCars;
+ m.innerHTML='<section role="tabpanel" aria-labelledby="tab-'+tab+'">'+banner()+fn()+"</section>";
+ bindTab();
+}
+function banner(){if(dbState==="off")return'<div class="banner warn">'+esc(t().dbOff)+"</div>";if(dbState==="loading")return'<div class="banner">'+esc(t().loading)+"</div>";if(dbState==="stale")return'<div class="banner warn">'+esc(t().stale)+"</div>";return""}
+
+function visibleCars(){return cars.filter(function(c){if(carFilter==="active")return c.status!=="dropped";if(carFilter==="dropped")return c.status==="dropped";return true}).sort(function(a,b){return STATUSES.indexOf(a.status)-STATUSES.indexOf(b.status)||(b.updatedAt||"").localeCompare(a.updatedAt||"")})}
+function rCars(){var L=t().cars;var list=visibleCars();
+ var h='<div class="spread"><div><h2>'+esc(L.h)+'</h2><p class="lead">'+esc(L.lead)+'</p></div><button class="btn primary" type="button" data-act="add-car">+ '+esc(L.add)+"</button></div>";
+ h+='<div class="filters" role="group">'+[["active",L.all],["dropped",L.dropped],["all",L.allAll]].map(function(f){return'<button type="button" data-filter="'+f[0]+'" aria-pressed="'+(carFilter===f[0])+'">'+esc(f[1])+"</button>"}).join("")+"</div>";
+ if(!list.length)return h+'<div class="empty">'+esc(L.empty)+"</div>";
+ return h+'<div class="cars">'+list.map(carCard).join("")+"</div>"}
+function yn(v){var L=t().cars;return v==="yes"?L.yes:v==="no"?L.no:L.unknown}
+function carCard(c){var L=t().cars,S=t().st,F=t().f.flagList;var hist=Array.isArray(c.priceHistory)?c.priceHistory:[];var first=hist.length?hist[0].price:c.price;var delta=(c.price||0)-(first||0);
+ var d=decodeVin(c.vin);var trim=c.trim||(d.err?"":d.trim);var lc=c.price?landed(c.price,c.sellerType==="dealer"&&c.gst!==false&&false):null;
+ var stepsDone=c.steps?Object.keys(c.steps).filter(function(k){return c.steps[k]}).length:0;
+ var flags=(c.flags||[]).map(function(f){return'<span class="chip bad">'+esc(F[f]||f)+"</span>"}).join("");
+ var eq='<span class="chip '+(c.acc==="yes"?"ok":c.acc==="no"?"bad":"")+'">'+esc(L.acc)+": "+esc(yn(c.acc))+'</span><span class="chip '+(c.cam==="yes"?"ok":c.cam==="no"?"bad":"")+'">'+esc(L.cam)+": "+esc(yn(c.cam))+"</span>";
+ return'<article class="car'+(c.status==="dropped"?" dropped":"")+'">'+
+ '<div class="head"><div style="min-width:0"><div class="title">'+esc((c.year?c.year+" ":"")+(c.title||"Audi Q5"))+(trim?" · "+esc(trim):"")+'</div><div class="sub">'+esc([c.seller,c.location].filter(Boolean).join(" · "))+'</div></div><span class="status chip '+(ST_CLASS[c.status]||"")+'">'+esc(S[c.status]||c.status)+"</span></div>"+
+ '<dl class="figs" style="margin:0"><div><dt>'+esc(L.price)+'</dt><dd>'+(c.price?cad(c.price):"—")+(delta?'<div class="delta '+(delta<0?"down":"up")+'" style="font-size:.75rem">'+(delta<0?"▼ ":"▲ ")+cad(Math.abs(delta))+"</div>":"")+'</dd></div><div><dt>'+esc(L.km)+'</dt><dd>'+(c.km?fmt(c.km):"—")+'</dd></div><div><dt>'+esc(L.landed)+'</dt><dd>'+(lc?eur(lc.total):"—")+"</dd></div></dl>"+
+ '<div class="chips">'+eq+flags+(c.addedBy==="claude"?'<span class="chip info">'+esc(L.byClaude)+"</span>":"")+(stepsDone?'<span class="chip acc">'+stepsDone+"/"+STEPS[lang].length+" "+esc(L.steps)+"</span>":"")+"</div>"+
+ (c.vin?'<div class="mono">'+esc(c.vin)+"</div>":"")+
+ (c.notes?'<div class="notes">'+esc(c.notes)+"</div>":"")+
+ '<div class="row"><button class="btn" type="button" data-act="edit-car" data-id="'+esc(c._id)+'">'+esc(L.edit)+"</button>"+(c.url?'<a class="btn ghost" href="'+esc(safeUrl(c.url))+'" target="_blank" rel="noopener">'+esc(L.open)+" ↗</a>":"")+"</div></article>"}
+function safeUrl(u){return /^https?:\/\//i.test(u)?u:"#"}
+
+function rCosts(){var L=t().costs;var p=parseFloat(String(priceInput).replace(/\s/g,"").replace(",","."))||0;var r=landed(p,gstOn);
+ var rows=[["car",r.car],gstOn?["gstL",r.gst]:null,["ship",r.ship],["ins",r.ins],["cif",r.cif],["duty",r.duty],["vat",r.vat],["marlog",r.marlog],["road",r.road],["rar",r.rar]].filter(Boolean);
+ var keys=["cadEur","usdEur","shipUsd","fuelUsd","insPct","dutyPct","vatPct","marlogEur","roadEur","rarEur"];
+ return'<div><h2>'+esc(L.h)+'</h2><p class="lead">'+esc(L.lead)+'</p></div><div class="costs"><div class="panel" style="display:grid;gap:14px"><div class="row"><label class="f" style="flex:1"><span>'+esc(L.price)+'</span><input id="c-price" inputmode="decimal" value="'+esc(priceInput)+'"></label><label class="check" style="margin-top:18px"><input type="checkbox" id="c-gst"'+(gstOn?" checked":"")+"> "+esc(L.gst)+'</label></div><div><div class="note">'+esc(L.total)+'</div><div class="total" id="c-total">'+eur(r.total)+'</div><div class="note">'+esc(L.perK)+" <b>"+eur(r.perK)+'</b></div></div><div class="scroll"><table><caption class="sr" style="text-align:left;font-weight:600;padding-bottom:6px">'+esc(L.breakdown)+"</caption><tbody>"+rows.map(function(x){return"<tr><td"+(x[0]==="cif"?' style="font-weight:600"':"")+">"+esc(L[x[0]])+'</td><td class="r">'+eur(x[1])+"</td></tr>"}).join("")+'</tbody></table></div><a href="https://claude.ai/artifact/EKnztVjXQq5BWdy7kR3oAn" target="_blank" rel="noopener">'+esc(L.calc)+" ↗</a></div>"+
+ '<form class="panel" id="rates-form" style="display:grid;gap:12px"><h3>'+esc(L.rates)+'</h3><div class="grid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">'+keys.map(function(k){return'<label class="f"><span>'+esc(L[k])+'</span><input name="'+k+'" id="r-'+k+'" inputmode="decimal" value="'+esc(costs[k])+'"></label>'}).join("")+'</div><div><button class="btn primary" type="submit"'+(db?"":" disabled")+">"+esc(L.saveRates)+"</button></div></form></div>"}
+
+function rProc(){var L=t().proc;var opts=cars.filter(function(c){return c.status!=="dropped"});var car=cars.find(function(c){return c._id===procCar});var steps=STEPS[lang];var done=car&&car.steps?car.steps:{};var n=steps.filter(function(s,i){return done["s"+i]}).length;
+ var h='<div><h2>'+esc(L.h)+'</h2><p class="lead">'+esc(L.lead)+'</p></div><div class="panel" style="display:grid;gap:10px"><label class="f"><span>'+esc(L.pick)+'</span><select id="proc-car"><option value="">'+esc(L.none)+"</option>"+opts.map(function(c){return'<option value="'+esc(c._id)+'"'+(c._id===procCar?" selected":"")+">"+esc((c.year||"")+" "+(c.title||"")+" · "+(c.seller||""))+"</option>"}).join("")+"</select></label>"+(car?'<div class="progress" aria-hidden="true"><i style="width:'+Math.round(n/steps.length*100)+'%"></i></div><div class="note">'+n+" / "+steps.length+" "+esc(L.done)+"</div>":"")+"</div>";
+ var phase="";h+='<div class="panel"><ol class="steps">';steps.forEach(function(s,i){if(s[0]!==phase){phase=s[0];h+='<li style="display:block;border:0;padding:0"><div class="phase">'+esc(phase)+"</div></li>"}
+  h+='<li><span class="n"></span><div class="stepbox">'+(car?'<input type="checkbox" data-step="s'+i+'" id="st-'+i+'"'+(done["s"+i]?" checked":"")+(db?"":" disabled")+">":"")+'<label for="st-'+i+'" style="min-width:0"><div class="step-t">'+esc(s[1])+'</div><div class="step-d">'+esc(s[2])+'</div><div class="step-meta"><span class="chip">'+esc(L.who)+": "+esc(s[3])+'</span><span class="chip">'+esc(L.docs)+": "+esc(s[4])+"</span></div></label></div></li>"});
+ return h+"</ol></div>"}
+
+function rDocs(){var L=t().docs;return'<div><h2>'+esc(L.h)+'</h2><p class="lead">'+esc(L.lead)+'</p></div><div class="cols">'+DOCS[lang].map(function(d){return'<div class="panel"><h3>'+esc(d[0])+"</h3><ul>"+d[1].map(function(x){return"<li>"+esc(x)+"</li>"}).join("")+"</ul></div>"}).join("")+"</div>"}
+
+function rContacts(){var L=t().contacts;var h='<div class="spread"><div><h2>'+esc(L.h)+'</h2><p class="lead">'+esc(L.lead)+'</p></div><button class="btn primary" type="button" data-act="add-contact"'+(db?"":" disabled")+">+ "+esc(L.add)+"</button></div>";
+ if(!contacts.length)return h+'<div class="empty">'+esc(L.empty)+"</div>";
+ return h+'<div class="cols">'+contacts.slice().sort(function(a,b){return(a.role||"").localeCompare(b.role||"")}).map(function(c){return'<div class="panel contact"><div class="spread"><div class="who">'+esc(c.name)+'</div><button class="btn ghost" type="button" data-act="edit-contact" data-id="'+esc(c._id)+'">'+esc(t().cars.edit)+'</button></div><div class="note">'+esc(c.role)+"</div>"+(c.phone?'<div class="line mono">'+esc(c.phone)+' <button class="btn ghost" type="button" data-copy="'+esc(c.phone)+'">'+esc(L.copy)+"</button></div>":"")+(c.email?'<div class="line mono">'+esc(c.email)+' <button class="btn ghost" type="button" data-copy="'+esc(c.email)+'">'+esc(L.copy)+"</button></div>":"")+(c.notes?'<div class="note" style="white-space:pre-wrap">'+esc(c.notes)+"</div>":"")+"</div>"}).join("")+"</div>"}
+
+function rLessons(){var L=t().lessons;return'<div><h2>'+esc(L.h)+'</h2><p class="lead">'+esc(L.lead)+'</p></div><div class="cols">'+LESSONS[lang].map(function(x){return'<div class="panel lesson'+(x[0]?" good":"")+'"><b>'+esc(x[1])+"</b><p>"+esc(x[2])+"</p></div>"}).join("")+'</div><div class="panel"><h3>'+esc(L.links)+'</h3><ul style="margin:8px 0 0;padding-left:18px;display:grid;gap:4px">'+LINKS.map(function(l){return'<li><a href="'+esc(l[1])+'" target="_blank" rel="noopener">'+esc(l[0])+"</a></li>"}).join("")+"</ul></div>"}
+
+function rTpl(){var L=t().tpl;return'<div><h2>'+esc(L.h)+'</h2><p class="lead">'+esc(L.lead)+'</p></div><div class="cols">'+TPL.map(function(x){var tl=tplLang[x.id]||(lang==="fr"?"fr":"en");var same=x.fr===x.en;return'<div class="panel tpl"><div class="spread"><h3>'+esc(x.l[lang])+"</h3>"+(same?"":'<div class="seg" role="group"><button type="button" data-tpl="'+x.id+'" data-tl="fr" aria-pressed="'+(tl==="fr")+'">FR</button><button type="button" data-tpl="'+x.id+'" data-tl="en" aria-pressed="'+(tl==="en")+'">EN</button></div>')+'</div><pre id="tpl-'+x.id+'">'+esc(x[same?"en":tl])+'</pre><div><button class="btn" type="button" data-copytpl="'+x.id+'">'+esc(L.copy)+"</button></div></div>"}).join("")+"</div>"}
+
+function rSearch(){var L=t().search,s=search;function inp(k,lab,type){return'<label class="f"><span>'+esc(lab)+'</span><input name="'+k+'" id="s-'+k+'" '+(type||'inputmode="numeric"')+' value="'+esc(s[k])+'"></label>'}
+ var trims=["Technik","Progressiv","Komfort"];var last=scan&&scan.lastRun?new Date(scan.lastRun):null;var next=last?new Date(last.getTime()+s.frequencyDays*864e5):null;
+ return'<div><h2>'+esc(L.h)+'</h2><p class="lead">'+esc(L.lead)+'</p></div>'+
+ '<div class="panel" style="display:grid;gap:6px"><div class="row"><span class="chip '+(s.enabled?"ok":"bad")+'">'+esc(L.enabled)+": "+esc(s.enabled?t().cars.yes:t().cars.no)+'</span><span class="chip">'+esc(L.last)+": "+esc(last?last.toLocaleString(locale[lang]):L.never)+"</span>"+(next&&s.enabled?'<span class="chip info">'+esc(L.next)+": "+esc(next.toLocaleDateString(locale[lang]))+"</span>":"")+(scan&&scan.found!=null?'<span class="chip acc">'+esc(scan.found)+" "+esc(L.found)+"</span>":"")+"</div>"+(scan&&scan.summary?'<div class="note" style="white-space:pre-wrap"><b>'+esc(L.result)+":</b> "+esc(scan.summary)+"</div>":"")+"</div>"+
+ '<form class="panel" id="search-form" style="display:grid;gap:14px"><label class="check"><input type="checkbox" name="enabled" id="s-enabled"'+(s.enabled?" checked":"")+"> "+esc(L.enabled)+'</label><div class="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:12px">'+
+ '<label class="f"><span>'+esc(L.freq)+'</span><select name="frequencyDays" id="s-frequencyDays">'+[[1,L.f1],[3,L.f3],[7,L.f7]].map(function(o){return'<option value="'+o[0]+'"'+(+s.frequencyDays===o[0]?" selected":"")+">"+esc(o[1])+"</option>"}).join("")+"</select></label>"+
+ inp("model",L.model,'type="text"')+inp("yearMin",L.yearMin)+inp("yearMax",L.yearMax)+inp("maxPrice",L.maxPrice)+inp("maxKm",L.maxKm)+inp("region",L.region,'type="text"')+inp("center",L.center,'type="text"')+inp("radiusKm",L.radius)+"</div>"+
+ '<fieldset style="border:0;padding:0;margin:0;display:grid;gap:6px"><legend class="note" style="font-weight:600">'+esc(L.trims)+'</legend><div class="row">'+trims.map(function(x){return'<label class="check"><input type="checkbox" name="trim" value="'+x+'"'+((s.trims||[]).indexOf(x)>=0?" checked":"")+"> "+x+"</label>"}).join("")+"</div></fieldset>"+
+ '<fieldset style="border:0;padding:0;margin:0;display:grid;gap:6px"><legend class="note" style="font-weight:600">'+esc(L.must)+'</legend><div class="row"><label class="check"><input type="checkbox" name="mustAcc"'+(s.mustAcc?" checked":"")+"> "+esc(L.acc)+'</label><label class="check"><input type="checkbox" name="must360"'+(s.must360?" checked":"")+"> "+esc(L.cam)+'</label><label class="check"><input type="checkbox" name="phevBonus"'+(s.phevBonus?" checked":"")+"> "+esc(L.phev)+"</label></div></fieldset>"+
+ '<fieldset style="border:0;padding:0;margin:0;display:grid;gap:6px"><legend class="note" style="font-weight:600">'+esc(L.sellers)+'</legend><div class="row"><label class="check"><input type="checkbox" name="dealers"'+(s.dealers?" checked":"")+"> "+esc(L.dealer)+'</label><label class="check"><input type="checkbox" name="privates"'+(s.privates?" checked":"")+"> "+esc(L.private)+"</label></div></fieldset>"+
+ '<label class="f wide"><span>'+esc(L.exclude)+'</span><textarea name="exclude" id="s-exclude">'+esc(s.exclude)+'</textarea></label><label class="f wide"><span>'+esc(L.extra)+'</span><textarea name="extra" id="s-extra">'+esc(s.extra)+'</textarea></label><div><button class="btn primary" type="submit"'+(db?"":" disabled")+">"+esc(L.save)+"</button></div></form>"}
+
+/* ---------- dialogs ---------- */
+var dlg=document.getElementById("dlg");
+function carDialog(c){var F=t().f,S=t().st;c=c||{status:"watching",sellerType:"dealer",acc:"",cam:"",flags:[]};var isNew=!c._id;
+ function sel(name,opts,val){return'<select name="'+name+'" id="d-'+name+'">'+opts.map(function(o){return'<option value="'+esc(o[0])+'"'+(String(val||"")===o[0]?" selected":"")+">"+esc(o[1])+"</option>"}).join("")+"</select>"}
+ var yn3=[["",t().cars.unknown],["yes",t().cars.yes],["no",t().cars.no]];
+ dlg.innerHTML='<form class="dlg" id="car-form" method="dialog"><h2>'+esc(isNew?t().cars.add:t().cars.edit)+'</h2><div class="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:12px">'+
+ '<label class="f"><span>'+esc(F.title)+'</span><input name="title" id="d-title" value="'+esc(c.title||"Audi Q5")+'"></label>'+
+ '<label class="f"><span>'+esc(F.year)+'</span><input name="year" id="d-year" inputmode="numeric" value="'+esc(c.year||"")+'"></label>'+
+ '<label class="f"><span>'+esc(F.trim)+'</span><input name="trim" id="d-trim" value="'+esc(c.trim||"")+'"></label>'+
+ '<label class="f"><span>'+esc(F.price)+'</span><input name="price" id="d-price" inputmode="decimal" value="'+esc(c.price||"")+'"></label>'+
+ '<label class="f"><span>'+esc(F.km)+'</span><input name="km" id="d-km" inputmode="numeric" value="'+esc(c.km||"")+'"></label>'+
+ '<label class="f"><span>'+esc(F.status)+"</span>"+sel("status",STATUSES.map(function(s){return[s,S[s]]}),c.status)+"</label>"+
+ '<label class="f"><span>'+esc(F.seller)+'</span><input name="seller" id="d-seller" value="'+esc(c.seller||"")+'"></label>'+
+ '<label class="f"><span>'+esc(F.sellerType)+"</span>"+sel("sellerType",[["dealer",F.dealer],["private",F.private]],c.sellerType)+"</label>"+
+ '<label class="f"><span>'+esc(F.location)+'</span><input name="location" id="d-location" value="'+esc(c.location||"")+'"></label>'+
+ '<label class="f"><span>'+esc(F.acc)+"</span>"+sel("acc",yn3,c.acc)+"</label>"+
+ '<label class="f"><span>'+esc(F.cam)+"</span>"+sel("cam",yn3,c.cam)+"</label>"+
+ '<label class="f wide"><span>'+esc(F.vin)+'</span><input name="vin" id="d-vin" class="mono" maxlength="17" value="'+esc(c.vin||"")+'"><div class="vin-out" id="vin-out">'+vinHtml(c.vin)+"</div></label>"+
+ '<label class="f wide"><span>'+esc(F.url)+'</span><input name="url" id="d-url" type="url" value="'+esc(c.url||"")+'"></label>'+
+ '<fieldset class="wide" style="grid-column:1/-1;border:0;padding:0;margin:0"><legend class="note" style="font-weight:600">'+esc(F.flags)+'</legend><div class="row">'+FLAGS.map(function(f){return'<label class="check"><input type="checkbox" name="flag" value="'+f+'"'+((c.flags||[]).indexOf(f)>=0?" checked":"")+"> "+esc(F.flagList[f])+"</label>"}).join("")+"</div></fieldset>"+
+ '<label class="f wide"><span>'+esc(F.notes)+'</span><textarea name="notes" id="d-notes">'+esc(c.notes||"")+"</textarea></label></div>"+
+ '<div class="spread"><div class="row"><button class="btn primary" type="submit" value="save"'+(db?"":" disabled")+">"+esc(F.save)+'</button><button class="btn" type="button" data-act="close">'+esc(F.cancel)+"</button></div>"+(isNew?"":'<button class="btn danger" type="button" data-act="del-car" data-id="'+esc(c._id)+'">'+esc(F.del)+"</button>")+"</div></form>";
+ dlg.showModal();
+ dlg.querySelector("#d-vin").addEventListener("input",function(e){var d=decodeVin(e.target.value);document.getElementById("vin-out").innerHTML=vinHtml(e.target.value);var tr=document.getElementById("d-trim"),yr=document.getElementById("d-year");if(!d.err){if(!tr.value&&d.trim!=="?")tr.value=d.trim;if(!yr.value&&d.year!=="?")yr.value=d.year}});
+ dlg.querySelector("#car-form").addEventListener("submit",function(e){e.preventDefault();saveCar(c,new FormData(e.target))});
+}
+function num(v){var n=parseFloat(String(v||"").replace(/\s/g,"").replace(",","."));return isFinite(n)?n:null}
+async function saveCar(old,fd){if(!db)return;var now=new Date().toISOString();var price=num(fd.get("price"));
+ var data={title:fd.get("title")||"Audi Q5",year:num(fd.get("year")),trim:fd.get("trim")||"",price:price,km:num(fd.get("km")),status:fd.get("status"),seller:fd.get("seller")||"",sellerType:fd.get("sellerType"),location:fd.get("location")||"",acc:fd.get("acc")||"",cam:fd.get("cam")||"",vin:String(fd.get("vin")||"").toUpperCase().trim(),url:fd.get("url")||"",flags:fd.getAll("flag"),notes:fd.get("notes")||"",updatedAt:now};
+ var hist=Array.isArray(old.priceHistory)?old.priceHistory.slice():[];if(price!=null&&(!hist.length||hist[hist.length-1].price!==price))hist.push({date:now.slice(0,10),price:price});data.priceHistory=hist;
+ try{if(old._id){data.steps=old.steps||{};data.addedBy=old.addedBy||"manual";data.addedAt=old.addedAt||now;await db.doc("cars/"+old._id).set(data)}else{data.steps={};data.addedBy="manual";data.addedAt=now;await db.collection("cars").add(data)}dlg.close();toast(t().costs.saved)}catch(err){toast(err&&err.message||"Error")}}
+function contactDialog(c){var L=t().contacts,F=t().f;c=c||{};var isNew=!c._id;
+ dlg.innerHTML='<form class="dlg" id="ct-form"><h2>'+esc(isNew?L.add:t().cars.edit)+'</h2><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:12px">'+
+ [["name",L.name],["role",L.role],["phone",L.phone],["email",L.email]].map(function(x){return'<label class="f"><span>'+esc(x[1])+'</span><input name="'+x[0]+'" id="ct-'+x[0]+'" value="'+esc(c[x[0]]||"")+'"></label>'}).join("")+
+ '<label class="f wide" style="grid-column:1/-1"><span>'+esc(L.notes)+'</span><textarea name="notes" id="ct-notes">'+esc(c.notes||"")+'</textarea></label></div><div class="spread"><div class="row"><button class="btn primary" type="submit">'+esc(F.save)+'</button><button class="btn" type="button" data-act="close">'+esc(F.cancel)+"</button></div>"+(isNew?"":'<button class="btn danger" type="button" data-act="del-contact" data-id="'+esc(c._id)+'">'+esc(F.del)+"</button>")+"</div></form>";
+ dlg.showModal();
+ dlg.querySelector("#ct-form").addEventListener("submit",async function(e){e.preventDefault();if(!db)return;var fd=new FormData(e.target);var d={name:fd.get("name")||"",role:fd.get("role")||"",phone:fd.get("phone")||"",email:fd.get("email")||"",notes:fd.get("notes")||""};try{if(c._id)await db.doc("contacts/"+c._id).set(d);else await db.collection("contacts").add(d);dlg.close();toast(t().costs.saved)}catch(err){toast(err&&err.message||"Error")}});
+}
+var armed=null;
+dlg.addEventListener("click",async function(e){var b=e.target.closest("[data-act]");if(!b)return;var a=b.dataset.act;
+ if(a==="close"){dlg.close();return}
+ if(a==="del-car"||a==="del-contact"){if(armed!==b.dataset.id){armed=b.dataset.id;b.textContent=t().f.delConfirm;return}armed=null;try{await db.doc((a==="del-car"?"cars/":"contacts/")+b.dataset.id).delete();dlg.close()}catch(err){toast(err&&err.message||"Error")}}});
+dlg.addEventListener("close",function(){armed=null});
+
+/* ---------- events ---------- */
+document.querySelector(".lang").addEventListener("click",function(e){var b=e.target.closest("[data-lang]");if(!b)return;lang=b.dataset.lang;write("hub-lang",lang);render()});
+document.getElementById("tabs").addEventListener("click",function(e){var b=e.target.closest("[data-tab]");if(!b)return;tab=b.dataset.tab;write("hub-tab",tab);render();window.scrollTo(0,0)});
+function copyText(txt,msg){function fallback(){toast(msg)}try{navigator.clipboard.writeText(txt).then(function(){toast(msg)},fallback)}catch(e){fallback()}}
+function bindTab(){var m=document.getElementById("main");
+ m.onclick=function(e){var b=e.target.closest("button,a");if(!b)return;
+  if(b.dataset.filter){carFilter=b.dataset.filter;write("hub-filter",carFilter);render();return}
+  if(b.dataset.act==="add-car"){carDialog(null);return}
+  if(b.dataset.act==="edit-car"){carDialog(cars.find(function(c){return c._id===b.dataset.id}));return}
+  if(b.dataset.act==="add-contact"){contactDialog(null);return}
+  if(b.dataset.act==="edit-contact"){contactDialog(contacts.find(function(c){return c._id===b.dataset.id}));return}
+  if(b.dataset.copy){copyText(b.dataset.copy,t().contacts.copied);return}
+  if(b.dataset.tpl){tplLang[b.dataset.tpl]=b.dataset.tl;render();return}
+  if(b.dataset.copytpl){var pre=document.getElementById("tpl-"+b.dataset.copytpl);copyText(pre.textContent,t().tpl.copied);try{var r=document.createRange();r.selectNodeContents(pre);var s=getSelection();s.removeAllRanges();s.addRange(r)}catch(x){}return}};
+ var cp=document.getElementById("c-price");if(cp){cp.oninput=function(){priceInput=cp.value;var p=num(cp.value)||0;var r=landed(p,gstOn);document.getElementById("c-total").textContent=eur(r.total)};cp.onchange=function(){render()};document.getElementById("c-gst").onchange=function(e){gstOn=e.target.checked;render()}}
+ var rf=document.getElementById("rates-form");if(rf)rf.onsubmit=async function(e){e.preventDefault();if(!db)return;var fd=new FormData(rf),d={};Object.keys(DEF_COSTS).forEach(function(k){var v=num(fd.get(k));d[k]=v==null?DEF_COSTS[k]:v});try{await db.doc("config/costs").set(d);toast(t().costs.saved)}catch(err){toast(err&&err.message||"Error")}};
+ var pc=document.getElementById("proc-car");if(pc)pc.onchange=function(){procCar=pc.value;write("hub-proc",procCar);render()};
+ m.querySelectorAll("[data-step]").forEach(function(cb){cb.onchange=async function(){var car=cars.find(function(c){return c._id===procCar});if(!car||!db)return;var steps=Object.assign({},car.steps||{});steps[cb.dataset.step]=cb.checked;try{await db.doc("cars/"+car._id).update({steps:steps,updatedAt:new Date().toISOString()})}catch(err){toast(err&&err.message||"Error")}}});
+ var sf=document.getElementById("search-form");if(sf)sf.onsubmit=async function(e){e.preventDefault();if(!db)return;var fd=new FormData(sf);var d={enabled:!!fd.get("enabled"),frequencyDays:+fd.get("frequencyDays")||7,model:fd.get("model")||"Audi Q5",trims:fd.getAll("trim"),yearMin:num(fd.get("yearMin")),yearMax:num(fd.get("yearMax")),maxPrice:num(fd.get("maxPrice")),maxKm:num(fd.get("maxKm")),region:fd.get("region")||"",center:fd.get("center")||"",radiusKm:num(fd.get("radiusKm")),mustAcc:!!fd.get("mustAcc"),must360:!!fd.get("must360"),phevBonus:!!fd.get("phevBonus"),dealers:!!fd.get("dealers"),privates:!!fd.get("privates"),exclude:fd.get("exclude")||"",extra:fd.get("extra")||"",updatedAt:new Date().toISOString()};try{await db.doc("config/search").set(d);toast(t().search.saved)}catch(err){toast(err&&err.message||"Error")}};
+}
+
+/* ---------- data ---------- */
+var pending=0;
+function dbReady(){if(dbState==="loading"||dbState==="stale"){dbState="ok";clearTimeout(staleTimer)}}
+function rerenderSafe(){if(dlg.open)return;var a=document.activeElement;if(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)&&document.getElementById("main").contains(a))return;render()}
+render();
+(async function(){var d=null;try{d=window.claude&&window.claude.use?await window.claude.use("db"):null}catch(e){d=null}
+ if(!d){dbState="off";render();return}db=d;staleTimer=setTimeout(function(){if(dbState==="loading"){dbState="stale";render()}},10000);
+ function onErr(){dbState="off";render()}
+ db.collection("cars").onSnapshot(function(s){cars=s.docs.map(function(x){return Object.assign({_id:x.id},x.data())});if(!s.metadata.fromCache)dbReady();rerenderSafe()},onErr);
+ db.collection("contacts").onSnapshot(function(s){contacts=s.docs.map(function(x){return Object.assign({_id:x.id},x.data())});rerenderSafe()},onErr);
+ db.doc("config/costs").onSnapshot(function(s){costs=Object.assign({},DEF_COSTS,s.exists?s.data():{});rerenderSafe()},onErr);
+ db.doc("config/search").onSnapshot(function(s){search=Object.assign({},DEF_SEARCH,s.exists?s.data():{});rerenderSafe()},onErr);
+ db.doc("config/scan").onSnapshot(function(s){scan=s.exists?s.data():null;rerenderSafe()},onErr);
+ render();})();
+})();
+</script>
